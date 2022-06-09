@@ -16,7 +16,7 @@ from shapely.geometry import Polygon, LineString, Point
 from shapely import affinity
 
 
-# TODO: Base class the Shapely polygon class and extend
+# TODO: #8 Base class shapely polygon and extend in BurnUnit class
 class BurnUnit:
 
     def __init__(self, polygon: Polygon, wind_direction: float):

@@ -15,7 +15,7 @@ class Igniter:
     carrying a drip torch or a drone dispatching DAIDs.
     """
 
-    # TODO: Write serialization method for Igniter class
+    # TODO: #5 Write serialization method for Igniter class
     def __init__(self, velocity: float, interval: float, interval_units: str = 'meters'):
         """Constructor computes and stores the interval in ignitions per meter (ipm)
         and ignitions per second (ips).
@@ -69,9 +69,9 @@ class IgnitionCrew:
     in the constructor.
     """
 
-    # TODO: Include same_interval boolean in constructor of IgnitionCrew and implement validator
-    # TODO: Write serialization method for IgnitionCrew object
-    # TODO: Improve IgnitionCrew __str__() method
+    # TODO: #2 Include same_interval boolean in constructor of IgnitionCrew and implement validator
+    # TODO: #3 Write serialization method for IgnitionCrew object
+    # TODO: #4 Improve IgnitionCrew __str__() method
 
     def __init__(self, same_velocity: bool = True):
         """Constructor

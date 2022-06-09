@@ -121,7 +121,6 @@ def read_geojson_polygon(geojson: dict) -> Polygon:
     return geometry
 
 
-# TODO: Clean up write_geojson function in io.py
 def write_geojson(geometries: list[BaseGeometry], properties={}, style={}) -> dict:
     """Write a list of shapely geometries to GeoJSON
 
