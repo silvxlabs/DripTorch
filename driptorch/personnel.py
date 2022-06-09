@@ -150,7 +150,7 @@ class IgnitionCrew:
             if self._velocity_req:
                 if velocity != self._velocity_req:
                     raise UnequalIgniterVelocity(
-                        UnequalIgniterVelocity.unequal_igniter_velocities.unequal_igniter_velocities)
+                        UnequalIgniterVelocity.unequal_igniter_velocities)
             else:
                 self._velocity_req = velocity
 
