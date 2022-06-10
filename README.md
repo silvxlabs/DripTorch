@@ -4,10 +4,17 @@ Ignition pattern simulator for prescribed firing technqiues
 
 ## Installation
 
-You can install `driptorch` from the Python Package Index with
+You can install DripTorch from the SilvX Anaconda channel. First create a Conda environment with Python version 3.10 or later.
 
+```shell
+$(base) conda create -n driptorch python=3.10
 ```
-pip install driptorch
+
+Activate the environment and install DripTorch
+
+```shell
+$(base) conda activate driptorch
+$(driptorch) conda install driptorch -c silvx
 ```
 
 ## Quickstart
@@ -16,7 +23,7 @@ pip install driptorch
 
 A burn unit is the spatial boundary of a firing operation while the wind direction determines the arrangement and timing of the ignition pattern. Everything that happens downstream in DripTorch depends on the unit boundary and the wind direction.
 
-You can create a burn unit in DripTorch by providing a Shapely `Polygon` object to the `BurnUnit` constructor. DripTorch expects the polygon CRS to be in Web Mercator (EPSG: 4326), however you can manually specify the EPSG code with an optional argument; DripTorch will convert the spatial data to the appropriate UTM projection internally.
+You can create a burn unit in DripTorch by providing a Shapely `Polygon` object to the `BurnUnit` constructor. DripTorch expects the polygon CRS to be Web Mercator (EPSG: 4326), however you can manually specify the EPSG code with an optional argument; DripTorch will convert the spatial data to the appropriate UTM projection internally.
 
 ```python
 import driptorch as dt
@@ -32,7 +39,7 @@ burn_unit = dt.BurnUnit(polygon, 90)
 burn_unit = dt.BurnUnit(polygon, 90, epsg=<epsg_code>)
 ```
 
-If your spatial data is formatted in GeoJSON then use the `from_json()` alternative constructor. DripTorch will look through the list of features and extract the first instance of a polygon geometry. A great site to create GeoJSON feature collections is [geojon.io](https://geojson.io).
+If your spatial data is formatted in GeoJSON then use the `from_json()` alternative constructor. DripTorch will look through the list of features and extract the first instance of a polygon geometry. [geojon.io](https://geojson.io) is a great web application for creating GeoJSONs.
 
 ```python
 # Define GeoJSON feature collection
@@ -52,7 +59,7 @@ You can emmulate a plowline or handline operation by buffering the burn unit.
 firing_area = burn_unit.buffer_control_line(2)
 ```
 
-You can also simulate the blackline operation which only buffers the side of the unit that is downwind.
+You can also simulate the blackline operation which only buffers the downwind side of the unit.
 
 ```python
 # Create an additional 10 meter buffer in the firing_area object on the downwind side of the unit
@@ -65,11 +72,19 @@ The difference between the `burn_unit` and `firing_area` can be computed for rem
 fuel_removal_area = burn_unit.difference(firing_area)
 ```
 
-Buffering the burn unit to account for the control line and blackline operation is optional. Just remember that the `BurnUnit` instance you pass to the built-in pattern ignition generators (discussed below) determine the where the ignition paths are placed. So, if you create an interior firing area polygon by buffering the original burn unit, what we called `firing_area` above then be sure to pass that polygon to downstream operations in DripTorch.
+And you can write the `BurnUnit` object back to GeoJSON for use in other applications.
+
+```python
+geojson = fuel_removal_area.to_json()
+```
+
+> Note: DripTorch caches the source EPSG code when loading a geometry, whether you specified it manual or left it as the default (4326). Everything under the hood operates in UTM, however when you export to GeoJSON DripTorch will convert the coordinates back to the source EPSG code.
+
+Buffering the burn unit to account for the control line and blackline operation is optional. Just remember that the `BurnUnit` instance you pass to the built-in pattern ignition generators (discussed below) determines the where the ignition paths are placed. So, if you create an interior firing area polygon by buffering the original burn unit, what we called `firing_area` above, then be sure to pass that polygon to downstream operations in DripTorch.
 
 ### Igniters and ignition crews
 
-Ignition personnel can be configured and assembled in an ignition crew. For individual igniters, you can specify their velocity in meters/second and ignition rate in either ignitions/meter or ignitions/second. The line type of the igniter is implicitly defined using the `rate` parameter in the `Igniter` contructor. For example, use an ignition rate of zero for an igniter that produces a continuous line of fire, use positive rate values for point ignitions and negative rate values for dash ignitions. By default, the rate parameter is in units of ignitions/meter. So, if you want your igniter to produce a point ignition every 5 meters then set `rate=1/5`. To specify the rate in ignitions/second, set `rate_units='seconds'`.
+Ignition personnel can be configured and assembled in an _ignition crew_. For individual igniters, you can specify their velocity in meters/second and ignition rate in either ignitions/meter or ignitions/second. The line type of the igniter is implicitly defined using the `rate` parameter in the `Igniter` constructor. For example, use an ignition rate of zero for an igniter that produces a continuous line of fire, use a positive rate value for point ignitions and a negative rate for dash ignitions. By default, the rate parameter is in units of ignitions/meter. If you want your igniter to produce a point ignition every 5 meters then set `rate=1/5`. To specify the rate in ignitions/second, set `rate_units='seconds'`.
 
 ```python
 # Create a few igniters with different line types
@@ -78,10 +93,10 @@ slow_dot_igniter = dt.Igniter(0.5, 1/10)
 medium_dash_igniter = dt.Igniter(1.8, -1/5)
 ```
 
-Now we can allocate these igniters to an ignition crew in various ways. One thing to note is that some firing techniques, such as strip-heading and flanking patterns, require that all igniters in an crew walk at the same speed. By default, the `IgnitionCrew` constructor will throw an exception if igniters with unequal velocities are allocated to the crew. If you want to allow for unequal velocity, which could be appropriate in a ring ignition pattern for example, then set `same_velocity=False`.
+We can allocate these igniters to an ignition crew in various ways. One thing to note is that some firing techniques, such as strip-heading and flanking patterns require that all igniters in an crew walk at the same speed. By default, the `IgnitionCrew` constructor will throw an exception if igniters with unequal velocities are allocated to the crew. If you want to allow for unequal velocity, which could be appropriate in a ring ignition pattern for example, then set `same_velocity=False`. Furthermore, some fire models may require different ignition input formats for different line typs. There is another optional toggle to restrict or allow different line types: `same_rate=False`.
 
 ```python
-two_man_crew = dt.IgnitionCrew(same_velocity=False)
+two_man_crew = dt.IgnitionCrew(same_velocity=False, same_rate=False)
 two_man_crew.add_igniter(fast_line_igniter)
 two_man_crew.add_igniter(medium_dash_igniter)
 ```
@@ -94,16 +109,16 @@ three_man_crew = dt.IgnitionCrew.from_list(igniter_list)
 # Throws an exception due to unequal igniter velocities
 ```
 
-or create a crew by duplicating an single igniter is to use the `clone()` alternative contructor.
+or create a crew by duplicating an single igniter is to use the `clone_igniter()` alternative contructor.
 
 ```python
 six_man_crew = dt.IgnitionCrew.clone(medium_dash_igniter, 6)
 ```
 
-It is also possible to create other types of igniters, such a Drone-base PSD devices. Just remember that even when you only have a single igniter resource, you still need to add it to an ignition crew to be passes to pattern generator methods.
+It is also possible to create other types of igniters, such as drone-base PSD/DAID devices. Just remember that even when you only have a single igniter resource, you still need to add it to an ignition crew to be passes to pattern generation methods.
 
 ```python
-drone_igniter = dt.Igniter(10, 1, rate_units='seconds')
+drone_igniter = dt.Igniter(10, 0.5, rate_units='seconds')
 drone_crew = dt.IgnitionCrew.from_list([drone_igniter])
 ```
 
@@ -117,14 +132,14 @@ Once your burn unit has been specified and you've allocated your ignition resour
 - Head fire - `head(offset)`
 - Backing fire - `back(offset)`
 
-Firing techniques are accesible through the `FiringTechnique` submodule. For exapmle, to get an instance of the stip-heading fire generator use this command.
+Firing techniques are accesible through the `FiringTechnique` submodule. For exapmle, to get an instance of the strip-heading fire generator use the following command.
 
 ```python
 # Initialize the pattern generator for the strip firing technique
 strip = dt.FiringTechniques.strip(firing_area, ignition_crew)
 ```
 
-All pattern generators have a `generate_pattern()` method, however the arguments may differ between techniques. To generate a pattern for the strip instance we just create, you must specify the spacing (staggering distance between igniters, in meters) and the depth (horizontal distance between igniters, again in meters).
+All pattern generators have a `generate_pattern()` method, however the arguments may differ between techniques. To generate a pattern for the strip instance we just created, you must specify the spacing (staggering distance between igniters, in meters) and the depth (horizontal distance between igniters, again in meters).
 
 ```python
 # Generate a strip pattern with 10 meter spacing and 50 meter depth
@@ -136,17 +151,17 @@ Certain firing technique require a specific number of igniters in the ignition c
 ```python
 # Initialize the pattern generator for the ring firing technique
 ring = dt.FiringTechniques.ring(firing_area, three_man_crew)
-# You'll see a warning that only the first two igniter will be used
+# You'll see a warning that only the first two igniters will be used
 
 # Create a rign ignition pattern with a 10 meters offset from the firing area boundary
 ring_pattern = ring.generate_pattern(10)
 ```
 
-Once you have an ignition pattern you have view it interactively on a Folium map and export the pattern to a fire simulator input file.
+Once you have an ignition pattern you can view it in an interactive map and export the pattern to a fire simulator input file.
 
 ### Mapping
 
-Thanks for Folium, you can map burn unit boundaries and animated ignition paths. DripTorch has some conveinence methods for mapping through the `Map` class. The mapping class takes the burn unit and you can optionally add the interior firing area and blackline area if you created those. Finally, adding the pattern will animate the ignition paths.
+Thanks to [Folium](https://python-visualization.github.io/folium/), you can map burn unit boundaries and animated ignition paths. DripTorch has some convenience methods to make creating maps super simple. The mapping class takes the burn unit and you can optionally add the interior firing area and blackline area if you created those. Finally, adding the pattern will animate the ignition paths.
 
 ```python
 # Initialize a map with the burn unit
@@ -166,3 +181,13 @@ map.show()
 ![Alt text](./img/map-strip.jpg)
 
 ### Exports
+
+If you want to actually use your ignition pattern to set something on fire (at least in a simulator) then use one of the export methods in the pattern instance to write the ignition paths in a model-specific format. Currently, DripTorch only supports QUIC-fire, but other formats are on our roadmap.
+
+```python
+# Write the pattern to a QUIC-Fire ignition file
+pattern.to_quicfire(filename='qf_ignition_file.dat')
+
+# If you don't specify a file name then the method will return a str containing the file contents
+qf_ignition_str = pattern.to_quicfire()
+```
