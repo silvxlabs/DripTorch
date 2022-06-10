@@ -61,14 +61,14 @@ class BurnUnit:
 
         return cls(polygon, wind_direction)
 
-    def to_json(self) -> dict:
+    def to_json(self, **kwargs) -> dict:
         """Write the BurnUnit boundary to a GeoJSON dictionary
 
         Returns:
             dict: GeoJSON dictionary
         """
 
-        return write_geojson([self.polygon])
+        return write_geojson([self.polygon], **kwargs)
 
     def _align(self):
         """Align the unit and boundary segs to the wind
