@@ -8,7 +8,7 @@ from __future__ import annotations
 import copy
 
 # Internal imports
-from driptorch.io import write_geojson, read_geojson_polygon
+from driptorch.io import Projector, write_geojson, read_geojson_polygon
 
 # External imports
 import numpy as np
@@ -19,15 +19,22 @@ from shapely import affinity
 # TODO: #8 Base class shapely polygon and extend in BurnUnit class
 class BurnUnit:
 
-    def __init__(self, polygon: Polygon, wind_direction: float):
+    def __init__(self, polygon: Polygon, wind_direction: float, utm_epsg: int = None):
         """Constructor
 
         Args:
             polygon (Polygon): Shapely polygon geometry object
             wind_direction (float): Wind direction (degrees)
+            utm (int): UTM EPSG code of spatial data. If not provided it is assumed
+                that coordinates are in 4326 and will be converted to UTM. Defaults to None.
         """
 
+        # Set the global EPSG source
+        if not utm_epsg:
+            utm_epsg, polygon = Projector.web_mercator_to_utm(polygon)
+
         # Store instance attributes
+        self.utm_epsg = utm_epsg
         self.polygon = polygon
         self.wind_direction = wind_direction
         self.centroid = polygon.centroid
@@ -51,6 +58,7 @@ class BurnUnit:
         Args:
             geojson (dict): GeoJSON dictionary
             wind_direction (float): Wind direction (degrees)
+            epsg (int): EPSG code of the input GeoJSON. Defaults to 4326.
 
         Returns:
             BurnUnit: New instance of a BurnUnit
@@ -68,7 +76,7 @@ class BurnUnit:
             dict: GeoJSON dictionary
         """
 
-        return write_geojson([self.polygon], **kwargs)
+        return write_geojson([self.polygon], utm_epsg=self.utm_epsg, **kwargs)
 
     def _align(self):
         """Align the unit and boundary segs to the wind
@@ -112,7 +120,7 @@ class BurnUnit:
         # Use shapely's buffer method on the polygon
         buffered_polygon = self.polygon.buffer(-width)
 
-        return BurnUnit(buffered_polygon, self.wind_direction)
+        return BurnUnit(buffered_polygon, self.wind_direction, utm_epsg=self.utm_epsg)
 
     def buffer_downwind(self, width: float) -> BurnUnit:
         """Create a downwind blackline buffer
@@ -132,7 +140,7 @@ class BurnUnit:
         # buffer to cut out the downwind blackline area
         buffered_polygon = self.polygon.difference(fore_line_buffer)
 
-        return BurnUnit(buffered_polygon, self.wind_direction)
+        return BurnUnit(buffered_polygon, self.wind_direction, utm_epsg=self.utm_epsg)
 
     def difference(self, burn_unit: BurnUnit) -> BurnUnit:
         """Return a burn unit instance that is the difference between
@@ -149,7 +157,7 @@ class BurnUnit:
         # Use shapely's set-theorectic difference method
         polygon_difference = self.polygon.difference(burn_unit.polygon)
 
-        return BurnUnit(polygon_difference, self.wind_direction)
+        return BurnUnit(polygon_difference, self.wind_direction, utm_epsg=self.utm_epsg)
 
     def get_bounds(self) -> np.ndarray:
         """Helper method for fetching the bounding box of the unit

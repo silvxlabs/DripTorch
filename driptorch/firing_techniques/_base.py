@@ -54,7 +54,7 @@ class FiringBase:
         timed_paths = propagator.forward(init_paths, self._ignition_crew)
 
         # Hand the timed paths over to the Pattern class and return an instance
-        return Pattern.from_dict(timed_paths)
+        return Pattern.from_dict(timed_paths, self._burn_unit.utm_epsg)
 
     def _init_paths(self, empty_paths: dict, **kwargs) -> dict:
         """Template method to be overloaded by the pattern generator class inheriting

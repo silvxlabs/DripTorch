@@ -31,7 +31,7 @@ warnings.filterwarnings("ignore", category=ShapelyDeprecationWarning)
 class Pattern:
 
     def __init__(self, heat: list[int], igniter: list[int], leg: list[int],
-                 times: list[list[float]], geometry: list[LineString]):
+                 times: list[list[float]], geometry: list[LineString], utm_epsg: int):
         """Constructor
 
         Args:
@@ -40,6 +40,7 @@ class Pattern:
             leg (list[int]): Leg for the path
             times (list[list[float]]): Coordinate arrival times for the path
             geometry (list[LineString]): Path geometry
+            utm_epsg (int): UTM EPSG code for the CRS that the paths are projected in.
         """
 
         self.heat = heat
@@ -47,14 +48,16 @@ class Pattern:
         self.leg = leg
         self.times = times
         self.geometry = geometry
+        self.utm_epsg = utm_epsg
 
     @classmethod
-    def from_dict(cls, paths_dict: dict) -> Pattern:
+    def from_dict(cls, paths_dict: dict, utm_epsg: int) -> Pattern:
         """Alternative contructor for initializing a Pattern object with a dictionary
         of path parameters
 
         Args:
             paths_dict (dict): Dictionary of path parameters
+            utm_epsg (int): UTM EPSG code for the CRS that the paths are currently projected in.
 
         Returns:
             Pattern: A new instance of Pattern
@@ -66,6 +69,7 @@ class Pattern:
             paths_dict['leg'],
             paths_dict['times'],
             paths_dict['geometry'],
+            utm_epsg=utm_epsg
         )
 
     def to_dict(self) -> dict:
@@ -119,7 +123,7 @@ class Pattern:
             'color': '#ff0000', 'radius': 1}}
 
         # Send off to the GeoJSON writer and return
-        return write_geojson(self.geometry, properties=props, style=style)
+        return write_geojson(self.geometry, self.utm_epsg, properties=props, style=style)
 
 
 class TemporalPropagator:
