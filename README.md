@@ -23,10 +23,21 @@ $(driptorch) conda install driptorch -c silvx
 
 A burn unit is the spatial boundary of a firing operation while the wind direction determines the arrangement and timing of the ignition pattern. Everything that happens downstream in DripTorch depends on the unit boundary and the wind direction.
 
-You can create a burn unit in DripTorch by providing a Shapely `Polygon` object to the `BurnUnit` constructor. DripTorch expects the polygon CRS to be Web Mercator (EPSG: 4326), however you can manually specify the EPSG code with an optional argument; DripTorch will convert the spatial data to the appropriate UTM projection internally.
+You can create a burn unit in DripTorch by providing a Shapely `Polygon` object to the `BurnUnit` constructor. DripTorch expects the polygon CRS to be Web Mercator (EPSG: 4326). You can use the following function to convert any Shapely geometry or GeoJSON dictionary from a specific EPSG code to 4326.
 
 ```python
 import driptorch as dt
+
+# Reproject a shapely polygon to 4326
+polygon_wm = dt.Projector.to_web_mercator(polygon, 5070)
+
+# Reproject a GeoJSON feature to 4326 (This won't work on Feature Collections, first you need to extract a feature from the feature list)
+feature_wm = dt.Projector.to_web_mercator(feature, 5070)
+```
+
+Internally, DripTorch will convert the 4326-projected spatial data to the appropriate UTM projection. The UTM EPSG code will be passed down to child objects of the burn unit and used to project the data back to 4326 when exporting.
+
+```python
 from shapely.geometry import Polygon
 
 # Create a shapely Polygon object
@@ -35,11 +46,11 @@ polygon = Polygon([(-114.44869995117188, 47.088504171925706), (-114.444708824157
 # Create a burn unit with a wind direction of 90 degrees
 burn_unit = dt.BurnUnit(polygon, 90)
 
-# If your polygon is not projected in 4326 you can specify the EPSG code
-burn_unit = dt.BurnUnit(polygon, 90, epsg=<epsg_code>)
+# If your polygon is already in UTM, then you'll need to specifiy the UTM EPSG code in the contructor
+burn_unit = dt.BurnUnit(polygon, 90, utm_epsg=32611)
 ```
 
-If your spatial data is formatted in GeoJSON then use the `from_json()` alternative constructor. DripTorch will look through the list of features and extract the first instance of a polygon geometry. [geojon.io](https://geojson.io) is a great web application for creating GeoJSONs.
+If your spatial data is formatted in GeoJSON then use the `from_json()` alternative constructor. DripTorch will look through the list of features and extract the first instance of a polygon geometry. [geojon.io](https://geojson.io) is a great web application for creating GeoJSONs. The GeoJSON doesn't have to be a Feature Collection. DripTorch will accept Feature types as well.
 
 ```python
 # Define GeoJSON feature collection
@@ -78,7 +89,7 @@ And you can write the `BurnUnit` object back to GeoJSON for use in other applica
 geojson = fuel_removal_area.to_json()
 ```
 
-> Note: DripTorch caches the source EPSG code when loading a geometry, whether you specified it manual or left it as the default (4326). Everything under the hood operates in UTM, however when you export to GeoJSON DripTorch will convert the coordinates back to the source EPSG code.
+> Note: DripTorch caches the source EPSG code when loading a geometry, whether you specified it manual or left it as the default (4326). Everything under the hood operates in UTM, however when you export to GeoJSON DripTorch will always convert the coordinates to 4326. For other types of exports, such as exports to fire model ignition files, the projection will stay in UTM.
 
 Buffering the burn unit to account for the control line and blackline operation is optional. Just remember that the `BurnUnit` instance you pass to the built-in pattern ignition generators (discussed below) determines the where the ignition paths are placed. So, if you create an interior firing area polygon by buffering the original burn unit, what we called `firing_area` above, then be sure to pass that polygon to downstream operations in DripTorch.
 

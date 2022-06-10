@@ -3,6 +3,7 @@ DripTorch I/O helper functions
 """
 
 # Internal imports
+from re import I
 from driptorch.errors import GeojsonError
 
 # External imports
@@ -13,35 +14,27 @@ from shapely.geometry.base import BaseGeometry
 from shapely.ops import transform
 
 
-class EPSG:
-    """Simple container to store appliction-wide
-    EPSG source and destination codes
-    """
-    SRC = 4326
-    DST = None
-
-
 class Projector:
     """
     Helper class to handle reprojections during I/O operations.
     """
 
-    def __init__(self):
+    def __init__(self, src_epsg, dst_epsg):
         """Constructor will initialize a function for forward projection and
         a function for backwards projection.
         """
 
         # Configure transformer for forward projections
         self.forward_proj = pyproj.Transformer.from_proj(
-            pyproj.Proj(f'epsg:{EPSG.SRC}'),
-            pyproj.Proj(f'epsg:{EPSG.DST}'),
+            pyproj.Proj(f'epsg:{src_epsg}'),
+            pyproj.Proj(f'epsg:{dst_epsg}'),
             always_xy=True
         )
 
         # Configure transform for inverse projections
         self.backward_proj = pyproj.Transformer.from_proj(
-            pyproj.Proj(f'epsg:{EPSG.DST}'),
-            pyproj.Proj(f'epsg:{EPSG.SRC}'),
+            pyproj.Proj(f'epsg:{dst_epsg}'),
+            pyproj.Proj(f'epsg:{src_epsg}'),
             always_xy=True
         )
 
@@ -73,12 +66,43 @@ class Projector:
     def estimate_utm_epsg(lon, lat):
         return int(32700-round((45+lat)/90, 0)*100+round((183+lon)/6, 0))
 
+    @classmethod
+    def web_mercator_to_utm(cls, geometry: BaseGeometry) -> BaseGeometry:
+
+        lon, lat = list(geometry.centroid.coords[0])
+        utm_epsg = cls.estimate_utm_epsg(lon, lat)
+
+        projector = cls(4326, utm_epsg)
+
+        return utm_epsg, projector.forward(geometry)
+
+    @classmethod
+    def to_web_mercator(cls, geometry: BaseGeometry | dict, src_epsg: int) -> BaseGeometry | dict:
+        """Convenience method to project a shapely geometry or GeoJSON feature to web mercator
+
+        Args:
+            geometry (BaseGeometry | dict): Either a shapely geometry or GeoJSON
+                feature (not a feature collection).
+            src_epsg (int): EPSG code of the CRS that the spatial data are currently projected in.
+
+        Returns:
+            BaseGeometry | dict: A shapely geometry or GeoJSON feature projected in 4326
+        """
+
+        projector = cls(src_epsg, 4326)
+
+        if isinstance(geometry, dict):
+            geometry = shape(geometry)
+            return mapping(projector.forward(geometry))
+
+        return projector.forward(geometry)
+
 
 def read_geojson_polygon(geojson: dict) -> Polygon:
     """Parse a GeoJSON to a shapely Polygon
 
     Args:
-        geojson (dict): Input GeoJSON dictionary
+        geojson (dict): Input GeoJSON dictionary projected in 4326
 
     Raises:
         GeojsonError: Raise error if we can't figure out the formatting
@@ -103,25 +127,10 @@ def read_geojson_polygon(geojson: dict) -> Polygon:
     else:
         raise GeojsonError(GeojsonError.read_error)
 
-    # Check if the geojson includes an EPSG code property
-    epsg = geojson.get('epsg', 0)
-    if epsg:
-        EPSG.SRC = int(epsg)
-    else:  # If not, assume web mercator
-        EPSG.SRC = 4326
-
-    # Estimate the UTM EPSG code
-    lon, lat = list(geometry.centroid.coords[0])
-    EPSG.DST = Projector.estimate_utm_epsg(lon, lat)
-
-    # Get a projector instance and reproject the geometry
-    projector = Projector()
-    geometry = projector.forward(geometry)
-
     return geometry
 
 
-def write_geojson(geometries: list[BaseGeometry], properties={}, style={}) -> dict:
+def write_geojson(geometries: list[BaseGeometry], utm_epsg: int, properties={}, style={}) -> dict:
     """Write a list of shapely geometries to GeoJSON
 
     Args:
@@ -134,7 +143,7 @@ def write_geojson(geometries: list[BaseGeometry], properties={}, style={}) -> di
     """
 
     # Get a projector instance for inverse projection
-    projector = Projector()
+    projector = Projector(utm_epsg, 4326)
 
     # Get the names of all the props
     property_names = properties.keys()
@@ -151,7 +160,7 @@ def write_geojson(geometries: list[BaseGeometry], properties={}, style={}) -> di
             {
                 'type': 'Feature',
                 'properties': props | style,
-                'geometry': mapping(projector.backward(geometry))
+                'geometry': mapping(projector.forward(geometry))
             }
         )
 
