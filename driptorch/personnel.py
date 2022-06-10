@@ -38,7 +38,7 @@ class Igniter:
 
         # Compute ipm and ips for dashes and dots
         elif rate_units == 'seconds':
-            self.interval = 1.0 (rate / velocity)
+            self.interval = 1.0 / (rate / velocity)
         else:
             self.interval = 1.0/rate
 
@@ -70,16 +70,20 @@ class IgnitionCrew:
     # TODO: #3 Write serialization method for IgnitionCrew object
     # TODO: #4 Improve IgnitionCrew __str__() method
 
-    def __init__(self, same_velocity: bool = True):
+    def __init__(self, same_velocity: bool = True, same_rate: bool = True):
         """Constructor
 
         Args:
             same_velocity (bool, optional): True requires all igniters of an instance
                 to have equal velocities. Defaults to True.
+            same_rate (bool, optional): True requires all igniter of an instance
+                to have equal rate values. Defaults to True.
         """
 
         self._same_velocity = same_velocity
+        self._same_rate = same_rate
         self._velocity_req = None
+        self._rate_req = None
 
         self._igniters = []
 
@@ -103,7 +107,7 @@ class IgnitionCrew:
         return ignition_crew
 
     @classmethod
-    def clone_igniter(cls, igniter: Igniter, clones: int) -> IgnitionCrew:
+    def clone_igniter(cls, igniter: Igniter, clones: int, **kwargs) -> IgnitionCrew:
         """Alternate constructor for building an ignition crew by cloning a given
         igniters `n` times.
 
@@ -117,7 +121,7 @@ class IgnitionCrew:
 
         igniters = [igniter.copy() for _ in range(clones)]
 
-        return cls.from_list(igniters)
+        return cls.from_list(igniters, **kwargs)
 
     def add_igniter(self, igniter: Igniter):
         """Add an igniter to the crew
@@ -128,6 +132,7 @@ class IgnitionCrew:
 
         # Check the igniter's velocity
         self._validate_velocity(igniter.velocity)
+        self._validate_rate(igniter.interval)
 
         # If the validator didn't raise an exception, then add the igniter to the crew
         self._igniters.append(igniter)
@@ -140,16 +145,33 @@ class IgnitionCrew:
             velocity (float): Velocity of the candidate igniter
 
         Raises:
-            UnequalIgniterVelocity: Exception raised if igniter's velocity is invalid
+            IgniterError: Exception raised if igniter's velocity is invalid
         """
 
         if self._same_velocity:
             if self._velocity_req:
                 if velocity != self._velocity_req:
-                    raise UnequalIgniterVelocity(
-                        UnequalIgniterVelocity.unequal_igniter_velocities)
+                    raise IgniterError(IgniterError.unequal_velocities)
             else:
                 self._velocity_req = velocity
+
+    def _validate_rate(self, rate: float):
+        """Private helper method to validate the rate of the candidate igniter
+        against the rate requirement of the crew.
+
+        Args:
+            rate (float): Ignition rate of the candidate igniter
+
+        Raises:
+            IgniterError: Exception raised if igniter's rate is invalid
+        """
+
+        if self._same_rate:
+            if self._rate_req:
+                if rate != self._rate_req:
+                    raise IgniterError(IgniterError.unequal_rates)
+            else:
+                self._rate_req = rate
 
     def __getitem__(self, index):
 
