@@ -16,34 +16,31 @@ class Igniter:
     """
 
     # TODO: #5 Write serialization method for Igniter class
-    def __init__(self, velocity: float, interval: float, interval_units: str = 'meters'):
+    def __init__(self, velocity: float, rate: float, rate_units: str = 'meters'):
         """Constructor computes and stores the interval in ignitions per meter (ipm)
         and ignitions per second (ips).
 
         Args:
             velocity (float): Speed of the igniter (meters/second)
-            interval (float): Ignition interval in ipm (ignitions per meter) or ips (ignitions per second).
-                Use the `interval_units` parameter to specifiy meters or seconds. An interval of 0 specifies
+            rate (float): Ignition rate in ipm (ignitions per meter) or ips (ignitions per second).
+                Use the `rate_units` parameter to specifiy meters or seconds. An interval of 0 specifies
                 a solid ignition line, while a negative value denotes a dashed ignition line and positve a
                 dotted ignition line.
-            interval_units (str, optional): Units for the ignition interval, must be "meters" or "seconds".
+            rate_units (str, optional): Units for the ignition rate, must be "meters" or "seconds".
                 Defaults to 'meters'.
         """
 
         self.velocity = velocity
 
         # Solid ignition line
-        if interval == 0:
-            self.interval_ipm = 0
-            self.interval_ips = 0
+        if rate == 0:
+            self.interval = 0
 
         # Compute ipm and ips for dashes and dots
-        elif interval_units == 'seconds':
-            self.interval_ipm = interval / velocity
-            self.interval_ips = interval
+        elif rate_units == 'seconds':
+            self.interval = 1.0 (rate / velocity)
         else:
-            self.interval_ipm = interval
-            self.interval_ips = interval * velocity
+            self.interval = 1.0/rate
 
     def copy(self) -> Igniter:
         """Sometimes we need to copy a particular Igniter because they're so good

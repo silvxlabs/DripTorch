@@ -341,14 +341,14 @@ class TemporalPropagator:
 
         for index, path in self.paths.iterrows():
             cur_igniter = self.ignition_crew[path.igniter]
-            if cur_igniter.interval_ipm == 0:
+            if cur_igniter.interval == 0:
                 self._lines(index, path, cur_igniter.velocity)
-            elif cur_igniter.interval_ipm < 0:
+            elif cur_igniter.interval < 0:
                 self._dashes(index, path, cur_igniter.velocity,
-                             -cur_igniter.interval_ipm)
+                             -cur_igniter.interval)
             else:
                 self._dots(index, path, cur_igniter.velocity,
-                           cur_igniter.interval_ipm)
+                           cur_igniter.interval)
 
     def _lines(self, index: int, path: pd.Series, velocity: float):
         """Compute arrival times along each igniter's coordinate sequence
