@@ -33,14 +33,16 @@ class FiringBase:
         # Get a tempalte dictionary for the paths object
         empty_paths = Pattern.empty_path_dict()
 
-        # Must wind-align the burn unit for laying out paths
-        self._burn_unit._align()
+        # Need to wind-align the burn unit for laying out paths
+        if kwargs.get('align', True):
+            self._burn_unit._align()
 
         # Run the path initialization method
         init_paths = self._init_paths(empty_paths, **kwargs)
 
         # Now we can unalign the paths before passing to the propagator
-        init_paths['geometry'] = self._unalign(init_paths['geometry'])
+        if kwargs.get('align', True):
+            init_paths['geometry'] = self._unalign(init_paths['geometry'])
 
         # Configure the propagator for pushing time through the paths
         propagator = TemporalPropagator(

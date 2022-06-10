@@ -46,7 +46,7 @@ class Ring(FiringBase):
             Pattern: Spatiotemporal ignition pattern
         """
 
-        return self._generate_pattern(offset=offset, sync_end_time=True)
+        return self._generate_pattern(offset=offset, sync_end_time=True, align=False)
 
     def _init_paths(self, paths: dict, **kwargs) -> dict:
         """Initialize spatial part of the ignition paths.

@@ -35,7 +35,7 @@ class Back(FiringBase):
             Pattern: Spatiotemporal ignition pattern
         """
 
-        return self._generate_pattern(offset=offset)
+        return self._generate_pattern(offset=offset, align=False)
 
     def _init_paths(self, paths: dict, **kwargs) -> dict:
         """Initialize spatial part of the ignition paths.

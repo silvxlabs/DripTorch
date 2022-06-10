@@ -87,8 +87,8 @@ class BurnUnit:
         if self.wind_alignment_angle:
             self.polygon = affinity.rotate(
                 self.polygon, -self.wind_alignment_angle, self.centroid)
-            self.polygon_segments.rotate(-self.wind_alignment_angle,
-                                         self.centroid)
+            self.polygon_segments.rotate(
+                -self.wind_alignment_angle, self.centroid)
 
     def copy(self) -> BurnUnit:
         """Utility method for copying a BurnUnit instance
