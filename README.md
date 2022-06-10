@@ -1,4 +1,4 @@
-# DripTorch
+![Alt text](./img/logo.jpg)
 
 Ignition pattern simulator for prescribed firing technqiues
 
@@ -36,54 +36,8 @@ If your spatial data is formatted in GeoJSON then use the `from_json()` alternat
 
 ```python
 # Define GeoJSON feature collection
-geojson = {
-  "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              -114.44869995117188,
-              47.088504171925706
-            ],
-            [
-              -114.44470882415771,
-              47.08745225315146
-            ],
-            [
-              -114.44342136383057,
-              47.09066638416644
-            ],
-            [
-              -114.44496631622313,
-              47.09236102969754
-            ],
-            [
-              -114.44633960723877,
-              47.0924194647886
-            ],
-            [
-              -114.45281982421875,
-              47.089205439567344
-            ],
-            [
-              -114.45153236389159,
-              47.08815353464254
-            ],
-            [
-              -114.44869995117188,
-              47.088504171925706
-            ]
-          ]
-        ]
-      }
-    }
-  ]
-}
+geojson = {"type":"FeatureCollection","features":[{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-114.44869995117188,47.088504171925706],[-114.44470882415771,47.08745225315146],[-114.44342136383057,47.09066638416644],[-114.44496631622313,47.09236102969754],[-114.44633960723877,47.0924194647886],[-114.45281982421875,47.089205439567344],[-114.45153236389159,47.08815353464254],[-114.44869995117188,47.088504171925706]]]}}]}
+
 
 # Create a burn unit from a GeoJSON feature collection with a wind direction of 217 degrees
 burn_unit = dt.BurnUnit.from_json(geojson, 217)
@@ -124,7 +78,7 @@ slow_dot_igniter = dt.Igniter(0.5, 1/10)
 medium_dash_igniter = dt.Igniter(1.8, -1/5)
 ```
 
-Now we can allocate these igniters to an ignition crew in various ways. One thing to note is that some firing techniques, such as strip-heading and flanking patterns, require that all igniters in an crew walk at the same speed. By default, the `IgnitionCrew` constructor will throw an exception is igniters with unequal velocities are allocated to the crew. If you want to allow for unequal velocity, which could be appropriate in a ring ignition pattern for example, then set `same_velocity=False`.
+Now we can allocate these igniters to an ignition crew in various ways. One thing to note is that some firing techniques, such as strip-heading and flanking patterns, require that all igniters in an crew walk at the same speed. By default, the `IgnitionCrew` constructor will throw an exception if igniters with unequal velocities are allocated to the crew. If you want to allow for unequal velocity, which could be appropriate in a ring ignition pattern for example, then set `same_velocity=False`.
 
 ```python
 two_man_crew = dt.IgnitionCrew(same_velocity=False)
@@ -157,11 +111,11 @@ drone_crew = dt.IgnitionCrew.from_list([drone_igniter])
 
 Once your burn unit has been specified and you've allocated your ignition resources, you can simulate various firing techniques using DripTorch pattern generators. Currently, DripTorch supports the following firing techniques:
 
-- Strip-heading fire (strip)
-- Flanking fire (flank)
-- Ring fire (ring)
-- Head fire (head)
-- Backing fire (back)
+- Strip-heading fire - `strip(spacing, depth)`
+- Flanking fire - `flank(depth)`
+- Ring fire - `ring(offset)`
+- Head fire - `head(offset)`
+- Backing fire - `back(offset)`
 
 Firing techniques are accesible through the `FiringTechnique` submodule. For exapmle, to get an instance of the stip-heading fire generator use this command.
 
@@ -177,12 +131,38 @@ All pattern generators have a `generate_pattern()` method, however the arguments
 strip_pattern = strip.generate_pattern(10, 50)
 ```
 
-Let's setup a ring fire as another example.
+Certain firing technique require a specific number of igniters in the ignition crew. For instance, the ring fire generator requires exactly two igniters. In this case, if you pass an ignition crew with one igniter, the constructor will warn you and clone the first igniter. If you supply a crew with three igniters, you will see a warning saying that DripTorch will only use the first two igniters in the crew.
 
 ```python
 # Initialize the pattern generator for the ring firing technique
-ring = dt.FiringTechniques.ring(firing_area, ignition_crew)
+ring = dt.FiringTechniques.ring(firing_area, three_man_crew)
+# You'll see a warning that only the first two igniter will be used
 
 # Create a rign ignition pattern with a 10 meters offset from the firing area boundary
-ring_pattern = rign.generate_pattern(10)
+ring_pattern = ring.generate_pattern(10)
 ```
+
+Once you have an ignition pattern you have view it interactively on a Folium map and export the pattern to a fire simulator input file.
+
+### Mapping
+
+Thanks for Folium, you can map burn unit boundaries and animated ignition paths. DripTorch has some conveinence methods for mapping through the `Map` class. The mapping class takes the burn unit and you can optionally add the interior firing area and blackline area if you created those. Finally, adding the pattern will animate the ignition paths.
+
+```python
+# Initialize a map with the burn unit
+map = dt.Map(burn_unit)
+
+# Optionally add the firing and blackline areas
+map.add_firing_area(firing_area)
+map.add_blackline_area(blackline_area)
+
+# Add the timed ignition pattern
+map.add_pattern(strip_pattern)
+
+# Show the map interactivly in a notebook
+map.show()
+```
+
+![Alt text](./img/map-strip.jpg)
+
+### Exports
