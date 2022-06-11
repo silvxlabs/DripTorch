@@ -3,13 +3,14 @@ DripTorch I/O helper functions
 """
 
 # Internal imports
-from re import I
-from driptorch.errors import GeojsonError
+from driptorch.templates import quicfire
+from driptorch.errors import *
 
 # External imports
 from folium import Polygon
+import numpy as np
 import pyproj
-from shapely.geometry import mapping, shape
+from shapely.geometry import mapping, shape, MultiLineString, LineString, Point, MultiPoint
 from shapely.geometry.base import BaseGeometry
 from shapely.ops import transform
 
@@ -171,3 +172,53 @@ def write_geojson(geometries: list[BaseGeometry], utm_epsg: int, properties={}, 
     }
 
     return geojson
+
+
+def write_quicfire(geometry: list, times: list) -> str:
+    """Writes a QUIC-fire ignition file
+
+    Args:
+        geometry (list): List of geometry to write
+        times (list): Arrival times corresponding to the geometry coordinates (seconds)
+
+    Raises:
+        ExportError: Error if Point and (Multi)LineString geometry types are mixed
+
+    Returns:
+        str: QUIC-fire formated ignition file
+    """
+
+    rows = ''
+    n_rows = 0
+
+    # TODO: #20 Cleanup QF export method
+    if all(isinstance(x, (LineString, MultiLineString)) for x in geometry):
+        for i, geom in enumerate(geometry):
+            time = times[i]
+            if isinstance(geom, LineString):
+                geom = [geom]
+                time = [time]
+            for j, part in enumerate(geom):
+                coords = np.array(part.coords)
+                t = time[j]
+                for k, xy in enumerate(coords[:-1]):
+                    rows += f'{xy[0]} {xy[1]} {coords[k+1,0]} {coords[k+1,1]} {t[k]} {t[1]}\n'
+                    n_rows += 1
+        file = quicfire.fmt_5.substitute(n_rows=n_rows, rows=rows)
+
+    elif all(isinstance(x, (Point, MultiPoint)) for x in geometry):
+        for i, geom in enumerate(geometry):
+            time = times[i]
+            if isinstance(geom, Point):
+                geom = [geom]
+                time = [time]
+            for j, part in enumerate(geom):
+                xy = np.array(part.coords[0])
+                rows += f'{xy[0]} {xy[1]} {time[j]}\n'
+                n_rows += 1
+        file = quicfire.fmt_4.substitute(n_rows=n_rows, rows=rows)
+
+    else:
+        raise ExportError(ExportError.incompatible_line_types)
+
+    return file
