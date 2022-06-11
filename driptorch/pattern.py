@@ -8,8 +8,9 @@ from time import time as unix_time
 
 # Internal imports
 from shapely.errors import ShapelyDeprecationWarning
+from shapely.geometry.base import BaseGeometry
 import warnings
-from driptorch.io import write_geojson
+from driptorch.io import write_geojson, write_quicfire
 
 # External imports
 import awkward as ak
@@ -109,6 +110,14 @@ class Pattern:
             dict: Timestamped GeoJSON representation of the firing pattern
         """
 
+        # The Timedstamed GeoJSON plug in won't take a time for each coordinate in
+        # the sub line string of a MLS, apparently it wants a single time to represent
+        # the entire sub line (Either they have a bug or I'm missing something).
+        for i, geom in enumerate(self.geometry):
+            if isinstance(geom, MultiLineString):
+                # Only keep the start time for each sub line
+                self.times[i] = [time[0] for time in self.times[i]]
+
         # Read the jagged times array as an Awkward array for vectorized operations
         times = ak.Array(self.times)
 
@@ -124,6 +133,35 @@ class Pattern:
 
         # Send off to the GeoJSON writer and return
         return write_geojson(self.geometry, self.utm_epsg, properties=props, style=style)
+
+    def translate(self, x_off: float, y_off: float) -> Pattern:
+
+        paths = self.paths.copy()
+        geoms = paths['geometries']
+        trans_geoms = []
+        for geom in geoms:
+            trans_geoms.append(geom.translate(x_off, y_off))
+
+        paths['gemoetry'] = trans_geoms
+
+        return Pattern.from_dict(paths, utm_epsg=self.utm_epsg)
+
+    def to_quicfire(self, filename: str = None) -> None | str:
+        """Write paths dictionary to QUIC-fire ignition file format.
+
+        Args:
+            filename (str, optional): If provided, write the ignition file to the
+                filename. Defaults to None.
+
+        Returns:
+            None | str: None if filename provided, string containing the ignition file if not.
+        """
+
+        if filename:
+            with open(filename, 'w') as f:
+                f.write(write_quicfire(self.geometry, self.times))
+        else:
+            return write_quicfire(self.geometry, self.times)
 
 
 class TemporalPropagator:
@@ -424,7 +462,7 @@ class TemporalPropagator:
             # times to the current path arrival time arrray and append
             # the dash to the line segment array
             if fire:
-                path_times.append(start_time)
+                path_times.append([start_time, end_time])
                 # path_times.append(end_time)
                 line_segs.append([xy.tolist(), next_xy.tolist()])
 
