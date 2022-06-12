@@ -1,4 +1,4 @@
-![Alt text](./img/logo.jpg)
+![driptorch-logo](https://github.com/teamholtz/DripTorch/blob/main/img/logo.jpg?raw=true)
 
 Ignition pattern simulator for prescribed firing technqiues
 
@@ -189,7 +189,7 @@ map.add_pattern(strip_pattern)
 map.show()
 ```
 
-![Alt text](./img/map-strip.jpg)
+![Alt text](https://github.com/teamholtz/DripTorch/blob/main/img/map-strip.jpg?raw=true)
 
 ### Exports
 
