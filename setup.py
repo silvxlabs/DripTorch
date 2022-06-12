@@ -9,6 +9,10 @@ version = (
     .strip()
 )
 
+# Remove the 'v' prefix if present
+if version[0] == 'v':
+    version = version[1:]
+
 # The directory containing this file
 HERE = pathlib.Path(__file__).parent
 
@@ -37,7 +41,7 @@ setup(
         'folium==0.12.1.post1'
     ],
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3.10',
