@@ -25,8 +25,8 @@ setup(
     long_description_content_type="text/markdown",
     author='Holtz TDS',
     author_email='lucas@holtztds.com',
-    url='https://github.com/silvx-io/driptorch',
-    keywords=['ignition patter', 'fire',
+    url='https://github.com/teamholtz/driptorch',
+    keywords=['ignition pattern', 'fire',
               'firing techniques', 'prescribed burn'],
     install_requires=[
         'Shapely==1.8.2',
@@ -37,12 +37,11 @@ setup(
         'folium==0.12.1.post1'
     ],
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
+        'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
     ],
 )
