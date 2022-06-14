@@ -1,5 +1,10 @@
 import pathlib
 from setuptools import setup
+
+# --------------------------------------------------------
+# This is commented out due to issues with conda skeleton,
+# will need to find another way to pull in git tags
+# --------------------------------------------------------
 # import subprocess
 
 # # Fetch version number from git tag
@@ -13,7 +18,7 @@ from setuptools import setup
 # if version[0] == 'v':
 #     version = version[1:]
 
-version = '0.2.1'
+version = '0.3.0'
 
 # The directory containing this file
 HERE = pathlib.Path(__file__).parent
