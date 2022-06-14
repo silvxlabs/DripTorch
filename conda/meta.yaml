@@ -1,34 +1,50 @@
-{% set data = load_setup_py_data() %}
+{% set name = "driptorch" %}
+{% set version = "0.2.1" %}
+
 package:
-  name: driptorch
-  version: 0.2.1
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
 
 source:
-  git_url: ../
+  url: "https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz"
+  sha256: a1e3e897d958e98e87d3340897a97c6fc8b87bad4f5014405db88a46cf8b237f
 
 build:
-  noarch: python
   number: 0
-  script: python -m pip install --no-deps --ignore-installed .
+  script: "{{ PYTHON }} -m pip install . -vv"
 
 requirements:
   host:
+    - awkward ==1.8.0
+    - folium ==0.12.1.post1
+    - numpy ==1.22.4
+    - pandas ==1.4.2
     - pip
+    - pyproj ==3.3.1
     - python
+    - shapely ==1.8.2
   run:
-    - python=3.10.*
-    - Shapely
-    - awkward
-    - numpy
-    - pandas
-    - pyproj
-    - folium
+    - awkward ==1.8.0
+    - folium ==0.12.1.post1
+    - numpy ==1.22.4
+    - pandas ==1.4.2
+    - pyproj ==3.3.1
+    - python
+    - shapely ==1.8.2
 
-test:
-  imports:
-    - driptorch
+# test:
+#   imports:
+#     - driptorch
 
 about:
-  home: https:/github.com/teamholtz/DripTorch
+  home: "https://github.com/teamholtz/driptorch"
   license: MIT
-  license_file: ../LICENSE
+  license_family: MIT
+  license_file: 
+  summary: "Ignition pattern simulator for prescribed firing techniques"
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - your-github-id-here
