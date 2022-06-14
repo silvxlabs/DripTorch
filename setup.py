@@ -1,17 +1,19 @@
 import pathlib
 from setuptools import setup
-import subprocess
+# import subprocess
 
-# Fetch version number from git tag
-version = (
-    subprocess.run(['git', 'describe', '--tags'], stdout=subprocess.PIPE)
-    .stdout.decode('utf-8')
-    .strip()
-)
+# # Fetch version number from git tag
+# version = (
+#     subprocess.run(['git', 'describe', '--tags'], stdout=subprocess.PIPE)
+#     .stdout.decode('utf-8')
+#     .strip()
+# )
 
-# Remove the 'v' prefix if present
-if version[0] == 'v':
-    version = version[1:]
+# # Remove the 'v' prefix if present
+# if version[0] == 'v':
+#     version = version[1:]
+
+version = '0.2.1'
 
 # The directory containing this file
 HERE = pathlib.Path(__file__).parent

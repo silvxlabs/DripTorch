@@ -1,0 +1,34 @@
+{% set data = load_setup_py_data() %}
+package:
+  name: driptorch
+  version: 0.2.1
+
+source:
+  git_url: ../
+
+build:
+  noarch: python
+  number: 0
+  script: python -m pip install --no-deps --ignore-installed .
+
+requirements:
+  host:
+    - pip
+    - python
+  run:
+    - python=3.10.*
+    - Shapely
+    - awkward
+    - numpy
+    - pandas
+    - pyproj
+    - folium
+
+test:
+  imports:
+    - driptorch
+
+about:
+  home: https:/github.com/teamholtz/DripTorch
+  license: MIT
+  license_file: ../LICENSE
