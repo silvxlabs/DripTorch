@@ -3,8 +3,8 @@ Folium map wrapper for easy burn unit and animated pattern mapping
 """
 
 # Internal imports
-from driptorch.pattern import Pattern
-from driptorch.unit import BurnUnit
+from .pattern import Pattern
+from .unit import BurnUnit
 
 # External imports
 import folium

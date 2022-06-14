@@ -3,8 +3,8 @@ DripTorch I/O helper functions
 """
 
 # Internal imports
-from driptorch.templates import QuicFire
-from driptorch.errors import *
+from .templates import QuicFire
+from .errors import *
 
 # External imports
 from folium import Polygon

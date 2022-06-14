@@ -7,7 +7,7 @@ from __future__ import annotations
 import copy
 
 # Internal imports
-from driptorch.errors import *
+from .errors import *
 
 
 class Igniter:

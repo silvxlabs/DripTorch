@@ -8,7 +8,7 @@ from __future__ import annotations
 import copy
 
 # Internal imports
-from driptorch.io import Projector, write_geojson, read_geojson_polygon
+from .io import Projector, write_geojson, read_geojson_polygon
 
 # External imports
 import numpy as np

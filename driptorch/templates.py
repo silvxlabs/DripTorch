@@ -1,3 +1,8 @@
+"""
+Fire model ignition formats
+"""
+
+# Core imports
 from string import Template
 import textwrap
 
