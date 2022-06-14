@@ -3,7 +3,7 @@ DripTorch I/O helper functions
 """
 
 # Internal imports
-from driptorch.templates import quicfire
+from driptorch.templates import QuicFire
 from driptorch.errors import *
 
 # External imports
@@ -204,7 +204,7 @@ def write_quicfire(geometry: list, times: list) -> str:
                 for k, xy in enumerate(coords[:-1]):
                     rows += f'{xy[0]} {xy[1]} {coords[k+1,0]} {coords[k+1,1]} {t[k]} {t[1]}\n'
                     n_rows += 1
-        file = quicfire.fmt_5.substitute(n_rows=n_rows, rows=rows)
+        file = QuicFire.fmt_5.substitute(n_rows=n_rows, rows=rows)
 
     elif all(isinstance(x, (Point, MultiPoint)) for x in geometry):
         for i, geom in enumerate(geometry):
@@ -216,7 +216,7 @@ def write_quicfire(geometry: list, times: list) -> str:
                 xy = np.array(part.coords[0])
                 rows += f'{xy[0]} {xy[1]} {time[j]}\n'
                 n_rows += 1
-        file = quicfire.fmt_4.substitute(n_rows=n_rows, rows=rows)
+        file = QuicFire.fmt_4.substitute(n_rows=n_rows, rows=rows)
 
     else:
         raise ExportError(ExportError.incompatible_line_types)
