@@ -4,7 +4,7 @@ Firing Techniques
 Strip-heading fire
 ------------------
 
-.. automodule:: driptorch.firing_techniques.strip
+.. automodule:: driptorch.firing.Strip
     :members:
     :undoc-members:
     :show-inheritance:
@@ -12,7 +12,7 @@ Strip-heading fire
 Flanking fire
 -------------
 
-.. automodule:: driptorch.firing_techniques.flank
+.. automodule:: driptorch.firing.Flank
     :members:
     :undoc-members:
     :show-inheritance:
@@ -20,7 +20,7 @@ Flanking fire
 Ring fire
 ---------
 
-.. automodule:: driptorch.firing_techniques.ring
+.. automodule:: driptorch.firing.Ring
     :members:
     :undoc-members:
     :show-inheritance:
@@ -28,7 +28,7 @@ Ring fire
 Head fire
 ---------
 
-.. automodule:: driptorch.firing_techniques.head
+.. automodule:: driptorch.firing.Head
     :members:
     :undoc-members:
     :show-inheritance:
@@ -36,7 +36,7 @@ Head fire
 Backing fire
 ------------
 
-.. automodule:: driptorch.firing_techniques.back
+.. automodule:: driptorch.firing.Back
     :members:
     :undoc-members:
     :show-inheritance:

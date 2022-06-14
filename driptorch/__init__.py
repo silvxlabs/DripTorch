@@ -1,17 +1,17 @@
 
 from .unit import BurnUnit
 from .personnel import Igniter, IgnitionCrew
-from .firing_techniques._factory import FiringFactory as FiringTechniques
+from .pattern import Pattern
 from .mapping import Map
 from .io import Projector
-from . import firing_techniques
+from . import firing
 
 __all__ = [
     "BurnUnit",
     "Igniter",
     "IgnitionCrew",
-    "FiringTechniques",
+    "Pattern",
     "Map",
     "Projector",
-    "firing_techniques"
+    "firing"
 ]

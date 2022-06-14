@@ -1,5 +1,5 @@
 import pathlib
-from setuptools import setup
+from setuptools import setup, find_packages
 
 # --------------------------------------------------------
 # This is commented out due to issues with conda skeleton,
@@ -18,7 +18,7 @@ from setuptools import setup
 # if version[0] == 'v':
 #     version = version[1:]
 
-version = '0.3.6'
+version = '0.3.7'
 
 # The directory containing this file
 HERE = pathlib.Path(__file__).parent
@@ -28,7 +28,7 @@ README = (HERE / "README.md").read_text()
 
 setup(
     name='driptorch',
-    packages=['driptorch'],
+    packages=find_packages(),
     version=version,
     license='MIT',
     description='Ignition pattern simulator for prescribed firing techniques',

@@ -181,9 +181,9 @@
 <li><p>Head fire - <code class="docutils literal notranslate"><span class="pre">head(offset)</span></code></p></li>
 <li><p>Backing fire - <code class="docutils literal notranslate"><span class="pre">back(offset)</span></code></p></li>
 </ul>
-<p>Firing techniques are accesible through the <code class="docutils literal notranslate"><span class="pre">FiringTechnique</span></code> submodule. For example, to get an instance of the strip-heading fire generator use the following command.</p>
+<p>Firing techniques are accesible through the <code class="docutils literal notranslate"><span class="pre">firing</span></code> subpackage. For example, to get an instance of the strip-heading fire generator use the following command.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Initialize the pattern generator for the strip firing technique</span>
-<span class="n">strip</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">FiringTechniques</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="n">firing_area</span><span class="p">,</span> <span class="n">ignition_crew</span><span class="p">)</span>
+<span class="n">strip</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">firing</span><span class="o">.</span><span class="n">Strip</span><span class="p">(</span><span class="n">firing_area</span><span class="p">,</span> <span class="n">ignition_crew</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>All pattern generators have a <code class="docutils literal notranslate"><span class="pre">generate_pattern()</span></code> method, however the arguments may differ between techniques. To generate a pattern for the strip instance we just created, you must specify the spacing (staggering distance between igniters, in meters) and the depth (horizontal distance between igniters, again in meters).</p>
@@ -193,7 +193,7 @@
 </div>
 <p>Certain firing technique require a specific number of igniters in the ignition crew. For instance, the ring fire generator requires exactly two igniters. In this case, if you pass an ignition crew with one igniter, the constructor will warn you that its going to clone the first igniter. If you supply a crew with three igniters, you will see a warning saying that DripTorch will only use the first two igniters in the crew.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Initialize the pattern generator for the ring firing technique</span>
-<span class="n">ring</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">FiringTechniques</span><span class="o">.</span><span class="n">ring</span><span class="p">(</span><span class="n">firing_area</span><span class="p">,</span> <span class="n">three_man_crew</span><span class="p">)</span>
+<span class="n">ring</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">firing</span><span class="o">.</span><span class="n">ring</span><span class="p">(</span><span class="n">firing_area</span><span class="p">,</span> <span class="n">three_man_crew</span><span class="p">)</span>
 <span class="c1"># You&#39;ll see a warning that only the first two igniters will be used</span>
 
 <span class="c1"># Create a rign ignition pattern with a 10 meters offset from the firing area boundary</span>

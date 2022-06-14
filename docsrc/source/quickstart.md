@@ -125,11 +125,11 @@ Once your burn unit has been specified and you've allocated your ignition resour
 - Head fire - `head(offset)`
 - Backing fire - `back(offset)`
 
-Firing techniques are accesible through the `FiringTechnique` submodule. For example, to get an instance of the strip-heading fire generator use the following command.
+Firing techniques are accesible through the `firing` subpackage. For example, to get an instance of the strip-heading fire generator use the following command.
 
 ```python
 # Initialize the pattern generator for the strip firing technique
-strip = dt.FiringTechniques.strip(firing_area, ignition_crew)
+strip = dt.firing.Strip(firing_area, ignition_crew)
 ```
 
 All pattern generators have a `generate_pattern()` method, however the arguments may differ between techniques. To generate a pattern for the strip instance we just created, you must specify the spacing (staggering distance between igniters, in meters) and the depth (horizontal distance between igniters, again in meters).
@@ -143,7 +143,7 @@ Certain firing technique require a specific number of igniters in the ignition c
 
 ```python
 # Initialize the pattern generator for the ring firing technique
-ring = dt.FiringTechniques.ring(firing_area, three_man_crew)
+ring = dt.firing.ring(firing_area, three_man_crew)
 # You'll see a warning that only the first two igniters will be used
 
 # Create a rign ignition pattern with a 10 meters offset from the firing area boundary
