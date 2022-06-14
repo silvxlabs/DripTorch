@@ -189,16 +189,28 @@ map.add_pattern(strip_pattern)
 map.show()
 ```
 
-![Alt text](https://github.com/teamholtz/DripTorch/blob/main/img/map-strip.jpg?raw=true)
+![strip-pattern-map](https://github.com/teamholtz/DripTorch/blob/main/img/map-strip.png?raw=true)
 
 ### Exports
 
 If you want to actually use your ignition pattern to set something on fire (at least in a simulator) then use one of the export methods in the pattern instance to write the ignition paths in a model-specific format. Currently, DripTorch only supports QUIC-fire, but other formats are on our roadmap.
 
+The origin of the simulation domain in QUIC-fire is the lower lefthand corner, so before exporting you should use the `translate()` method on the pattern instance to move the ignition paths to the origin.
+
+```python
+# First, get the lower lefthand coordinate of the burn unit envelope
+lower_left = burn_unit.get_bounds().min(axis=0)
+
+# Now translate the pattern to the origin of the coordinate reference system
+pattern_trans = pattern.translate(-lower_left[0], -lower_left[1])
+```
+
+Now you can write a QUIC-fire ignition file.
+
 ```python
 # Write the pattern to a QUIC-Fire ignition file
-pattern.to_quicfire(filename='qf_ignition_file.dat')
+pattern_trans.to_quicfire(filename='qf_ignition_file.dat')
 
 # If you don't specify a file name then the method will return a str containing the file contents
-qf_ignition_str = pattern.to_quicfire()
+qf_ignition_str = pattern_trans.to_quicfire()
 ```

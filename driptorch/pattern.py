@@ -8,7 +8,7 @@ from time import time as unix_time
 
 # Internal imports
 from shapely.errors import ShapelyDeprecationWarning
-from shapely.geometry.base import BaseGeometry
+from shapely import affinity
 import warnings
 from driptorch.io import write_geojson, write_quicfire
 
@@ -136,15 +136,14 @@ class Pattern:
 
     def translate(self, x_off: float, y_off: float) -> Pattern:
 
-        paths = self.paths.copy()
-        geoms = paths['geometries']
+        geoms = self.geometry
         trans_geoms = []
         for geom in geoms:
-            trans_geoms.append(geom.translate(x_off, y_off))
+            trans_geoms.append(affinity.translate(geom, x_off, y_off))
 
-        paths['gemoetry'] = trans_geoms
+        self.geometry = trans_geoms
 
-        return Pattern.from_dict(paths, utm_epsg=self.utm_epsg)
+        return self
 
     def to_quicfire(self, filename: str = None) -> None | str:
         """Write paths dictionary to QUIC-fire ignition file format.
