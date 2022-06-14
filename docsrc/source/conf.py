@@ -58,6 +58,7 @@ html_theme = 'sphinx_rtd_theme'
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
+html_favicon = 'https://storage.googleapis.com/holtz-common/favicons/favicon.ico'
 html_logo = "https://storage.googleapis.com/holtz-driptorch/gh-repo/img/logo-small.png"
 html_theme_options = {
     'logo_only': True,
