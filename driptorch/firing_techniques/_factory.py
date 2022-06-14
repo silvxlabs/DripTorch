@@ -3,11 +3,14 @@ Class factory for accessing ignition pattern generators
 """
 
 # Import all the firing technique classes
-# (see __init__.py in the firing_techniques module)
-from driptorch.firing_techniques import *
+from .back import Back
+from .strip import Strip
+from .flank import Flank
+from .ring import Ring
+from .head import Head
 
-from driptorch.personnel import IgnitionCrew
-from driptorch.unit import BurnUnit
+from ..personnel import IgnitionCrew
+from ..unit import BurnUnit
 
 
 class FiringFactory:

@@ -5,17 +5,17 @@ Spatiotemporal patterns and the infamous temporal propagator
 # Core imports
 from __future__ import annotations
 from time import time as unix_time
+import warnings
 
 # Internal imports
-from shapely.errors import ShapelyDeprecationWarning
-from shapely import affinity
-import warnings
-from driptorch.io import write_geojson, write_quicfire
+from .io import write_geojson, write_quicfire
 
 # External imports
 import awkward as ak
 import numpy as np
 import pandas as pd
+from shapely.errors import ShapelyDeprecationWarning
+from shapely import affinity
 from shapely.geometry import MultiPoint, MultiLineString, LineString
 
 # Turn off Pandas copy warning (or figure out how to do it like the Panda wants)

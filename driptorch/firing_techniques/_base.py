@@ -1,8 +1,8 @@
 
 # Internal imports
-from driptorch.pattern import Pattern, TemporalPropagator
-from driptorch.personnel import IgnitionCrew
-from driptorch.unit import BurnUnit
+from ..pattern import Pattern, TemporalPropagator
+from ..personnel import IgnitionCrew
+from ..unit import BurnUnit
 
 # External imports
 from shapely import affinity

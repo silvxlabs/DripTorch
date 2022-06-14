@@ -3,10 +3,10 @@ Pattern generator for strip-head firing
 """
 
 # Internal imports
-from driptorch.unit import BurnUnit
-from driptorch.firing_techniques._base import FiringBase
-from driptorch.personnel import IgnitionCrew
-from driptorch.pattern import Pattern
+from ._base import FiringBase
+from ..unit import BurnUnit
+from ..personnel import IgnitionCrew
+from ..pattern import Pattern
 
 # External imports
 from shapely.geometry import LineString, MultiLineString

@@ -6,11 +6,11 @@ Pattern generator for backing fire
 import warnings
 
 # Internal imports
-from driptorch.unit import BurnUnit
-from driptorch.firing_techniques._base import FiringBase
-from driptorch.personnel import IgnitionCrew
-from driptorch.pattern import Pattern
-from driptorch.warnings import CrewSizeWarning
+from ._base import FiringBase
+from ..unit import BurnUnit
+from ..personnel import IgnitionCrew
+from ..pattern import Pattern
+from ..warnings import CrewSizeWarning
 
 
 class Back(FiringBase):
