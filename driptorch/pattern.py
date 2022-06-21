@@ -123,11 +123,10 @@ class Pattern:
 
         # Convert to milliseconds since Epoch (this is what Leaflet wants)
         times = (times * 1000) + (unix_time() * 1000)
-        self.times = times.to_list()
 
         # Set the props and styling
         props = {'heat': self.heat, 'igniter': self.igniter,
-                 'leg': self.leg, 'times': self.times}
+                 'leg': self.leg, 'times': times.to_list()}
         style = {'icon': 'circle', 'style': {
             'color': '#ff0000', 'radius': 1}}
 

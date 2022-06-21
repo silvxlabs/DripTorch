@@ -18,7 +18,7 @@ from setuptools import setup, find_packages
 # if version[0] == 'v':
 #     version = version[1:]
 
-version = '0.3.7'
+version = '0.3.8'
 
 # The directory containing this file
 HERE = pathlib.Path(__file__).parent
