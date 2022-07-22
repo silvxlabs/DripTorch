@@ -4,6 +4,7 @@ Spatiotemporal patterns and the infamous temporal propagator
 
 # Core imports
 from __future__ import annotations
+import copy
 from time import time as unix_time
 import warnings
 
@@ -23,7 +24,7 @@ pd.options.mode.chained_assignment = None
 
 # Turn off the Shapely deprecation warning about about future removal
 # of the array interface. This happens when a Pandas takes a list of Shapely
-# geometies and casts to a list of ndarray objects. GeoPandas would fix this
+# geometries and casts to a list of ndarray objects. GeoPandas would fix this
 # but it's not worth the added complexity of GDAL C binary deps. This is fine
 # as long as we don't upgrade the Shapely req to v2.
 warnings.filterwarnings("ignore", category=ShapelyDeprecationWarning)
@@ -137,17 +138,32 @@ class Pattern:
         return write_geojson(self.geometry, self.utm_epsg, properties=props, style=style)
 
     def translate(self, x_off: float, y_off: float) -> Pattern:
+        """Translate pattern geometry along the x and y axis by the supplied
+        x and y offset amounts.
 
+        Args:
+            x_off (float): Offset along the x axis
+            y_off (float): Offset along the y axis
+
+        Returns:
+            Pattern: New Pattern object with translated geometries
+        """
+
+        # Translate the path geometries
         geoms = self.geometry
         trans_geoms = []
         for geom in geoms:
             trans_geoms.append(affinity.translate(geom, x_off, y_off))
 
-        self.geometry = trans_geoms
+        # Create a clone of the existing Pattern object and replace the geometries
+        # with the translated geometries
+        obj_copy = copy.copy(self)
+        obj_copy.geometry = trans_geoms
 
-        return self
+        # Return the new Pattern object
+        return obj_copy
 
-    def to_quicfire(self, filename: str = None) -> None | str:
+    def to_quicfire(self, filename: str = None, time_offset=0) -> None | str:
         """Write paths dictionary to QUIC-fire ignition file format.
 
         Args:
@@ -158,11 +174,22 @@ class Pattern:
             None | str: None if filename provided, string containing the ignition file if not.
         """
 
+        times = self.times.copy()
+        geometry = self.geometry.copy()
+
+        # Apply time offset if not zero
+        if time_offset:
+            times = ak.Array(times)
+            times = times + time_offset
+            times = times.to_list()
+
+        # Check if filename was provided and write to it if so
         if filename:
             with open(filename, 'w') as f:
-                f.write(write_quicfire(self.geometry, self.times))
+                f.write(write_quicfire(geometry, times))
+        # Otherwise return QF ignition file to client as string
         else:
-            return write_quicfire(self.geometry, self.times)
+            return write_quicfire(geometry, times)
 
 
 class TemporalPropagator:
