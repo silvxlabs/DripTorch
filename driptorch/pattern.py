@@ -110,16 +110,19 @@ class Pattern:
             dict: Timestamped GeoJSON representation of the firing pattern
         """
 
+        # Copy the times array
+        times = self.times.copy()
+
         # The Timedstamed GeoJSON plug in won't take a time for each coordinate in
         # the sub line string of a MLS, apparently it wants a single time to represent
         # the entire sub line (Either they have a bug or I'm missing something).
         for i, geom in enumerate(self.geometry):
             if isinstance(geom, MultiLineString):
                 # Only keep the start time for each sub line
-                self.times[i] = [time[0] for time in self.times[i]]
+                times[i] = [time[0] for time in times[i]]
 
         # Read the jagged times array as an Awkward array for vectorized operations
-        times = ak.Array(self.times)
+        times = ak.Array(times)
 
         # Convert to milliseconds since Epoch (this is what Leaflet wants)
         times = (times * 1000) + (unix_time() * 1000)

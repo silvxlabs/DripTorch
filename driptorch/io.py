@@ -202,7 +202,7 @@ def write_quicfire(geometry: list, times: list) -> str:
                 coords = np.array(part.coords)
                 t = time[j]
                 for k, xy in enumerate(coords[:-1]):
-                    rows += f'{xy[0]} {xy[1]} {coords[k+1,0]} {coords[k+1,1]} {t[k]} {t[1]}\n'
+                    rows += f'{xy[0]} {xy[1]} {coords[k+1,0]} {coords[k+1,1]} {t[k]} {t[k+1]}\n'
                     n_rows += 1
         file = QuicFire.fmt_5.substitute(n_rows=n_rows, rows=rows)
 
