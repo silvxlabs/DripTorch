@@ -132,11 +132,15 @@
 </pre></div>
 </div>
 <p>And you can write the <code class="docutils literal notranslate"><span class="pre">BurnUnit</span></code> object back to GeoJSON for use in other applications.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">geojson</span> <span class="o">=</span> <span class="n">fuel_removal_area</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Write a GeoJSON in the default projection (EPSG: 4326)</span>
+<span class="n">geojson</span> <span class="o">=</span> <span class="n">fuel_removal_area</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
+
+<span class="c1"># Write a GeoJSON projected in Albers Equal Area Conic (EPSG: 5070)</span>
+<span class="n">geojson</span> <span class="o">=</span> <span class="n">burn_unit</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">dst_epsg</span><span class="o">=</span><span class="mi">5070</span><span class="p">)</span>
 </pre></div>
 </div>
 <blockquote>
-<div><p>Note: DripTorch caches the source EPSG code when loading a geometry, whether you specified it manual or left it as the default (4326). Everything under the hood operates in UTM, however when you export to GeoJSON DripTorch will always convert the coordinates to 4326. For other types of exports, such as exports to fire model ignition files, the projection will stay in UTM.</p>
+<div><p>Note: DripTorch caches the source EPSG code when loading a geometry, whether you specified it manual or left it as the default (4326). Everything under the hood operates in UTM, however when you export to GeoJSON DripTorch will always convert the coordinates to 4326. For other types of exports, such as exports to fire model ignition files, the projection will stay in UTM if you don’t specify a destination CRS.</p>
 </div></blockquote>
 <p>Buffering the burn unit to account for the control line and blackline operation is optional. Just remember that the <code class="docutils literal notranslate"><span class="pre">BurnUnit</span></code> instance you pass to the built-in pattern ignition generators (discussed below) determines the where the ignition paths are clipped. So, if you create an interior firing area polygon by buffering the original burn unit, what we called <code class="docutils literal notranslate"><span class="pre">firing_area</span></code> above, be sure to pass that polygon to downstream operations in DripTorch if you don’t want ignitions in your control line or blackline area.</p>
 </div>
@@ -223,21 +227,16 @@
 </div>
 <div class="section" id="exports">
 <h2>Exports<a class="headerlink" href="#exports" title="Permalink to this headline"></a></h2>
-<p>If you want to actually use your ignition pattern to set something on fire (at least in a simulator) then use one of the export methods in the pattern instance to write the ignition paths in a model-specific format. Currently, DripTorch only supports QUIC-fire, but other formats are on our roadmap.</p>
-<p>The origin of the simulation domain in QUIC-fire is the lower lefthand corner, so before exporting you should use the <code class="docutils literal notranslate"><span class="pre">translate()</span></code> method on the pattern instance to move the ignition paths to the origin.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># First, get the lower lefthand coordinate of the burn unit envelope</span>
-<span class="n">lower_left</span> <span class="o">=</span> <span class="n">burn_unit</span><span class="o">.</span><span class="n">get_bounds</span><span class="p">()</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-
-<span class="c1"># Now translate the pattern to the origin of the coordinate reference system</span>
-<span class="n">pattern_trans</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="o">-</span><span class="n">lower_left</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="n">lower_left</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-</pre></div>
-</div>
-<p>Now you can write a QUIC-fire ignition file.</p>
+<p>If you want to use your ignition pattern to set something on fire (at least in a simulator) then use one of the export methods in the pattern instance to write the ignition paths in a model-specific format. Currently, DripTorch only supports QUIC-fire, but other formats are on our roadmap.</p>
+<p>The origin of the simulation domain in QUIC-fire is the lower lefthand corner. You can specify the extent of the domain using a <code class="docutils literal notranslate"><span class="pre">BurnUnit</span></code> object. In most cases, you’ll simply provide the first burn unit you created in the pipeline, prior to any control line or downwind buffering. The extent of the burn unit object will be extracted and the ignition patterns will be translated to the origin of the CRS internally. Optionally, you can specify a destination EPSG code if you want to reproject the ignition pattern before exporting to QUIC-fire.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Write the pattern to a QUIC-Fire ignition file</span>
-<span class="n">pattern_trans</span><span class="o">.</span><span class="n">to_quicfire</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;qf_ignition_file.dat&#39;</span><span class="p">)</span>
+<span class="n">qf_ignition_file</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">to_quicfire</span><span class="p">(</span><span class="n">burn_unit</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;./qf_ignition.dat&#39;</span><span class="p">,</span> <span class="n">time_offset</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">dst_epsg</span><span class="o">=</span><span class="mi">5070</span><span class="p">)</span>
 
-<span class="c1"># If you don&#39;t specify a file name then the method will return a str containing the file contents</span>
-<span class="n">qf_ignition_str</span> <span class="o">=</span> <span class="n">pattern_trans</span><span class="o">.</span><span class="n">to_quicfire</span><span class="p">()</span>
+<span class="c1"># If you don&#39;t specify a file name then the method will return a string containing the file contents</span>
+<span class="n">qf_ignition_str</span> <span class="o">=</span> <span class="n">pattern_trans</span><span class="o">.</span><span class="n">to_quicfire</span><span class="p">(</span><span class="n">burn_unit</span><span class="p">,</span> <span class="n">time_offset</span><span class="o">=</span><span class="mi">25</span><span class="p">)</span>
+
+<span class="c1"># Reproject the ignition pattern to Albers before writing the QUIC-fire ignition file</span>
+<span class="n">qf_ignition_str</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">to_quicfire</span><span class="p">(</span><span class="n">burn_unit</span><span class="p">,</span> <span class="n">dst_epsg</span><span class="o">=</span><span class="mi">5070</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

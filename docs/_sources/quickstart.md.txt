@@ -68,10 +68,14 @@ fuel_removal_area = burn_unit.difference(firing_area)
 And you can write the `BurnUnit` object back to GeoJSON for use in other applications.
 
 ```python
+# Write a GeoJSON in the default projection (EPSG: 4326)
 geojson = fuel_removal_area.to_json()
+
+# Write a GeoJSON projected in Albers Equal Area Conic (EPSG: 5070)
+geojson = burn_unit.to_json(dst_epsg=5070)
 ```
 
-> Note: DripTorch caches the source EPSG code when loading a geometry, whether you specified it manual or left it as the default (4326). Everything under the hood operates in UTM, however when you export to GeoJSON DripTorch will always convert the coordinates to 4326. For other types of exports, such as exports to fire model ignition files, the projection will stay in UTM.
+> Note: DripTorch caches the source EPSG code when loading a geometry, whether you specified it manual or left it as the default (4326). Everything under the hood operates in UTM, however when you export to GeoJSON DripTorch will always convert the coordinates to 4326. For other types of exports, such as exports to fire model ignition files, the projection will stay in UTM if you don't specify a destination CRS.
 
 Buffering the burn unit to account for the control line and blackline operation is optional. Just remember that the `BurnUnit` instance you pass to the built-in pattern ignition generators (discussed below) determines the where the ignition paths are clipped. So, if you create an interior firing area polygon by buffering the original burn unit, what we called `firing_area` above, be sure to pass that polygon to downstream operations in DripTorch if you don't want ignitions in your control line or blackline area.
 
@@ -175,24 +179,17 @@ map.show()
 
 ## Exports
 
-If you want to actually use your ignition pattern to set something on fire (at least in a simulator) then use one of the export methods in the pattern instance to write the ignition paths in a model-specific format. Currently, DripTorch only supports QUIC-fire, but other formats are on our roadmap.
+If you want to use your ignition pattern to set something on fire (at least in a simulator) then use one of the export methods in the pattern instance to write the ignition paths in a model-specific format. Currently, DripTorch only supports QUIC-fire, but other formats are on our roadmap.
 
-The origin of the simulation domain in QUIC-fire is the lower lefthand corner, so before exporting you should use the `translate()` method on the pattern instance to move the ignition paths to the origin.
-
-```python
-# First, get the lower lefthand coordinate of the burn unit envelope
-lower_left = burn_unit.get_bounds().min(axis=0)
-
-# Now translate the pattern to the origin of the coordinate reference system
-pattern_trans = pattern.translate(-lower_left[0], -lower_left[1])
-```
-
-Now you can write a QUIC-fire ignition file.
+The origin of the simulation domain in QUIC-fire is the lower lefthand corner. You can specify the extent of the domain using a `BurnUnit` object. In most cases, you'll simply provide the first burn unit you created in the pipeline, prior to any control line or downwind buffering. The extent of the burn unit object will be extracted and the ignition patterns will be translated to the origin of the CRS internally. Optionally, you can specify a destination EPSG code if you want to reproject the ignition pattern before exporting to QUIC-fire.
 
 ```python
 # Write the pattern to a QUIC-Fire ignition file
-pattern_trans.to_quicfire(filename='qf_ignition_file.dat')
+qf_ignition_file = pattern.to_quicfire(burn_unit, filename='./qf_ignition.dat', time_offset=100, dst_epsg=5070)
 
-# If you don't specify a file name then the method will return a str containing the file contents
-qf_ignition_str = pattern_trans.to_quicfire()
+# If you don't specify a file name then the method will return a string containing the file contents
+qf_ignition_str = pattern_trans.to_quicfire(burn_unit, time_offset=25)
+
+# Reproject the ignition pattern to Albers before writing the QUIC-fire ignition file
+qf_ignition_str = pattern.to_quicfire(burn_unit, dst_epsg=5070)
 ```
