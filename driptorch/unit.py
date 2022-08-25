@@ -76,7 +76,7 @@ class BurnUnit:
             dict: GeoJSON dictionary
         """
 
-        return write_geojson([self.polygon], utm_epsg=self.utm_epsg, **kwargs)
+        return write_geojson([self.polygon], src_epsg=self.utm_epsg, **kwargs)
 
     def _align(self):
         """Align the unit and boundary segs to the wind
