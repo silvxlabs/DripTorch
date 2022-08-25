@@ -223,7 +223,7 @@ def write_quicfire(geometry: list, times: list) -> str:
             # Loop over each point in the geometry
             for j, part in enumerate(geom):
                 xy = np.array(part.coords[0])
-                rows += f'{xy[0]} {xy[1]} {time[j]}\n'
+                rows += f'{int(xy[0])} {int(xy[1])} {time[j]}\n'
                 n_rows += 1
         file = QuicFire.fmt_4.substitute(n_rows=n_rows, rows=rows)
 
