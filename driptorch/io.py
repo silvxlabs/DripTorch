@@ -191,34 +191,47 @@ def write_quicfire(geometry: list, times: list) -> str:
     rows = ''
     n_rows = 0
 
-    # TODO: #20 Cleanup QF export method
+    # Process ignition paths for QF format 5
     if all(isinstance(x, (LineString, MultiLineString)) for x in geometry):
+
+        # Loop over each geometry
         for i, geom in enumerate(geometry):
             time = times[i]
+            # Check if we have a linestring and wrap in a list if so
             if isinstance(geom, LineString):
                 geom = [geom]
                 time = [time]
+            # Loop over each line in the geometry
             for j, part in enumerate(geom):
                 coords = np.array(part.coords)
                 t = time[j]
+                # Loop over each coordinate in the line
                 for k, xy in enumerate(coords[:-1]):
                     rows += f'{xy[0]} {xy[1]} {coords[k+1,0]} {coords[k+1,1]} {t[k]} {t[k+1]}\n'
                     n_rows += 1
         file = QuicFire.fmt_5.substitute(n_rows=n_rows, rows=rows)
 
+    # Process ignition paths for QF format 4
     elif all(isinstance(x, (Point, MultiPoint)) for x in geometry):
+        # Loop over each geometry
         for i, geom in enumerate(geometry):
             time = times[i]
+            # Check if we have a point and wrap in a list if so
             if isinstance(geom, Point):
                 geom = [geom]
                 time = [time]
+            # Loop over each point in the geometry
             for j, part in enumerate(geom):
                 xy = np.array(part.coords[0])
                 rows += f'{xy[0]} {xy[1]} {time[j]}\n'
                 n_rows += 1
         file = QuicFire.fmt_4.substitute(n_rows=n_rows, rows=rows)
 
+    # Handle the case where we have mixed geometry types
     else:
         raise ExportError(ExportError.incompatible_line_types)
+
+    # Remove blank lines from file
+    file = '\n'.join([line for line in file.split('\n') if line.strip()])
 
     return file
