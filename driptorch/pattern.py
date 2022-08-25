@@ -9,7 +9,8 @@ from time import time as unix_time
 import warnings
 
 # Internal imports
-from .io import write_geojson, write_quicfire
+from .io import Projector, write_geojson, write_quicfire
+from .unit import BurnUnit
 
 # External imports
 import awkward as ak
@@ -33,7 +34,7 @@ warnings.filterwarnings("ignore", category=ShapelyDeprecationWarning)
 class Pattern:
 
     def __init__(self, heat: list[int], igniter: list[int], leg: list[int],
-                 times: list[list[float]], geometry: list[LineString], utm_epsg: int):
+                 times: list[list[float]], geometry: list[LineString], epsg: int):
         """Constructor
 
         Args:
@@ -42,7 +43,7 @@ class Pattern:
             leg (list[int]): Leg for the path
             times (list[list[float]]): Coordinate arrival times for the path
             geometry (list[LineString]): Path geometry
-            utm_epsg (int): UTM EPSG code for the CRS that the paths are projected in.
+            epsg (int): EPSG code for path geometry
         """
 
         self.heat = heat
@@ -50,16 +51,16 @@ class Pattern:
         self.leg = leg
         self.times = times
         self.geometry = geometry
-        self.utm_epsg = utm_epsg
+        self.epsg = epsg
 
     @classmethod
-    def from_dict(cls, paths_dict: dict, utm_epsg: int) -> Pattern:
-        """Alternative contructor for initializing a Pattern object with a dictionary
+    def from_dict(cls, paths_dict: dict, epsg: int) -> Pattern:
+        """Alternative constructor for initializing a Pattern object with a dictionary
         of path parameters
 
         Args:
             paths_dict (dict): Dictionary of path parameters
-            utm_epsg (int): UTM EPSG code for the CRS that the paths are currently projected in.
+            burn_unit (BurnUnit): Burn unit object associated with the ignition pattern
 
         Returns:
             Pattern: A new instance of Pattern
@@ -71,7 +72,7 @@ class Pattern:
             paths_dict['leg'],
             paths_dict['times'],
             paths_dict['geometry'],
-            utm_epsg=utm_epsg
+            epsg
         )
 
     def to_dict(self) -> dict:
@@ -114,7 +115,7 @@ class Pattern:
         # Copy the times array
         times = self.times.copy()
 
-        # The Timedstamed GeoJSON plug in won't take a time for each coordinate in
+        # The Timedstamed GeoJSON plugin in won't take a time for each coordinate in
         # the sub line string of a MLS, apparently it wants a single time to represent
         # the entire sub line (Either they have a bug or I'm missing something).
         for i, geom in enumerate(self.geometry):
@@ -135,7 +136,7 @@ class Pattern:
             'color': '#ff0000', 'radius': 1}}
 
         # Send off to the GeoJSON writer and return
-        return write_geojson(self.geometry, self.utm_epsg, properties=props, style=style)
+        return write_geojson(self.geometry, self.epsg, properties=props, style=style)
 
     def translate(self, x_off: float, y_off: float) -> Pattern:
         """Translate pattern geometry along the x and y axis by the supplied
@@ -163,12 +164,15 @@ class Pattern:
         # Return the new Pattern object
         return obj_copy
 
-    def to_quicfire(self, filename: str = None, time_offset=0) -> None | str:
+    def to_quicfire(self, burn_unit: BurnUnit, filename: str = None, time_offset=0, dst_epsg: int = None) -> None | str:
         """Write paths dictionary to QUIC-fire ignition file format.
 
         Args:
+            burn_unit (BurnUnit): Burn unit that defines the extent of the QF simulation
             filename (str, optional): If provided, write the ignition file to the
                 filename. Defaults to None.
+            time_offset (float, optional): Time offset to add to the ignition times.
+            dst_epsg (int, optional): EPSG code for the destination projection.
 
         Returns:
             None | str: None if filename provided, string containing the ignition file if not.
@@ -176,12 +180,32 @@ class Pattern:
 
         times = self.times.copy()
         geometry = self.geometry.copy()
+        domain = burn_unit.copy()
 
         # Apply time offset if not zero
         if time_offset:
             times = ak.Array(times)
             times = times + time_offset
             times = times.to_list()
+
+        # Reproject burn_unit and geometry to destination epsg if provided
+        if dst_epsg:
+            projector = Projector(domain.utm_epsg, dst_epsg)
+
+            domain.polygon = projector.forward(domain.polygon)
+
+            reproj_geoms = []
+            for geom in geometry:
+                reproj_geoms.append(projector.forward(geom))
+            geometry = reproj_geoms
+
+        # Translate pattern geometry to the origin or the CRS according to the burn unit extent
+        lower_left = domain.get_bounds().min(axis=0)
+        trans_geoms = []
+        for geom in geometry:
+            trans_geoms.append(affinity.translate(
+                geom, -lower_left[0], -lower_left[1]))
+        geometry = trans_geoms
 
         # Check if filename was provided and write to it if so
         if filename:
