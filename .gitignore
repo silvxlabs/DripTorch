@@ -1,3 +1,5 @@
+# QF related files
+*.dat
 
 # notebooks
 *.ipynb

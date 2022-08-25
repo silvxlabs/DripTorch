@@ -131,11 +131,13 @@ def read_geojson_polygon(geojson: dict) -> Polygon:
     return geometry
 
 
-def write_geojson(geometries: list[BaseGeometry], utm_epsg: int, properties={}, style={}) -> dict:
+def write_geojson(geometries: list[BaseGeometry], src_epsg: int, dst_epsg: int = 4326, properties={}, style={}) -> dict:
     """Write a list of shapely geometries to GeoJSON
 
     Args:
         geometries (list[BaseGeometry]): List of shapely geometries
+        src_epsg (int): EPSG code of the CRS that the spatial data are currently projected in.
+        dst_epsg (int): EPSG code of the CRS that the spatial data will be projected to.
         properties (dict, optional): Properties for each feature. Defaults to {}.
         style (dict, optional): Rendering style applied to all features. Defaults to {}.
 
@@ -144,7 +146,7 @@ def write_geojson(geometries: list[BaseGeometry], utm_epsg: int, properties={}, 
     """
 
     # Get a projector instance for inverse projection
-    projector = Projector(utm_epsg, 4326)
+    projector = Projector(src_epsg, dst_epsg)
 
     # Get the names of all the props
     property_names = properties.keys()
