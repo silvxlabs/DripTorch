@@ -26,17 +26,14 @@ class Flank(FiringBase):
         # Initialize the base class
         super().__init__(burn_unit, ignition_crew)
 
-    def generate_pattern(self, depth: float) -> Pattern:
+    def generate_pattern(self) -> Pattern:
         """Generate a flank fire ignition pattern
-
-        Args:
-            depth (float): Horizontal distance in meters between igniters and heats
 
         Returns:
             Pattern: Spatiotemporal ignition pattern
         """
 
-        return self._generate_pattern(depth=depth)
+        return self._generate_pattern()
 
     def _init_paths(self, paths: dict, **kwargs) -> dict:
         """Initialize spatial part of the ignition paths.
@@ -53,12 +50,16 @@ class Flank(FiringBase):
 
         # Get the depth parameter from the keyword args (This is required in the
         # `generate_pattern()` method of this class)
-        depth = kwargs['depth']
 
         # Extract the bounding extent of the firing area
         bbox = self._burn_unit.get_bounds()
         x_min, y_min = bbox[:, 0].min(), bbox[:, 1].min()
         x_max, y_max = bbox[:, 0].max(), bbox[:, 1].max()
+
+        # Compute depth by equally spacing ignitors. This make sense for flank
+        # technique since we don't what ignitors walking back downwind in the fire
+        # they just ignited.
+        depth = (y_max - y_min) / len(self._ignition_crew)
 
         # Set up the initial start positions along the y-axis
         y_range = np.arange(y_min + depth, y_max, depth)

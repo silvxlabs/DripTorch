@@ -124,7 +124,7 @@ drone_crew = dt.IgnitionCrew.from_list([drone_igniter])
 Once your burn unit has been specified and you've allocated your ignition resources, you can simulate various firing techniques using DripTorch pattern generators. Currently, DripTorch supports the following firing techniques:
 
 - Strip-heading fire - `strip(spacing, depth)`
-- Flanking fire - `flank(depth)`
+- Flanking fire - `flank()`
 - Ring fire - `ring(offset)`
 - Head fire - `head(offset)`
 - Backing fire - `back(offset)`
