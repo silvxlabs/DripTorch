@@ -7,8 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Build recipe from PyPI package and build/publish to conda
     steps:
+      - uses: teamholtz/conda-skeleton-publish
       - name: Publish conda package from PyPI package
-        uses: teamholtz/conda-skeleton-publish
         with:
           pypi_package: "driptorch"
           package_version: "latest"
