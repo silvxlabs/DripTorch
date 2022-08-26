@@ -1,3 +1,5 @@
+name: Publish to Conda
+
 on:
   workflow_dispatch:
     branches: [main]
