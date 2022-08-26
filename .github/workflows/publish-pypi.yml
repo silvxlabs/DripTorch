@@ -5,9 +5,9 @@ on:
     types: [published]
 
 jobs:
-  deploy:
+  publish:
     runs-on: ubuntu-latest
-
+    name: Build and publish to PyPI
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
