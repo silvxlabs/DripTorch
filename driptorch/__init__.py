@@ -1,4 +1,3 @@
-__version__ = '0.5.0'
 
 from .unit import BurnUnit
 from .personnel import Igniter, IgnitionCrew

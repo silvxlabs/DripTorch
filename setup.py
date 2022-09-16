@@ -1,8 +1,12 @@
 import pathlib
 from setuptools import setup, find_packages
-from driptorch import __version__
+from distutils.util import convert_path
 
-version = __version__
+# Get the version from the _version file within the package directory
+driptorch_ns = {}
+version_path = convert_path('driptorch/_version.py')
+with open(version_path) as f:
+    exec(f.read(), driptorch_ns)
 
 # The directory containing this file
 HERE = pathlib.Path(__file__).parent
@@ -10,10 +14,11 @@ HERE = pathlib.Path(__file__).parent
 # The text of the README file
 README = (HERE / "README.md").read_text()
 
+# Set 'er up
 setup(
     name='driptorch',
     packages=find_packages(),
-    version=version,
+    version=driptorch_ns['__version__'],
     license='MIT',
     description='Ignition pattern simulator for prescribed firing techniques',
     long_description=README,
