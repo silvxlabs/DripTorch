@@ -6,7 +6,7 @@ Fire model ignition formats
 from string import Template
 import textwrap
 from datetime import datetime
-from . import __version__
+from ._version import __version__
 
 
 class QuicFire:
