@@ -53,6 +53,12 @@ class Pattern:
         self.geometry = geometry
         self.epsg = epsg
 
+        # Compute the total elapsed time for the ignition crew
+        times_ak = ak.Array(self.times)
+        min_time = ak.min(times_ak)
+        max_time = ak.max(times_ak)
+        self.elapsed_time = max_time - min_time
+
     @classmethod
     def from_dict(cls, paths_dict: dict, epsg: int) -> Pattern:
         """Alternative constructor for initializing a Pattern object with a dictionary
@@ -136,7 +142,8 @@ class Pattern:
             'color': '#ff0000', 'radius': 1}}
 
         # Send off to the GeoJSON writer and return
-        return write_geojson(self.geometry, self.epsg, properties=props, style=style)
+        return write_geojson(self.geometry, self.epsg, properties=props, style=style,
+                             elapsed_time=self.elapsed_time)
 
     def translate(self, x_off: float, y_off: float) -> Pattern:
         """Translate pattern geometry along the x and y axis by the supplied
@@ -164,15 +171,16 @@ class Pattern:
         # Return the new Pattern object
         return obj_copy
 
-    def to_quicfire(self, burn_unit: BurnUnit, filename: str = None, time_offset=0, dst_epsg: int = None) -> None | str:
+    def to_quicfire(self, burn_unit: BurnUnit, filename: str = None, time_offset=0, resolution: int = 1, dst_epsg: int = None) -> None | str:
         """Write paths dictionary to QUIC-fire ignition file format.
 
         Args:
             burn_unit (BurnUnit): Burn unit that defines the extent of the QF simulation
             filename (str, optional): If provided, write the ignition file to the
                 filename. Defaults to None.
-            time_offset (float, optional): Time offset to add to the ignition times.
-            dst_epsg (int, optional): EPSG code for the destination projection.
+            time_offset (float, optional): Time offset to add to the ignition times. Defaults to 0.
+            resolution (int, optional): Horizontal resolution of QUIC-fire domain (meters). Defaults to 1.
+            dst_epsg (int, optional): EPSG code for the destination projection. Defaults to None.
 
         Returns:
             None | str: None if filename provided, string containing the ignition file if not.
@@ -210,10 +218,11 @@ class Pattern:
         # Check if filename was provided and write to it if so
         if filename:
             with open(filename, 'w') as f:
-                f.write(write_quicfire(geometry, times))
+                f.write(write_quicfire(geometry, times,
+                        self.elapsed_time, resolution=resolution))
         # Otherwise return QF ignition file to client as string
         else:
-            return write_quicfire(geometry, times)
+            return write_quicfire(geometry, times, self.elapsed_time, resolution=resolution)
 
 
 class TemporalPropagator:

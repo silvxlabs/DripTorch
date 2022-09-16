@@ -131,7 +131,8 @@ def read_geojson_polygon(geojson: dict) -> Polygon:
     return geometry
 
 
-def write_geojson(geometries: list[BaseGeometry], src_epsg: int, dst_epsg: int = 4326, properties={}, style={}) -> dict:
+def write_geojson(geometries: list[BaseGeometry], src_epsg: int, dst_epsg: int = 4326, properties={},
+                  style={}, elapsed_time=None) -> dict:
     """Write a list of shapely geometries to GeoJSON
 
     Args:
@@ -140,6 +141,7 @@ def write_geojson(geometries: list[BaseGeometry], src_epsg: int, dst_epsg: int =
         dst_epsg (int): EPSG code of the CRS that the spatial data will be projected to.
         properties (dict, optional): Properties for each feature. Defaults to {}.
         style (dict, optional): Rendering style applied to all features. Defaults to {}.
+        elapsed_time (float, optional): Time elapsed during the firing operation. Defaults to None.
 
     Returns:
         dict: GeoJSON
@@ -173,15 +175,19 @@ def write_geojson(geometries: list[BaseGeometry], src_epsg: int, dst_epsg: int =
         'features': features
     }
 
+    if elapsed_time is not None:
+        geojson['elapsedTime'] = elapsed_time
+
     return geojson
 
 
-def write_quicfire(geometry: list, times: list) -> str:
+def write_quicfire(geometry: list, times: list, elapsed_time, resolution: int = 1) -> str:
     """Writes a QUIC-fire ignition file
 
     Args:
         geometry (list): List of geometry to write
         times (list): Arrival times corresponding to the geometry coordinates (seconds)
+        resolution (int): Horizontal resolution of QUIC-fire domain (meters). Defaults to 1.
 
     Raises:
         ExportError: Error if Point and (Multi)LineString geometry types are mixed
@@ -211,7 +217,8 @@ def write_quicfire(geometry: list, times: list) -> str:
                 for k, xy in enumerate(coords[:-1]):
                     rows += f'{xy[0]} {xy[1]} {coords[k+1,0]} {coords[k+1,1]} {t[k]} {t[k+1]}\n'
                     n_rows += 1
-        file = QuicFire.fmt_5.substitute(n_rows=n_rows, rows=rows)
+        file = QuicFire.fmt_5.substitute(
+            n_rows=n_rows, rows=rows, elapsed_time=round(elapsed_time, 2))
 
     # Process ignition paths for QF format 4
     elif all(isinstance(x, (Point, MultiPoint)) for x in geometry):
@@ -225,9 +232,10 @@ def write_quicfire(geometry: list, times: list) -> str:
             # Loop over each point in the geometry
             for j, part in enumerate(geom):
                 xy = np.array(part.coords[0])
-                rows += f'{int(xy[0])} {int(xy[1])} {time[j]}\n'
+                rows += f'{int(xy[0]/resolution)} {int(xy[1]/resolution)} {time[j]}\n'
                 n_rows += 1
-        file = QuicFire.fmt_4.substitute(n_rows=n_rows, rows=rows)
+        file = QuicFire.fmt_4.substitute(
+            n_rows=n_rows, rows=rows, elapsed_time=round(elapsed_time, 2))
 
     # Handle the case where we have mixed geometry types
     else:
