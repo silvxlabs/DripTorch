@@ -53,6 +53,12 @@ class Pattern:
         self.geometry = geometry
         self.epsg = epsg
 
+        # Compute the total elapsed time for the ignition crew
+        times_ak = ak.Array(self.times)
+        min_time = ak.min(times_ak)
+        max_time = ak.max(times_ak)
+        self.elapsed_time = max_time - min_time
+
     @classmethod
     def from_dict(cls, paths_dict: dict, epsg: int) -> Pattern:
         """Alternative constructor for initializing a Pattern object with a dictionary
@@ -136,7 +142,8 @@ class Pattern:
             'color': '#ff0000', 'radius': 1}}
 
         # Send off to the GeoJSON writer and return
-        return write_geojson(self.geometry, self.epsg, properties=props, style=style)
+        return write_geojson(self.geometry, self.epsg, properties=props, style=style,
+                             elapsed_time=self.elapsed_time)
 
     def translate(self, x_off: float, y_off: float) -> Pattern:
         """Translate pattern geometry along the x and y axis by the supplied
@@ -211,10 +218,11 @@ class Pattern:
         # Check if filename was provided and write to it if so
         if filename:
             with open(filename, 'w') as f:
-                f.write(write_quicfire(geometry, times, resolution=resolution))
+                f.write(write_quicfire(geometry, times,
+                        self.elapsed_time, resolution=resolution))
         # Otherwise return QF ignition file to client as string
         else:
-            return write_quicfire(geometry, times, resolution=resolution)
+            return write_quicfire(geometry, times, self.elapsed_time, resolution=resolution)
 
 
 class TemporalPropagator:
