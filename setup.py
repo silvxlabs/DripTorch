@@ -1,7 +1,8 @@
 import pathlib
 from setuptools import setup, find_packages
+from driptorch import __version__
 
-version = '0.4.2'
+version = __version__
 
 # The directory containing this file
 HERE = pathlib.Path(__file__).parent
