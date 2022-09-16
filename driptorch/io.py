@@ -176,12 +176,13 @@ def write_geojson(geometries: list[BaseGeometry], src_epsg: int, dst_epsg: int =
     return geojson
 
 
-def write_quicfire(geometry: list, times: list) -> str:
+def write_quicfire(geometry: list, times: list, resolution: int = 1) -> str:
     """Writes a QUIC-fire ignition file
 
     Args:
         geometry (list): List of geometry to write
         times (list): Arrival times corresponding to the geometry coordinates (seconds)
+        resolution (int): Horizontal resolution of QUIC-fire domain (meters). Defaults to 1.
 
     Raises:
         ExportError: Error if Point and (Multi)LineString geometry types are mixed
@@ -225,7 +226,7 @@ def write_quicfire(geometry: list, times: list) -> str:
             # Loop over each point in the geometry
             for j, part in enumerate(geom):
                 xy = np.array(part.coords[0])
-                rows += f'{int(xy[0])} {int(xy[1])} {time[j]}\n'
+                rows += f'{int(xy[0]/resolution)} {int(xy[1]/resolution)} {time[j]}\n'
                 n_rows += 1
         file = QuicFire.fmt_4.substitute(n_rows=n_rows, rows=rows)
 
