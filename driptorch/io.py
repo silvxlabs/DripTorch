@@ -5,6 +5,7 @@ DripTorch I/O helper functions
 # Internal imports
 from .templates import QuicFire
 from .errors import *
+from ._version import __version__
 
 # External imports
 from folium import Polygon
@@ -175,8 +176,12 @@ def write_geojson(geometries: list[BaseGeometry], src_epsg: int, dst_epsg: int =
         'features': features
     }
 
+    # Add elapsed time to properties if it was provided
     if elapsed_time is not None:
         geojson['elapsedTime'] = elapsed_time
+
+    # Add DripTorch version to the GeoJSON
+    geojson['driptorchVersion'] = __version__
 
     return geojson
 

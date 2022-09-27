@@ -109,11 +109,13 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">driptorch.firing._base.FiringBase</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="driptorch.firing.Flank.generate_pattern">
-<span class="sig-name descname"><span class="pre">generate_pattern</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="pattern.html#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern"><span class="pre">driptorch.pattern.Pattern</span></a></span></span><a class="headerlink" href="#driptorch.firing.Flank.generate_pattern" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">generate_pattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heat_depth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="pattern.html#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern"><span class="pre">driptorch.pattern.Pattern</span></a></span></span><a class="headerlink" href="#driptorch.firing.Flank.generate_pattern" title="Permalink to this definition"></a></dt>
 <dd><p>Generate a flank fire ignition pattern</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Spatiotemporal ignition pattern</p>
+<dd class="field-odd"><p>Spatiotemporal ignition pattern
+depth (float): Depth in meters between igniters. If None, depth is computed by equally spacing igniters. Defaults to None.
+heat_depth (float): Depth in meters between igniter heats. This argument is ignored if depth is None. Defaults to None.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference internal" href="pattern.html#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern">Pattern</a></p>
@@ -140,6 +142,29 @@
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference internal" href="pattern.html#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern">Pattern</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="driptorch.firing.Inferno">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">driptorch.firing.</span></span><span class="sig-name descname"><span class="pre">Inferno</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">burn_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="unit.html#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><span class="pre">driptorch.unit.BurnUnit</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#driptorch.firing.Inferno" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This technique is set up differently than the other firing techniques. It doesn’t
+inherit from the FiringBase class. Time does not need to be propagated so we
+don’t pass to the Temporal Propagator.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="driptorch.firing.Inferno.generate_pattern">
+<span class="sig-name descname"><span class="pre">generate_pattern</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="pattern.html#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern"><span class="pre">driptorch.pattern.Pattern</span></a></span></span><a class="headerlink" href="#driptorch.firing.Inferno.generate_pattern" title="Permalink to this definition"></a></dt>
+<dd><p>Generate an inferno ignition pattern</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Spatiotemporal ignition pattern</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="pattern.html#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern">Pattern</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -175,13 +200,15 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">driptorch.firing._base.FiringBase</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="driptorch.firing.Strip.generate_pattern">
-<span class="sig-name descname"><span class="pre">generate_pattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="pattern.html#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern"><span class="pre">driptorch.pattern.Pattern</span></a></span></span><a class="headerlink" href="#driptorch.firing.Strip.generate_pattern" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">generate_pattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heat_depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="pattern.html#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern"><span class="pre">driptorch.pattern.Pattern</span></a></span></span><a class="headerlink" href="#driptorch.firing.Strip.generate_pattern" title="Permalink to this definition"></a></dt>
 <dd><p>Generate a strip head fire ignition pattern.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>spacing</strong> (<em>float</em>) – Staggering distance in meters between igniters within a heat</p></li>
 <li><p><strong>depth</strong> (<em>float</em>) – Horizontal distance in meters between igniters and heats</p></li>
+<li><p><strong>heat_depth</strong> (<em>float</em>) – Depth in meters between igniter heats. If None,
+heat_depth is equal to igniter depth. Defaults to None.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

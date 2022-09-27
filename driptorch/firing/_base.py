@@ -47,7 +47,8 @@ class FiringBase:
         # Configure the propagator for pushing time through the paths
         propagator = TemporalPropagator(
             kwargs.get('spacing', 0),
-            sync_end_time=kwargs.get('sync_end_time', False)
+            sync_end_time=kwargs.get('sync_end_time', False),
+            return_trip=kwargs.get('return_trip', False),
         )
 
         # Compute arrival times for each coordinate in each path
