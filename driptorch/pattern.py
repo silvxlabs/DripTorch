@@ -231,17 +231,21 @@ class TemporalPropagator:
     through their coordinates.
     """
 
-    def __init__(self, spacing: float, sync_end_time: bool = False):
+    def __init__(self, spacing: float, sync_end_time: bool = False, return_trip: bool = False):
         """Class constructor
 
         Args:
             spacing (float): Stagger spacing between igniters in a heat (meters)
             sync_end_time (bool, optional): If true synchronize igniters within
                 a heat to finish simultaneously. Defaults to False.
+            return_trip (bool, optional): If true, incorporate the time it takes for a heat
+                of igniters to return to the opposite side of the burn unit (use only for flank ignition).
+                Defaults to False.
         """
 
         self.spacing = spacing
         self.sync_end_time = sync_end_time
+        self.return_trip = return_trip
 
     def forward(self, paths, ignition_crew):
 
@@ -326,6 +330,10 @@ class TemporalPropagator:
 
                 # The current igniter's start time is the previous heat max end time
                 path.start_time = prev_heat_max_end_time
+
+                # If return_trip is turned on, then incorporate the return trip before this heat starts
+                if self.return_trip:
+                    path.start_time += path.geometry.length / velocity
 
             # This check is for any igniter following the first one. Note that
             # multileg ignition paths are caught in the first check above, so

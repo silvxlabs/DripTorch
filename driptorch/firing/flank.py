@@ -33,7 +33,7 @@ class Flank(FiringBase):
             Pattern: Spatiotemporal ignition pattern
         """
 
-        return self._generate_pattern(depth=depth)
+        return self._generate_pattern(depth=depth, return_trip=True)
 
     def _init_paths(self, paths: dict, **kwargs) -> dict:
         """Initialize spatial part of the ignition paths.
