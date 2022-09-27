@@ -31,10 +31,8 @@ class Flank(FiringBase):
 
         Returns:
             Pattern: Spatiotemporal ignition pattern
-            depth (float): Depth in meters between igniters. If None, depth is computed
-                by equally spacing igniters. Defaults to None.
-            heat_depth (float): Depth in meters between igniter heats. This argument is
-                ignored if depth is None. Defaults to None.
+            depth (float): Depth in meters between igniters. If None, depth is computed by equally spacing igniters. Defaults to None.
+            heat_depth (float): Depth in meters between igniter heats. This argument is ignored if depth is None. Defaults to None.
         """
 
         return self._generate_pattern(depth=depth, heat_depth=heat_depth, return_trip=True)

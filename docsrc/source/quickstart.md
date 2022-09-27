@@ -143,6 +143,20 @@ All pattern generators have a `generate_pattern()` method, however the arguments
 strip_pattern = strip.generate_pattern(10, 50)
 ```
 
+For strip and flank techniques you can specify the depth between heats with the `heat_depth` argument.
+
+```python
+# Generate a flank pattern with 40 meter depth between igniters and 80 meter depth between heats
+flank_pattern = flank.generate_pattern(depth=40, heat_depth=80)
+```
+
+Additionally, in the flank technique, if you don't specify an igniter depth, the depth is automatically calcuated such that the igniters are equally spaced across the unit in a single heat.
+
+```python
+# Generate a single-heat flank patter
+flank_pattern = flank.generate_pattern()
+```
+
 Certain firing technique require a specific number of igniters in the ignition crew. For instance, the ring fire generator requires exactly two igniters. In this case, if you pass an ignition crew with one igniter, the constructor will warn you that its going to clone the first igniter. If you supply a crew with three igniters, you will see a warning saying that DripTorch will only use the first two igniters in the crew.
 
 ```python
