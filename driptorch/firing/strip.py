@@ -26,18 +26,20 @@ class Strip(FiringBase):
         # Initialize the base class
         super().__init__(burn_unit, ignition_crew)
 
-    def generate_pattern(self, spacing: float, depth: float) -> Pattern:
+    def generate_pattern(self, spacing: float, depth: float, heat_depth: float = None) -> Pattern:
         """Generate a strip head fire ignition pattern.
 
         Args:
             spacing (float): Staggering distance in meters between igniters within a heat
             depth (float): Horizontal distance in meters between igniters and heats
+            heat_depth (float): Depth in meters between igniter heats. If None,
+                heat_depth is equal to igniter depth. Defaults to None.
 
         Returns:
             Pattern: Spatiotemporal ignition pattern
         """
 
-        return self._generate_pattern(spacing=spacing, depth=depth)
+        return self._generate_pattern(spacing=spacing, depth=depth, heat_depth=heat_depth)
 
     def _init_paths(self, paths: dict, **kwargs) -> dict:
         """Initialize spatial part of the ignition paths.
@@ -55,14 +57,30 @@ class Strip(FiringBase):
         # Get the depth parameter from the keyword args (This is required in the
         # `generate_pattern()` method of this class)
         depth = kwargs['depth']
+        heat_depth = kwargs['heat_depth']
 
         # Extract the bounding extent of the firing area
         bbox = self._burn_unit.get_bounds()
         x_min, y_min = bbox[:, 0].min(), bbox[:, 1].min()
         x_max, y_max = bbox[:, 0].max(), bbox[:, 1].max()
 
-        # Set up the initial start positions along the x-axis
-        x_range = np.arange(x_min + depth, x_max, depth)
+        # Set up the initial start positions along the y-axis
+        # If no heat depth is specified, then we have constant spacing between igniters and heats
+        if not heat_depth:
+            x_range = np.arange(x_min + depth, x_max, depth)
+        # If a heat depth is specified, then we have constant spacing between igniters,
+        # but potentially a different spacing between heats.
+        else:
+            x_range = []
+            cur_x = x_min + depth
+            i = 0
+            while cur_x < x_max:
+                x_range.append(cur_x)
+                if (i+1) % len(self._ignition_crew) == 0:
+                    cur_x = x_range[i] + heat_depth
+                else:
+                    cur_x = x_range[i] + depth
+                i += 1
 
         # Initialize loop control parameters
         cur_heat = 0
