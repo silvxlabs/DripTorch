@@ -68,6 +68,6 @@ class Inferno:
                 paths['igniter'].append(0)
                 paths['leg'].append(j)
                 paths['geometry'].append(part)
-                paths['times'].append([0.0, 0.0])
+                paths['times'].append([1.0, 1.0])
 
         return Pattern.from_dict(paths, epsg=self._burn_unit.utm_epsg)
