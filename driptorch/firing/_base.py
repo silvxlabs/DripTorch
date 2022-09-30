@@ -30,7 +30,7 @@ class FiringBase:
             Pattern: Spatiotemporal ignition pattern
         """
 
-        # Get a tempalte dictionary for the paths object
+        # Get a template dictionary for the paths object
         empty_paths = Pattern.empty_path_dict()
 
         # Need to wind-align the burn unit for laying out paths
