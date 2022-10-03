@@ -11,6 +11,7 @@ import warnings
 # Internal imports
 from .io import Projector, write_geojson, write_quicfire
 from .unit import BurnUnit
+from .errors import EPSGError
 
 # External imports
 import awkward as ak
@@ -19,6 +20,7 @@ import pandas as pd
 from shapely.errors import ShapelyDeprecationWarning
 from shapely import affinity
 from shapely.geometry import MultiPoint, MultiLineString, LineString
+from typing import optional
 
 # Turn off Pandas copy warning (or figure out how to do it like the Panda wants)
 pd.options.mode.chained_assignment = None
@@ -223,6 +225,43 @@ class Pattern:
         # Otherwise return QF ignition file to client as string
         else:
             return write_quicfire(geometry, times, self.elapsed_time, resolution=resolution)
+
+    def merge(pattern:Pattern,time_offset_seconds:float,inplace:bool=True) -> optional[Pattern,None]:
+        """Merge an input pattern with self
+
+        Args:
+            pattern (Pattern): input pattern to be merged into self
+            time_offset_seconds (float): time offset between patterns (seconds)
+            inplace (bool, optional): Perform merge inplace or return new merged Pattern object, if false original Patterns are maintained. Defaults to True.
+
+        Raises:
+            EPSGError.non_equivalent: _description_
+
+        Returns:
+            optional[Pattern,None]: if inplace is False, returns new merged Pattern object
+        """
+        assert pattern.epsg == self.epsg:
+            raise EPSGError.non_equivalent
+
+        output = Pattern()
+
+        times_offset = ak.Array(self.times) + time_offset_seconds
+        input_times = ak.Array(pattern.times)
+        new_times = ak.concatenate(times_offset,input_times).to_list()
+
+        output.times = new_times
+        output.heat = self.heat.extend(pattern.times)
+        output.igniter = self.igniter.extend(pattern.igniter)
+        output.leg = self.leg.extend(pattern.leg)
+        output.geometry = self.geometry.extend(pattern.geometry)
+        output.epsg = self.epsg
+
+        if inplace:
+            self = output 
+        else:
+            return output
+
+
 
 
 class TemporalPropagator:
