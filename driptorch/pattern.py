@@ -226,28 +226,30 @@ class Pattern:
         else:
             return write_quicfire(geometry, times, self.elapsed_time, resolution=resolution)
 
-    def merge(pattern:Pattern,time_offset_seconds:float,inplace:bool=True) -> optional[Pattern,None]:
+
+    def merge(input_Pattern: Pattern, time_offset_seconds: float, inplace: bool=True) -> optional[Pattern,None]:
         """Merge an input pattern with self
 
         Args:
-            pattern (Pattern): input pattern to be merged into self
+            input_pattern (Pattern): input pattern to be merged into self
             time_offset_seconds (float): time offset between patterns (seconds)
             inplace (bool, optional): Perform merge inplace or return new merged Pattern object, if false original Patterns are maintained. Defaults to True.
 
         Raises:
-            EPSGError.non_equivalent: _description_
+            EPSGError.non_equivalent: 'EPSG code for input pattern does not match self.epsg'
 
         Returns:
             optional[Pattern,None]: if inplace is False, returns new merged Pattern object
         """
-        assert pattern.epsg == self.epsg:
+
+        if pattern.epsg != self.epsg:
             raise EPSGError.non_equivalent
 
         output = Pattern()
 
-        times_offset = ak.Array(self.times) + time_offset_seconds
-        input_times = ak.Array(pattern.times)
-        new_times = ak.concatenate(times_offset,input_times).to_list()
+        times_offset = ak.Array(self.times) 
+        input_times = ak.Array(pattern.times) + time_offset_seconds
+        new_times = ak.concatenate(times_offset,input_times,axis=0).to_list()
 
         output.times = new_times
         output.heat = self.heat.extend(pattern.times)

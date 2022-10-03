@@ -24,4 +24,4 @@ class ExportError(Exception):
 
 class EPSGError(Exception):
 
-    non_equivalent = 'EPSG codes for input pattern do not match merge pattern'
+    non_equivalent = 'EPSG code for input pattern does not match self.epsg'
