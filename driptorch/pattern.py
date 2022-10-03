@@ -242,7 +242,7 @@ class Pattern:
             optional[Pattern,None]: if inplace is False, returns new merged Pattern object
         """
 
-        if pattern.epsg != self.epsg:
+        if input_pattern.epsg != self.epsg:
             raise EPSGError.non_equivalent
 
         output = Pattern()
