@@ -20,7 +20,8 @@ import pandas as pd
 from shapely.errors import ShapelyDeprecationWarning
 from shapely import affinity
 from shapely.geometry import MultiPoint, MultiLineString, LineString
-from typing import Optional
+from typing import Union
+from copy import copy
 
 # Turn off Pandas copy warning (or figure out how to do it like the Panda wants)
 pd.options.mode.chained_assignment = None
@@ -227,7 +228,7 @@ class Pattern:
             return write_quicfire(geometry, times, self.elapsed_time, resolution=resolution)
 
 
-    def merge(input_Pattern: Pattern, time_offset_seconds: float, inplace: bool=True) -> Optional[Pattern,None]:
+    def merge(self,input_pattern: Pattern, time_offset_seconds: float, inplace: bool=True) -> Pattern:
         """Merge an input pattern with self
 
         Args:
@@ -239,25 +240,29 @@ class Pattern:
             EPSGError.non_equivalent: 'EPSG code for input pattern does not match self.epsg'
 
         Returns:
-            optional[Pattern,None]: if inplace is False, returns new merged Pattern object
+            Union[Pattern,None]: if inplace is False, returns new merged Pattern object
         """
 
         if input_pattern.epsg != self.epsg:
             raise EPSGError.non_equivalent
 
-        output = Pattern()
+        output = copy(self)
 
-        times_offset = ak.Array(self.times) 
-        input_times = ak.Array(pattern.times) + time_offset_seconds
-        new_times = ak.concatenate(times_offset,input_times,axis=0).to_list()
-
+        #times_offset = ak.Array(self.times) 
+        time_end = float(np.max(np.max(self.times)))
+        input_times = ak.Array(input_pattern.times) + time_offset_seconds + time_end
+        input_times = input_times.to_list()
+        new_times = self.times.extend(input_times)
+        #new_times = ak.concatenate(times_offset,input_times).to_list()
+    
         output.times = new_times
-        output.heat = self.heat.extend(pattern.times)
-        output.igniter = self.igniter.extend(pattern.igniter)
-        output.leg = self.leg.extend(pattern.leg)
-        output.geometry = self.geometry.extend(pattern.geometry)
+        output.heat = self.heat.extend(input_pattern.times)
+        output.igniter = self.igniter.extend(input_pattern.igniter)
+        output.leg = self.leg.extend(input_pattern.leg)
+        output.geometry = self.geometry.extend(input_pattern.geometry)
         output.epsg = self.epsg
 
+        print(output.times)
         if inplace:
             self = output 
         else:
