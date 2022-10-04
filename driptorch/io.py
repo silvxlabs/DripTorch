@@ -14,7 +14,7 @@ import pyproj
 from shapely.geometry import mapping, shape, MultiLineString, LineString, Point, MultiPoint
 from shapely.geometry.base import BaseGeometry
 from shapely.ops import transform
-from typing import Optional
+from typing import Union 
 
 class Projector:
     """
@@ -79,7 +79,7 @@ class Projector:
         return utm_epsg, projector.forward(geometry)
 
     @classmethod
-    def to_web_mercator(cls, geometry: Optional[BaseGeometry, dict], src_epsg: int) -> BaseGeometry | dict:
+    def to_web_mercator(cls, geometry: Union[BaseGeometry, dict], src_epsg: int) -> Union[BaseGeometry, dict]:
         """Convenience method to project a shapely geometry or GeoJSON feature to web mercator
 
         Args:
