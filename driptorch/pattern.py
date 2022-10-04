@@ -20,7 +20,7 @@ import pandas as pd
 from shapely.errors import ShapelyDeprecationWarning
 from shapely import affinity
 from shapely.geometry import MultiPoint, MultiLineString, LineString
-from typing import optional
+from typing import Optional
 
 # Turn off Pandas copy warning (or figure out how to do it like the Panda wants)
 pd.options.mode.chained_assignment = None
@@ -227,7 +227,7 @@ class Pattern:
             return write_quicfire(geometry, times, self.elapsed_time, resolution=resolution)
 
 
-    def merge(input_Pattern: Pattern, time_offset_seconds: float, inplace: bool=True) -> optional[Pattern,None]:
+    def merge(input_Pattern: Pattern, time_offset_seconds: float, inplace: bool=True) -> Optional[Pattern,None]:
         """Merge an input pattern with self
 
         Args:
