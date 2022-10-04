@@ -20,8 +20,7 @@ import pandas as pd
 from shapely.errors import ShapelyDeprecationWarning
 from shapely import affinity
 from shapely.geometry import MultiPoint, MultiLineString, LineString
-from typing import Union
-from copy import copy
+
 
 # Turn off Pandas copy warning (or figure out how to do it like the Panda wants)
 pd.options.mode.chained_assignment = None
@@ -227,48 +226,50 @@ class Pattern:
         else:
             return write_quicfire(geometry, times, self.elapsed_time, resolution=resolution)
 
-
-    def merge(self,input_pattern: Pattern, time_offset_seconds: float, inplace: bool=True) -> Pattern:
+    def merge(self, pattern: Pattern, time_offset: float = 0, inplace: bool = False) -> Pattern:
         """Merge an input pattern with self
 
         Args:
-            input_pattern (Pattern): input pattern to be merged into self
-            time_offset_seconds (float): time offset between patterns (seconds)
-            inplace (bool, optional): Perform merge inplace or return new merged Pattern object, if false original Patterns are maintained. Defaults to True.
+            pattern (Pattern): Input pattern to be merged into self
+            time_offset (float): Time offset between patterns (seconds)
+            inplace (bool, optional): Overwrites Pattern object if true, otherwise return new Pattern object. Defaults to True.
 
         Raises:
-            EPSGError.non_equivalent: 'EPSG code for input pattern does not match self.epsg'
+            EPSGError.non_equivalent: EPSG code for input pattern does not match self.epsg
 
         Returns:
-            Union[Pattern,None]: if inplace is False, returns new merged Pattern object
+            Pattern: Merged pattern object
         """
 
-        if input_pattern.epsg != self.epsg:
+        # Check that the EPSG codes are the same
+        if pattern.epsg != self.epsg:
             raise EPSGError.non_equivalent
 
-        output = copy(self)
+        # Get an empty path dictionary
+        merged_dict = self.empty_path_dict()
 
-        #times_offset = ak.Array(self.times) 
-        time_end = float(np.max(np.max(self.times)))
-        input_times = ak.Array(input_pattern.times) + time_offset_seconds + time_end
-        input_times = input_times.to_list()
-        new_times = self.times.extend(input_times)
-        #new_times = ak.concatenate(times_offset,input_times).to_list()
-    
-        output.times = new_times
-        output.heat = self.heat.extend(input_pattern.times)
-        output.igniter = self.igniter.extend(input_pattern.igniter)
-        output.leg = self.leg.extend(input_pattern.leg)
-        output.geometry = self.geometry.extend(input_pattern.geometry)
-        output.epsg = self.epsg
+        # Delay times in the second pattern by the elapsed time of the first pattern and offset
+        delayed_times = (ak.max(self.times) + time_offset +
+                         ak.Array(pattern.times)).to_list()
 
-        print(output.times)
+        # Build merged pattern attributes
+        merged_dict['heat'] = self.heat + pattern.heat
+        merged_dict['igniter'] = self.igniter + pattern.igniter
+        merged_dict['leg'] = self.leg + pattern.leg
+        merged_dict['times'] = self.times + delayed_times
+        merged_dict['geometry'] = self.geometry + pattern.geometry
+
+        # Instantiate a new Pattern object
+        merged_pattern = self.from_dict(merged_dict, self.epsg)
+
+        # If inplace then overwrite self with the merged pattern
         if inplace:
-            self = output 
-        else:
-            return output
+            self = merged_pattern
 
-
+        # If inplace is False then return the merged pattern. This is outside
+        # of the if statement so that the merged pattern is still return in case
+        # the user sets the method to a variable
+        return merged_pattern
 
 
 class TemporalPropagator:
