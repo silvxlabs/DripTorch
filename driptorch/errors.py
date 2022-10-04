@@ -20,3 +20,8 @@ class ExportError(Exception):
         'Point and LineString/MultiLineString geometry types in the ' \
         'same file. Please reconfigure your ignition crew to have either ' \
         'all point ignitions or line/dash ignitions.'
+
+
+class EPSGError(Exception):
+
+    non_equivalent = 'EPSG code for input pattern does not match self.epsg'
