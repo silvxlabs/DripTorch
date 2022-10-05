@@ -300,7 +300,6 @@ class TemporalPropagator:
         self.paths = pd.DataFrame(paths)
         self.ignition_crew = ignition_crew
 
-        # TODO: #6 Check for geometry, heat, igniter and leg columns in Propagator.
         # Geometry must of type LineString
 
         # Setup some new dataframe columns
