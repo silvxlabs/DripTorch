@@ -66,7 +66,6 @@ class IgnitionCrew:
     """
 
    
-    # TODO: #3 Write serialization method for IgnitionCrew object
     # TODO: #4 Improve IgnitionCrew __str__() method
 
     def __init__(self, same_velocity: bool = True, same_rate: bool = True):
