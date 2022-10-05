@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Patterns &mdash; DripTorch 0.3.3 documentation</title>
+  <title>Patterns &mdash; DripTorch 0.6.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="https://storage.googleapis.com/holtz-driptorch/gh-repo/img/favicon.ico"/>
@@ -121,6 +121,30 @@ of path parameters</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="driptorch.pattern.Pattern.merge">
+<span class="sig-name descname"><span class="pre">merge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern"><span class="pre">driptorch.pattern.Pattern</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern"><span class="pre">driptorch.pattern.Pattern</span></a></span></span><a class="headerlink" href="#driptorch.pattern.Pattern.merge" title="Permalink to this definition"></a></dt>
+<dd><p>Merge an input pattern with self</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pattern</strong> (<a class="reference internal" href="#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern"><em>Pattern</em></a>) – Input pattern to be merged into self</p></li>
+<li><p><strong>time_offset</strong> (<em>float</em>) – Time offset between patterns (seconds)</p></li>
+<li><p><strong>inplace</strong> (<em>bool</em><em>, </em><em>optional</em>) – Overwrites Pattern object if true, otherwise return new Pattern object. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>EPSGError.non_equivalent</strong> – EPSG code for input pattern does not match self.epsg</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Merged pattern object</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern">Pattern</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="driptorch.pattern.Pattern.to_dict">
 <span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#driptorch.pattern.Pattern.to_dict" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the Pattern path parameters as a dictionary</p>
@@ -221,7 +245,7 @@ through their coordinates.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Holtz Forestry LLC.</p>
+    <p>&#169; Copyright 2022, Silvx Labs LLC.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

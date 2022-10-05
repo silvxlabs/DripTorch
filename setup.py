@@ -23,9 +23,9 @@ setup(
     description='Ignition pattern simulator for prescribed firing techniques',
     long_description=README,
     long_description_content_type="text/markdown",
-    author='Holtz TDS',
-    author_email='lucas@holtztds.com',
-    url='https://github.com/teamholtz/driptorch',
+    author='Silvx Labs',
+    author_email='lucas@silvxlabs.com',
+    url='https://github.com/silvxlabs/DripTorch',
     keywords=['ignition pattern', 'fire',
               'firing techniques', 'prescribed burn'],
     install_requires=[

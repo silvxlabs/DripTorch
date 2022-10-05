@@ -10,18 +10,24 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+from distutils.util import convert_path
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../..'))
 
+# Get the version from the _version file within the package directory
+driptorch_ns = {}
+version_path = convert_path('../../driptorch/_version.py')
+with open(version_path) as f:
+    exec(f.read(), driptorch_ns)
 
 # -- Project information -----------------------------------------------------
 
 project = 'DripTorch'
-copyright = '2022, Holtz Forestry LLC'
+copyright = '2022, Silvx Labs LLC'
 
 # The full version, including alpha/beta/rc tags
-release = '0.3.3'
+release = driptorch_ns['__version__']
 
 
 # -- General configuration ---------------------------------------------------
@@ -62,6 +68,6 @@ html_favicon = 'https://storage.googleapis.com/holtz-driptorch/gh-repo/img/favic
 html_logo = "https://storage.googleapis.com/holtz-driptorch/gh-repo/img/logo-small.png"
 html_theme_options = {
     'logo_only': True,
-    'display_version': False,
+    'display_version': True,
     'style_nav_header_background': '#343131'
 }
