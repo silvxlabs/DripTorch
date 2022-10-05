@@ -469,7 +469,6 @@ class TemporalPropagator:
     def _sync_end_time(self):
         """ Helper method to synchronize end times"""
 
-        # TODO: #7 What about multileg ignition paths when synchronizing end times?
 
         # Get the unique heat indecies
         heats = np.sort(self.paths.heat.unique())
