@@ -1,4 +1,10 @@
-test_polygon =  {
+test_polygon = {
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
@@ -109,3 +115,6 @@ test_polygon =  {
           ]
         ]
       }
+    }
+  ]
+}

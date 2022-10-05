@@ -4,7 +4,7 @@ from shapely.geometry.polygon import Polygon
 
 
 import driptorch as dt
-from driptorch.io import Projector
+from driptorch.io import Projector,read_geojson_polygon
 from tests.resources import testgeoms
 
 
@@ -22,7 +22,7 @@ def test_projector() -> None:
     assert dst_epsg == location_UTM_epsg
 
     projecter = Projector(src_epsg=src_epsg,dst_epsg=dst_epsg)
-    test_polygon_4326: Polygon = shape(testgeoms.test_polygon)
+    test_polygon_4326: Polygon = read_geojson_polygon(testgeoms.test_polygon)
     test_polygon_4326_to_UTM: Polygon = projecter.forward(test_polygon_4326) # Project from lat/lon to UTM
     test_polygon_4326_to_UTM_to_4326: Polygon = projecter.backward(test_polygon_4326_to_UTM) # Project from UTM to lat/lon
 
@@ -37,7 +37,7 @@ def test_projector() -> None:
     
 def test_web_mercator_funcs() -> None:
 
-    test_polygon_4326: Polygon = shape(testgeoms.test_polygon)
+    test_polygon_4326: Polygon = read_geojson_polygon(testgeoms.test_polygon)
     utm_epsg, test_polygon_4326_to_UTM = Projector.web_mercator_to_utm(test_polygon_4326)
 
     test_polygon_4326_to_UTM_to_4326 = Projector.to_web_mercator(test_polygon_4326_to_UTM,utm_epsg)
