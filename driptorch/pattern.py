@@ -300,7 +300,6 @@ class TemporalPropagator:
         self.paths = pd.DataFrame(paths)
         self.ignition_crew = ignition_crew
 
-        # TODO: #6 Check for geometry, heat, igniter and leg columns in Propagator.
         # Geometry must of type LineString
 
         # Setup some new dataframe columns
@@ -470,7 +469,6 @@ class TemporalPropagator:
     def _sync_end_time(self):
         """ Helper method to synchronize end times"""
 
-        # TODO: #7 What about multileg ignition paths when synchronizing end times?
 
         # Get the unique heat indecies
         heats = np.sort(self.paths.heat.unique())
