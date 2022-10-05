@@ -10,11 +10,11 @@ jobs:
     name: Build recipe from PyPI package and build/publish to conda
     steps:
       - name: Publish conda package from PyPI package
-        uses: teamholtz/conda-skeleton-publish@v2
+        uses: silvxlabs/conda-skeleton-publish@v2
         with:
           pypi_package: "driptorch"
           package_version: "latest"
           python_version: "3.10"
-          upload_channel: "holtz"
+          upload_channel: "silvxlabs"
           access_token: ${{ secrets.CONDA_TOKEN }}
           stable: "true"

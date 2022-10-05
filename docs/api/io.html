@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>I/O &mdash; DripTorch 0.3.3 documentation</title>
+  <title>I/O &mdash; DripTorch 0.6.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="https://storage.googleapis.com/holtz-driptorch/gh-repo/img/favicon.ico"/>
@@ -126,12 +126,14 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="driptorch.io.Projector.to_web_mercator">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">to_web_mercator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">shapely.geometry.base.BaseGeometry</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_epsg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">shapely.geometry.base.BaseGeometry</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span></span></span><a class="headerlink" href="#driptorch.io.Projector.to_web_mercator" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">to_web_mercator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">shapely.geometry.base.BaseGeometry</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_epsg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">shapely.geometry.base.BaseGeometry</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#driptorch.io.Projector.to_web_mercator" title="Permalink to this definition"></a></dt>
 <dd><p>Convenience method to project a shapely geometry or GeoJSON feature to web mercator</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>geometry</strong> (<em>BaseGeometry</em><em> | </em><em>dict</em>) – Either a shapely geometry or GeoJSON
+<li><p><strong>Optional</strong><strong>[</strong><strong>BaseGeometry</strong> (<em>geometry</em>) – Either a shapely geometry or GeoJSON
+feature (not a feature collection).</p></li>
+<li><p><strong>dict</strong><strong>]</strong> – Either a shapely geometry or GeoJSON
 feature (not a feature collection).</p></li>
 <li><p><strong>src_epsg</strong> (<em>int</em>) – EPSG code of the CRS that the spatial data are currently projected in.</p></li>
 </ul>
@@ -232,7 +234,7 @@ feature (not a feature collection).</p></li>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Holtz Forestry LLC.</p>
+    <p>&#169; Copyright 2022, Silvx Labs LLC.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
