@@ -65,8 +65,6 @@ class IgnitionCrew:
     in the constructor.
     """
 
-   
-    # TODO: #4 Improve IgnitionCrew __str__() method
 
     def __init__(self, same_velocity: bool = True, same_rate: bool = True):
         """Constructor
