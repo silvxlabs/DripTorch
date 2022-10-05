@@ -65,7 +65,7 @@ class IgnitionCrew:
     in the constructor.
     """
 
-    # TODO: #2 Include same_interval boolean in constructor of IgnitionCrew and implement validator
+   
     # TODO: #3 Write serialization method for IgnitionCrew object
     # TODO: #4 Improve IgnitionCrew __str__() method
 
