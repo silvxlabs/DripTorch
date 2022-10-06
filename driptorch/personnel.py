@@ -5,6 +5,7 @@ Burn operation personnel
 # Core imports
 from __future__ import annotations
 import copy
+import json
 
 # Internal imports
 from .errors import *
@@ -15,31 +16,45 @@ class Igniter:
     carrying a drip torch or a drone dispatching DAIDs.
     """
 
-    def __init__(self, velocity: float, rate: float, rate_units: str = 'meters'):
+    def __init__(self, velocity: float, interval: float, interval_units: str = 'meters'):
         """Constructor computes and stores the interval in ignitions per meter (ipm)
         and ignitions per second (ips).
 
         Args:
             velocity (float): Speed of the igniter (meters/second)
-            rate (float): Ignition rate in ipm (ignitions per meter) or ips (ignitions per second).
-                Use the `rate_units` parameter to specifiy meters or seconds. An interval of 0 specifies
+            interval (float): Ignition interval in ipm (ignitions per meter) or ips (ignitions per second).
+                Use the `interval_units` parameter to specifiy meters or seconds. An interval of 0 specifies
                 a solid ignition line, while a negative value denotes a dashed ignition line and positve a
                 dotted ignition line.
-            rate_units (str, optional): Units for the ignition rate, must be "meters" or "seconds".
+            interval_units (str, optional): Units for the ignition interval, must be "meters" or "seconds".
                 Defaults to 'meters'.
         """
 
         self.velocity = velocity
+        self.interval_units = interval_units
 
         # Solid ignition line
-        if rate == 0:
+        if interval == 0:
             self.interval = 0
 
         # Compute ipm and ips for dashes and dots
-        elif rate_units == 'seconds':
-            self.interval = 1.0 / (rate / velocity)
+        elif interval_units == 'seconds':
+            self.interval = 1.0 / (interval / velocity)
         else:
-            self.interval = 1.0/rate
+            self.interval = 1.0/interval
+
+    @classmethod
+    def from_json(cls, json_str: str) -> Igniter:
+        """Create an Igniter from a JSON string.
+
+        Args:
+            json_str (str): JSON string
+
+        Returns:
+            driptorch.Igniter: Igniter object
+        """
+
+        return Igniter(**json.loads(json_str))
 
     def copy(self) -> Igniter:
         """Sometimes we need to copy a particular Igniter because they're so good
@@ -51,11 +66,14 @@ class Igniter:
 
         return copy.copy(self)
 
-    def __str__(self):
+    def to_json(self) -> str:
+        """Convert the Igniter to a JSON string.
 
-        return (f'Igniter(velocity={self.velocity}, ' +
-                f'interval_ipm={self.interval_ipm}, ' +
-                f'interval_ips={self.interval_ips})')
+        Returns:
+            str: JSON string
+        """
+
+        return json.dumps(self.__dict__)
 
 
 class IgnitionCrew:
@@ -65,21 +83,20 @@ class IgnitionCrew:
     in the constructor.
     """
 
-
-    def __init__(self, same_velocity: bool = True, same_rate: bool = True):
+    def __init__(self, same_velocity: bool = True, same_interval: bool = True):
         """Constructor
 
         Args:
             same_velocity (bool, optional): True requires all igniters of an instance
                 to have equal velocities. Defaults to True.
-            same_rate (bool, optional): True requires all igniter of an instance
-                to have equal rate values. Defaults to True.
+            same_interval (bool, optional): True requires all igniter of an instance
+                to have equal interval values. Defaults to True.
         """
 
         self._same_velocity = same_velocity
-        self._same_rate = same_rate
+        self._same_interval = same_interval
         self._velocity_req = None
-        self._rate_req = None
+        self._interval_req = None
 
         self._igniters = []
 
@@ -119,6 +136,25 @@ class IgnitionCrew:
 
         return cls.from_list(igniters, **kwargs)
 
+    @classmethod
+    def from_json(cls, json_str: str) -> IgnitionCrew:
+        """Create an IgnitionCrew from a JSON string.
+
+        Args:
+            json_str (str): JSON string
+
+        Returns:
+            driptorch.IgnitionCrew: IgnitionCrew object
+        """
+
+        # Load the JSON string into a dictionary
+        crew_dict = json.loads(json_str)
+
+        # Create an ignition crew object
+        return IgnitionCrew.from_list([Igniter(**igniter) for igniter in crew_dict['igniters']],
+                                      same_velocity=crew_dict['same_velocity'],
+                                      same_interval=crew_dict['same_interval'])
+
     def add_igniter(self, igniter: Igniter):
         """Add an igniter to the crew
 
@@ -128,10 +164,22 @@ class IgnitionCrew:
 
         # Check the igniter's velocity
         self._validate_velocity(igniter.velocity)
-        self._validate_rate(igniter.interval)
+        self._validate_interval(igniter.interval)
 
         # If the validator didn't raise an exception, then add the igniter to the crew
         self._igniters.append(igniter)
+
+    def to_json(self) -> str:
+        """Convert the IgnitionCrew to a JSON string.
+
+        Returns:
+            str: JSON string
+        """
+
+        # Create a dictionary to hold the crew's attributes and encode to JSON
+        return json.dumps({'same_velocity': self._same_velocity,
+                           'same_interval': self._same_interval,
+                           'igniters': [igniter.__dict__ for igniter in self._igniters]})
 
     def _validate_velocity(self, velocity: float):
         """Private helper method to validate the velcity of the candidate igniter
@@ -151,23 +199,23 @@ class IgnitionCrew:
             else:
                 self._velocity_req = velocity
 
-    def _validate_rate(self, rate: float):
-        """Private helper method to validate the rate of the candidate igniter
-        against the rate requirement of the crew.
+    def _validate_interval(self, interval: float):
+        """Private helper method to validate the interval of the candidate igniter
+        against the interval requirement of the crew.
 
         Args:
-            rate (float): Ignition rate of the candidate igniter
+            interval (float): Ignition interval of the candidate igniter
 
         Raises:
-            IgniterError: Exception raised if igniter's rate is invalid
+            IgniterError: Exception raised if igniter's interval is invalid
         """
 
-        if self._same_rate:
-            if self._rate_req:
-                if rate != self._rate_req:
-                    raise IgniterError(IgniterError.unequal_rates)
+        if self._same_interval:
+            if self._interval_req:
+                if interval != self._interval_req:
+                    raise IgniterError(IgniterError.unequal_intervals)
             else:
-                self._rate_req = rate
+                self._interval_req = interval
 
     def __getitem__(self, index):
 
@@ -181,10 +229,3 @@ class IgnitionCrew:
 
         for i in range(self.__len__()):
             yield self._igniters[i]
-
-    def __str__(self):
-
-        print_str = f'IgnitionCrew\n'
-        for igniter in self._igniters:
-            print_str += f'{igniter}\n'
-        return print_str
