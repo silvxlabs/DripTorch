@@ -9,9 +9,6 @@ import driptorch as dt
 from driptorch.io import *
 from tests.resources import testgeoms
 
-
-
-
 def test_geojson_io() -> None:
     """Test geoJSON io functionality 
     """
@@ -24,7 +21,6 @@ def test_geojson_io() -> None:
 
     # Test recreated geoJSON for order
     assert geojson_from_Polygon["features"][0]["geometry"]["coordinates"][0][0][0] == testgeoms.test_polygon["features"][0]["geometry"]["coordinates"][0][0][0]
-
 
 def test_projector() -> None:
     """Test the functionality of the Projector.forward(),Projector.backward(), and Projector.estimate_utm_epsg()
@@ -60,10 +56,8 @@ def test_web_mercator_funcs() -> None:
     utm_epsg, test_polygon_4326_to_UTM = Projector.web_mercator_to_utm(test_polygon_4326)
     test_polygon_4326_to_UTM_to_4326 = Projector.to_web_mercator(test_polygon_4326_to_UTM,utm_epsg)
 
-
     # Generate testing objects. Note that projection operations cannot maintain floating point precision 
     # above that of the input points which warrants rounding down.
-
     test_a = [round(x,5) for x in test_polygon_4326.bounds]
     test_b = [round(x,5) for x in test_polygon_4326_to_UTM_to_4326.bounds]
 
@@ -75,7 +69,7 @@ def test_web_mercator_funcs() -> None:
 def test_write_quickfire() -> None:
     """Test io.write_quicfire()
     """
-
+    
     testgeoJSON = testgeoms.test_polygon
     burn_unit = dt.BurnUnit.from_json(testgeoJSON, wind_direction=0)
     firing_area = burn_unit.buffer_control_line(5)
@@ -91,7 +85,6 @@ def test_write_quickfire() -> None:
     elapsed_time = pattern.elapsed_time
 
     # Get domain bounds from the firing unit to normalize coordinates
-
     lower_left = domain.get_bounds().min(axis=0)
 
     # Translate geometries from the firing technique t
@@ -101,6 +94,7 @@ def test_write_quickfire() -> None:
             geom, -lower_left[0], -lower_left[1]))
     geometry = trans_geoms
 
+    # Generate quicfire output
     quicfire_output = write_quicfire(geometry=geometry,times=times,elapsed_time=elapsed_time,resolution=1)
     test_quicfire_path = path.join(path.dirname(__file__), "resources/quicfire_output_test.dat")
     
