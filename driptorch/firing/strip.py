@@ -26,7 +26,7 @@ class Strip(FiringBase):
         # Initialize the base class
         super().__init__(burn_unit, ignition_crew)
 
-    def generate_pattern(self, spacing: float, depth: float, heat_depth: float = None) -> Pattern:
+    def generate_pattern(self, spacing: float, depth: float, heat_depth: float = None, side: str = 'right') -> Pattern:
         """Generate a strip head fire ignition pattern.
 
         Args:
@@ -34,12 +34,13 @@ class Strip(FiringBase):
             depth (float): Horizontal distance in meters between igniters and heats
             heat_depth (float): Depth in meters between igniter heats. If None,
                 heat_depth is equal to igniter depth. Defaults to None.
+            side (str): Side of the wind vector to start the ignition. Defaults to 'right'. Options are 'left' or 'right'.
 
         Returns:
             Pattern: Spatiotemporal ignition pattern
         """
 
-        return self._generate_pattern(spacing=spacing, depth=depth, heat_depth=heat_depth)
+        return self._generate_pattern(spacing=spacing, depth=depth, heat_depth=heat_depth, side=side)
 
     def _init_paths(self, paths: dict, **kwargs) -> dict:
         """Initialize spatial part of the ignition paths.
@@ -58,6 +59,7 @@ class Strip(FiringBase):
         # `generate_pattern()` method of this class)
         depth = kwargs['depth']
         heat_depth = kwargs['heat_depth']
+        side = kwargs['side']
 
         # Extract the bounding extent of the firing area
         bbox = self._burn_unit.get_bounds()
@@ -85,7 +87,7 @@ class Strip(FiringBase):
         # Initialize loop control parameters
         cur_heat = 0
         cur_igniter = 0
-        direction_toggle = True
+        direction_toggle = False if side == 'left' else True
 
         # For each start position, build a path and assign to a heat and igniter
         for i, x in enumerate(x_range):
