@@ -26,16 +26,19 @@ class Flank(FiringBase):
         # Initialize the base class
         super().__init__(burn_unit, ignition_crew)
 
-    def generate_pattern(self, depth=None, heat_depth=None) -> Pattern:
+    def generate_pattern(self, depth: float = None, heat_depth: float = None, side: str = 'right') -> Pattern:
         """Generate a flank fire ignition pattern
+
+        Args:
+            depth (float, optional): Depth in meters between igniters. Defaults to None.
+            heat_depth (float, optional): Depth in meters between heats. Defaults to None.
+            side (str, optional): Side of the wind vector to start the ignition. Defaults to 'right'. Options are 'left' or 'right'.
 
         Returns:
             Pattern: Spatiotemporal ignition pattern
-            depth (float): Depth in meters between igniters. If None, depth is computed by equally spacing igniters. Defaults to None.
-            heat_depth (float): Depth in meters between igniter heats. This argument is ignored if depth is None. Defaults to None.
         """
 
-        return self._generate_pattern(depth=depth, heat_depth=heat_depth, return_trip=True)
+        return self._generate_pattern(depth=depth, heat_depth=heat_depth, side=side, return_trip=True)
 
     def _init_paths(self, paths: dict, **kwargs) -> dict:
         """Initialize spatial part of the ignition paths.
@@ -54,6 +57,7 @@ class Flank(FiringBase):
         # `generate_pattern()` method of this class)
         depth = kwargs['depth']
         heat_depth = kwargs['heat_depth']
+        side = kwargs['side']
 
         # Extract the bounding extent of the firing area
         bbox = self._burn_unit.get_bounds()
@@ -83,6 +87,10 @@ class Flank(FiringBase):
                 else:
                     cur_y = y_range[i] + depth
                 i += 1
+
+        # Flip the y_range if we're on the right side
+        if side == 'left':
+            y_range = y_range[::-1]
 
         # Initialize loop control parameters
         cur_heat = 0
