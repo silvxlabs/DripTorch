@@ -8,7 +8,6 @@ import json
 import os.path as path
 from datetime import datetime
 
-
 # Internal Imports
 import driptorch as dt
 from driptorch.io import *
@@ -58,7 +57,7 @@ def generate_simulations(
     simulation_data = {
         "version":simulation_version,
         "date": simulation_date,
-        "args":kwargs
+        "args": locals()
         }
 
     burn_unit = dt.BurnUnit.from_json(unit_bounds, wind_direction=wind_direction)
@@ -66,47 +65,46 @@ def generate_simulations(
     firing_area = firing_area.buffer_downwind(back_buffer)
     blackline_area = burn_unit.difference(firing_area)
     domain = burn_unit.copy()
-   
+    simulation_data["epsg"] = domain.utm_epsg
+    simulation_data["lower_left"] = domain.get_bounds().min(axis=0).tolist()
     simulation_data["burn_unit"] = burn_unit.to_json()
     simulation_data["firing_area"] = firing_area.to_json()
     simulation_data["blackline"] = blackline_area.to_json()
 
-    dash_igniter = dt.Igniter(ignitor_speed, rate=ignitor_rate)
+    
+    dash_igniter = dt.Igniter(ignitor_speed, ignitor_rate)
     point_crew = dt.IgnitionCrew.clone_igniter(dash_igniter, number_ignitors)
 
     # Inferno Technique
     inferno_technique = dt.firing.Inferno(firing_area)
     inferno_pattern = inferno_technique.generate_pattern()
-    simulation_data["inferno_pattern"] = inferno_pattern.to_json()
-
+    simulation_data["inferno_pattern"] = inferno_pattern.to_dict()
+ 
     # Ring Technique
     ring_technique = dt.firing.Ring(firing_area, point_crew)
     ring_pattern = ring_technique.generate_pattern(offset)
-    simulation_data["ring_pattern"] = ring_pattern.to_json()
+    simulation_data["ring_pattern"] = ring_pattern.to_dict()
 
     # Head Technique
     head_technique = dt.firing.Head(firing_area,point_crew)
     head_pattern = head_technique.generate_pattern(offset)
-    simulation_data["head_pattern"] = head_pattern.to_json()
-
+    simulation_data["head_pattern"] = head_pattern.to_dict()
     # Back Technique
     back_technique = dt.firing.Back(firing_area,point_crew)
     back_pattern = back_technique.generate_pattern(offset)
-    simulation_data["back_pattern"] = back_pattern.to_json()
-
+    simulation_data["back_pattern"] = back_pattern.to_dict()
     if ignitor_depth:
 
         # Flank Technique
         flank_technique = dt.firing.Flank(firing_area,point_crew)
         flank_pattern = flank_technique.generate_pattern(ignitor_depth,heat_depth)
-        simulation_data["flank_pattern"] = flank_pattern.to_json()
-
+        simulation_data["flank_pattern"] = flank_pattern.to_dict()
     if ignitor_depth and ignitor_spacing:
 
         # Strip Technique
         strip_technique = dt.firing.Strip(firing_area,point_crew)
         strip_pattern = strip_technique.generate_pattern(ignitor_spacing,ignitor_depth,heat_depth)
-        simulation_data["strip_pattern"] = strip_pattern.to_json()
+        simulation_data["strip_pattern"] = strip_pattern.to_dict()
 
 
     return simulation_data
