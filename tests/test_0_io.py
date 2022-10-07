@@ -1,12 +1,16 @@
 # External Imports
 from shapely import affinity
 from shapely.geometry.polygon import Polygon
+from shapely.geometry import shape
 import numpy as np
 import os.path as path
+import json
+
 
 # Internal Imports
 import driptorch as dt
 from driptorch.io import *
+
 from tests.resources import testgeoms
 
 def test_geojson_io() -> None:
@@ -69,33 +73,25 @@ def test_web_mercator_funcs() -> None:
 def test_write_quickfire() -> None:
     """Test io.write_quicfire()
     """
-    
-    testgeoJSON = testgeoms.test_polygon
-    burn_unit = dt.BurnUnit.from_json(testgeoJSON, wind_direction=0)
-    firing_area = burn_unit.buffer_control_line(5)
-    firing_area = firing_area.buffer_downwind(20)
-    blackline_area = burn_unit.difference(firing_area)
-    domain = burn_unit.copy()
-    dash_igniter = dt.Igniter(1.8, rate=-1/20)
-    point_crew = dt.IgnitionCrew.clone_igniter(dash_igniter, 2)
-    technique = dt.firing.Ring(firing_area, point_crew)
-    pattern = technique.generate_pattern(50)
-    geometry = pattern.geometry
-    times = pattern.times
-    elapsed_time = pattern.elapsed_time
+    validation_data_path = path.join(path.dirname(__file__),"resources/simulation_0.json")
+    with open(validation_data_path,"r") as file:
+        validation_data = json.load(file)
+        pattern = dt.pattern.Pattern.from_dict(validation_data["ring_pattern"],epsg=validation_data["epsg"])
+        burn_unit = dt.unit.BurnUnit.from_json(validation_data["burn_unit"],wind_direction=validation_data["args"]["wind_direction"])
+        lower_left = validation_data["lower_left"]
+        times = pattern.times
+        geometries = pattern.geometry
+        elapsed_time = pattern.elapsed_time
 
-    # Get domain bounds from the firing unit to normalize coordinates
-    lower_left = domain.get_bounds().min(axis=0)
-
-    # Translate geometries from the firing technique t
+    #Translate geometries from the firing technique t
     trans_geoms = []
-    for geom in geometry:
+    for geom in geometries:
         trans_geoms.append(affinity.translate(
             geom, -lower_left[0], -lower_left[1]))
-    geometry = trans_geoms
+    geometries = trans_geoms
 
     # Generate quicfire output
-    quicfire_output = write_quicfire(geometry=geometry,times=times,elapsed_time=elapsed_time,resolution=1)
+    quicfire_output = write_quicfire(geometry=geometries,times=times,elapsed_time=elapsed_time,resolution=1)
     test_quicfire_path = path.join(path.dirname(__file__), "resources/quicfire_output_test.dat")
     
     with open(test_quicfire_path,"r") as test_quicfire_output:

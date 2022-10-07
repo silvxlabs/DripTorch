@@ -8,8 +8,5 @@ simulation_args = {
     "ignitor_speed" : 1.8,
     "ignitor_rate" : -1/20,
     "number_ignitors" : 2,
-    "offset" : 50,
-    "ignitor_spacing" : 5,
-    "ignitor_depth" : 5,
-    "heat_depth" : 50,
+    "offset" : 50
 }

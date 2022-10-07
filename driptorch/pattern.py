@@ -19,7 +19,7 @@ import numpy as np
 import pandas as pd
 from shapely.errors import ShapelyDeprecationWarning
 from shapely import affinity
-from shapely.geometry import MultiPoint, MultiLineString, LineString
+from shapely.geometry import MultiPoint, MultiLineString, LineString,shape
 
 
 # Turn off Pandas copy warning (or figure out how to do it like the Panda wants)
@@ -68,12 +68,14 @@ class Pattern:
 
         Args:
             paths_dict (dict): Dictionary of path parameters
-            burn_unit (BurnUnit): Burn unit object associated with the ignition pattern
+            epsg (Int): EPSG code of path geometries
 
         Returns:
             Pattern: A new instance of Pattern
         """
 
+
+        paths_dict['geometry'] = [shape(x) for x in paths_dict['geometry'] ]
         return cls(
             paths_dict['heat'],
             paths_dict['igniter'],
@@ -95,7 +97,8 @@ class Pattern:
             'igniter': self.igniter,
             'leg': self.leg,
             'times': self.times,
-            'geometry': self.geometry
+            #convert to geoJSON for storage
+            'geometry': [x.__geo_interface__ for x in self.geometry] 
         }
 
     @staticmethod
