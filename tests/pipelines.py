@@ -80,6 +80,9 @@ def generate_simulations(
     dash_igniter = dt.Igniter(ignitor_speed, ignitor_rate)
     point_crew = dt.IgnitionCrew.clone_igniter(dash_igniter, number_ignitors)
 
+    simulation_data["igniter"] = dash_igniter.to_json()
+    simulation_data["firing_crew"] = point_crew.to_json()
+    
     # Inferno Technique
     inferno_technique = dt.firing.Inferno(firing_area)
     inferno_pattern = inferno_technique.generate_pattern()
