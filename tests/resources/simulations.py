@@ -5,8 +5,8 @@ simulation_args = {
     "front_buffer" : 5,
     "back_buffer" : 20,
     "wind_direction" : 0,
-    "ignitor_speed" : 1.8,
-    "ignitor_rate" : -1/20,
-    "number_ignitors" : 2,
+    "igniter_speed" : 1.8,
+    "igniter_rate" : -1/20,
+    "number_igniters" : 2,
     "offset" : 50
 }

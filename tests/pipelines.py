@@ -20,12 +20,12 @@ def generate_simulations(
     front_buffer: int,
     back_buffer: int,
     wind_direction: float,
-    ignitor_speed: float,
-    ignitor_rate: float,
-    number_ignitors: float,
+    igniter_speed: float,
+    igniter_rate: float,
+    number_igniters: float,
     offset: float,
-    ignitor_spacing: float = None,
-    ignitor_depth: float = None,
+    igniter_spacing: float = None,
+    igniter_depth: float = None,
     heat_depth: float = None,
     **kwargs
 ) -> dict:
@@ -36,15 +36,15 @@ def generate_simulations(
         front_buffer (int): Width (meters) of the front buffer
         back_buffer (int): Width (meters) of the back buffer
         wind_direction (float): Wind direction azimuth
-        ignitor_speed (float): Speed of the igniter (meters/second)
-        ignitor_rate (float): Ignition rate in ipm (ignitions per meter) or ips (ignitions per second).
+        igniter_speed (float): Speed of the igniter (meters/second)
+        igniter_rate (float): Ignition rate in ipm (ignitions per meter) or ips (ignitions per second).
                 Use the `rate_units` parameter to specifiy meters or seconds. An interval of 0 specifies
                 a solid ignition line, while a negative value denotes a dashed ignition line and positve a
                 dotted ignition line.
-        number_ignitors (float): Number of ignitors for simulation
+        number_igniters (float): Number of igniters for simulation
         offset (float): Offset distance in meters from the unit boundary
-        ignitor_spacing (float, optional): Staggering distance in meters between igniters within a heat. Defaults to None.
-        ignitor_depth (float, optional): Depth in meters between igniters. If None, depth is computed by equally spacing igniters. Defaults to None.
+        igniter_spacing (float, optional): Staggering distance in meters between igniters within a heat. Defaults to None.
+        igniter_depth (float, optional): Depth in meters between igniters. If None, depth is computed by equally spacing igniters. Defaults to None.
         heat_depth (float, optional): Depth in meters between igniter heats. This argument is ignored if depth is None. Defaults to None.
 
     Returns:
@@ -77,8 +77,8 @@ def generate_simulations(
     simulation_data["firing_area"] = firing_area.to_json()
     simulation_data["blackline"] = blackline_area.to_json()
 
-    dash_igniter = dt.Igniter(ignitor_speed, ignitor_rate)
-    point_crew = dt.IgnitionCrew.clone_igniter(dash_igniter, number_ignitors)
+    dash_igniter = dt.Igniter(igniter_speed, igniter_rate)
+    point_crew = dt.IgnitionCrew.clone_igniter(dash_igniter, number_igniters)
 
     simulation_data["igniter"] = dash_igniter.to_json()
     simulation_data["firing_crew"] = point_crew.to_json()
@@ -101,18 +101,18 @@ def generate_simulations(
     back_technique = dt.firing.Back(firing_area, point_crew)
     back_pattern = back_technique.generate_pattern(offset)
     simulation_data["back_pattern"] = back_pattern.to_dict()
-    if ignitor_depth:
+    if igniter_depth:
 
         # Flank Technique
         flank_technique = dt.firing.Flank(firing_area, point_crew)
-        flank_pattern = flank_technique.generate_pattern(ignitor_depth, heat_depth)
+        flank_pattern = flank_technique.generate_pattern(igniter_depth, heat_depth)
         simulation_data["flank_pattern"] = flank_pattern.to_dict()
-    if ignitor_depth and ignitor_spacing:
+    if igniter_depth and igniter_spacing:
 
         # Strip Technique
         strip_technique = dt.firing.Strip(firing_area, point_crew)
         strip_pattern = strip_technique.generate_pattern(
-            ignitor_spacing, ignitor_depth, heat_depth
+            igniter_spacing, igniter_depth, heat_depth
         )
         simulation_data["strip_pattern"] = strip_pattern.to_dict()
 

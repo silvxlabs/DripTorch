@@ -28,7 +28,6 @@ To run these tests, call "pytest -ss -v" from the terminal.
 """
 
 SIMULATION_PATH = "resources/simulation_0.json"
-QF_VALIDATION_PATH = "resources/quicfire_output_test.dat"
 
 def test_igniter() -> None:
     """Test personnel.Igniter() and personnel.IgnitionCrew() functionality
@@ -37,8 +36,8 @@ def test_igniter() -> None:
     
     with open(validation_data_path, "r") as file:
         validation_data = json.load(file)
-    igniter_test = dt.igniter(validation_data["args"]["ignitor_speed"],validation_data["args"]["ignitor_speed"])
-    ignition_crew_test = dt.IgnitionCrew.clone_igniter(igniter_test,validation_data["args"]["number_ignitors"])
+    igniter_test = dt.igniter(validation_data["args"]["igniter_speed"],validation_data["args"]["igniter_speed"])
+    ignition_crew_test = dt.IgnitionCrew.clone_igniter(igniter_test,validation_data["args"]["number_igniters"])
     
     igniter_validation = dt.Igniter().from_json(validation_data["igniter"])
     ignition_crew_validation = dt.IgnitionCrew.from_json(validation_data["firing_crew"])

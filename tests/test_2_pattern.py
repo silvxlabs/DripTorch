@@ -173,11 +173,11 @@ def test_temporal_propgation() -> None:
         qf_validation_data = "\n".join(file.readlines())
 
     dash_igniter = dt.Igniter(
-        validation_data["args"]["ignitor_speed"],
-        validation_data["args"]["ignitor_rate"],
+        validation_data["args"]["igniter_speed"],
+        validation_data["args"]["igniter_rate"],
     )
     point_crew = dt.IgnitionCrew.clone_igniter(
-        dash_igniter, validation_data["args"]["number_ignitors"]
+        dash_igniter, validation_data["args"]["number_igniters"]
     )
 
     firing_area = dt.BurnUnit.from_json(
