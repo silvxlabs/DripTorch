@@ -21,6 +21,7 @@ and the construct of "Test data" for data generated at run time.
 Test data is compared against validation data to assert the functionality of
 class objects and their associated methods.
 
+To run these tests, call "pytest -ss -v" from the terminal.
 """
 
 def test_geojson_io() -> None:
