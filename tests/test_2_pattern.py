@@ -1,4 +1,5 @@
 # External Imports
+from unicodedata import decimal
 from shapely import affinity
 from shapely.geometry.polygon import Polygon
 from shapely.geometry import shape
@@ -59,6 +60,33 @@ def test_pattern_io() -> None:
     test_b = validation_data["head_pattern"]["times"]
     assert test_a == test_b
 
+    # Write pattern to quicfire and then open it back up
+    test_a = qf_validation_data.split("/")[-1].split("\n").remove("")
+    fd, pth = tempfile.mkstemp()
+    test_pattern_1.to_quicfire(test_burn_unit, filename=pth)
+    with open(pth, "r") as file:
+        test_b = "\n".join(file.readlines()).split("/")[-1].split("\n").remove("")
+    os.close(fd)
+    assert test_a == test_b
+
+
+def test_merge() -> None:
+    validation_data_path = path.join(path.dirname(__file__), SIMULATION_PATH)
+    qf_validation_data_path = path.join(path.dirname(__file__), QF_VALIDATION_PATH)
+
+    with open(validation_data_path, "r") as file:
+        validation_data = json.load(file)
+
+    with open(qf_validation_data_path, "r") as file:
+        qf_validation_data = "\n".join(file.readlines())
+
+    test_pattern_0 = dt.pattern.Pattern.from_dict(
+        validation_data["head_pattern"], epsg=validation_data["epsg"]
+    )
+    test_pattern_1 = dt.pattern.Pattern.from_dict(
+        validation_data["ring_pattern"], epsg=validation_data["epsg"]
+    )
+
     merge_0 = test_pattern_0.merge(test_pattern_1)
     merge_1 = test_pattern_1.merge(test_pattern_0)
 
@@ -77,6 +105,25 @@ def test_pattern_io() -> None:
         test_b,
         decimal=5,
         err_msg="\nMerged pattern elapsed times are not equivalent.\n",
+    )
+
+
+def test_translate() -> None:
+
+    validation_data_path = path.join(path.dirname(__file__), SIMULATION_PATH)
+    qf_validation_data_path = path.join(path.dirname(__file__), QF_VALIDATION_PATH)
+
+    with open(validation_data_path, "r") as file:
+        validation_data = json.load(file)
+
+    with open(qf_validation_data_path, "r") as file:
+        qf_validation_data = "\n".join(file.readlines())
+
+    test_pattern_0 = dt.pattern.Pattern.from_dict(
+        validation_data["head_pattern"], epsg=validation_data["epsg"]
+    )
+    test_pattern_1 = dt.pattern.Pattern.from_dict(
+        validation_data["ring_pattern"], epsg=validation_data["epsg"]
     )
 
     x_off = 100
@@ -106,12 +153,46 @@ def test_pattern_io() -> None:
         err_msg="\nTranslated geometries are not aligned.\n",
     )
 
-    test_a = qf_validation_data.split("/")[-1].split("\n").remove("")
-    # Write pattern to quicfire and then open it back up
-    fd, pth = tempfile.mkstemp()
-    test_pattern_1.to_quicfire(test_burn_unit, filename=pth)
-    with open(pth, "r") as file:
-        test_b = "\n".join(file.readlines()).split("/")[-1].split("\n").remove("")
-    os.close(fd)
 
-    assert test_a == test_b
+def test_temporal_propgation() -> None:
+
+    validation_data_path = path.join(path.dirname(__file__), SIMULATION_PATH)
+    qf_validation_data_path = path.join(path.dirname(__file__), QF_VALIDATION_PATH)
+
+    with open(validation_data_path, "r") as file:
+        validation_data = json.load(file)
+
+    with open(qf_validation_data_path, "r") as file:
+        qf_validation_data = "\n".join(file.readlines())
+
+    dash_igniter = dt.Igniter(
+        validation_data["args"]["ignitor_speed"],
+        validation_data["args"]["ignitor_rate"],
+    )
+    point_crew = dt.IgnitionCrew.clone_igniter(
+        dash_igniter, validation_data["args"]["number_ignitors"]
+    )
+
+    firing_area = dt.BurnUnit.from_json(
+        validation_data["firing_area"],
+        wind_direction=validation_data["args"]["wind_direction"],
+    )
+
+    ring_technique = dt.firing.Ring(firing_area, point_crew)
+    ring_pattern_test = ring_technique.generate_pattern(
+        validation_data["args"]["offset"]
+    )
+
+    ring_pattern_validation = dt.Pattern.from_dict(
+        validation_data["ring_pattern"], epsg=validation_data["epsg"]
+    )
+
+    test_a = list(itertools.chain.from_iterable(ring_pattern_test.times))
+    test_b = list(itertools.chain.from_iterable(ring_pattern_validation.times))
+
+    assert_array_almost_equal(
+        test_a,
+        test_b,
+        decimal=5,
+        err_msg="\n Test and validation times are not aligned.\n",
+    )
