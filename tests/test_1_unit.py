@@ -1,6 +1,7 @@
 # External Imports
 from shapely import affinity
 from shapely.geometry.polygon import Polygon
+from shapely.geometry import shape
 import numpy as np
 from numpy.testing import assert_array_almost_equal
 import json
@@ -11,8 +12,6 @@ from datetime import datetime
 
 # Internal Imports
 import driptorch as dt
-from driptorch.io import *
-from driptorch._version import __version__
 from tests.resources import simulations
 
 """
