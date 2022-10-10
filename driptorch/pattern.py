@@ -320,7 +320,7 @@ class TemporalPropagator:
         self.return_trip = return_trip
 
     def forward(self, paths, ignition_crew, time_offset_heat):
-
+        print(time_offset_heat)
         # Create a Pandas DataFrame from the initialized paths dictionary
         self.paths = pd.DataFrame(paths)
         self.ignition_crew = ignition_crew
@@ -353,7 +353,7 @@ class TemporalPropagator:
 
         return self.paths.to_dict(orient="list")
 
-    def _init_path_time(self, spacing: float, time_offset_heat=0):
+    def _init_path_time(self, spacing: float, time_offset_heat):
         """Helper method to run the initial time propagation.
 
         Args:
