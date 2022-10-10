@@ -1,4 +1,3 @@
-
 # Internal imports
 from ..pattern import Pattern, TemporalPropagator
 from ..personnel import IgnitionCrew
@@ -10,7 +9,6 @@ from shapely.geometry import LineString
 
 
 class FiringBase:
-
     def __init__(self, burn_unit: BurnUnit, ignition_crew: IgnitionCrew):
         """Constructor
 
@@ -34,21 +32,22 @@ class FiringBase:
         empty_paths = Pattern.empty_path_dict()
 
         # Need to wind-align the burn unit for laying out paths
-        if kwargs.get('align', True):
+        if kwargs.get("align", True):
             self._burn_unit._align()
 
         # Run the path initialization method
         init_paths = self._init_paths(empty_paths, **kwargs)
 
         # Now we can unalign the paths before passing to the propagator
-        if kwargs.get('align', True):
-            init_paths['geometry'] = self._unalign(init_paths['geometry'])
+        if kwargs.get("align", True):
+            init_paths["geometry"] = self._unalign(init_paths["geometry"])
 
         # Configure the propagator for pushing time through the paths
         propagator = TemporalPropagator(
-            kwargs.get('spacing', 0),
-            sync_end_time=kwargs.get('sync_end_time', False),
-            return_trip=kwargs.get('return_trip', False),
+            kwargs.get("spacing", 0),
+            sync_end_time=kwargs.get("sync_end_time", False),
+            return_trip=kwargs.get("return_trip", False),
+            time_offset_heat=kwargs.get("time_offset_heat", 0),
         )
 
         # Compute arrival times for each coordinate in each path
@@ -85,8 +84,9 @@ class FiringBase:
         for line in lines:
             unaligned_lines.append(
                 affinity.rotate(
-                    line, -self._burn_unit.wind_alignment_angle,
-                    self._burn_unit.centroid
+                    line,
+                    -self._burn_unit.wind_alignment_angle,
+                    self._burn_unit.centroid,
                 )
             )
 
