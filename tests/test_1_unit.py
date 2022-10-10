@@ -58,9 +58,10 @@ def test_align_unalign() -> None:
     unaligned = aligned.copy()
     unaligned._unalign()
 
-    test_a = [x for x in burn_unit.polygon.exterior.coords]
-    test_b = [x for x in unaligned.polygon.exterior.coords]
-    assert test_a == test_b
+    test_a = list(burn_unit.polygon.exterior.coords)
+    test_b = list(unaligned.polygon.exterior.coords)
+    assert_array_almost_equal(test_a,test_b,decimal=5,err_msg="\nTest burn_unit and augmented burn_unit are not aligned\n")
+
 
 
 def test_buffer_functions() -> None:
@@ -81,20 +82,26 @@ def test_buffer_functions() -> None:
     validation_blackline_area = dt.unit.BurnUnit.from_json(validation_data["blackline"],wind_direction=validation_data["args"]["wind_direction"])
 
     # Build new firing area and test against the validation data
-    test_a = [truncate(x) for x in firing_area.polygon.exterior.coords]
-    test_b = [truncate(x) for x in validation_firing_area.polygon.exterior.coords]
-    assert test_a == test_b
+    test_a = list(firing_area.polygon.exterior.coords)
+    test_b = list(validation_firing_area.polygon.exterior.coords)
+    assert_array_almost_equal(test_a,test_b,decimal=5,err_msg="\nTest firing_area and validation firing_area are not aligned\n")
+
 
     # Build new blackline area and test agains the validation data
-    test_a = [truncate(x) for x in blackline_area.polygon.exterior.coords]
-    test_b = [truncate(x) for x in validation_blackline_area.polygon.exterior.coords]
-    assert test_a == test_b
+    test_a = list(blackline_area.polygon.exterior.coords)
+    test_b = list(validation_blackline_area.polygon.exterior.coords)
+    assert_array_almost_equal(test_a,test_b,decimal=5,err_msg="\nTest blackline_area and validation blackline_area are not aligned\n")
+
 
 def test_polygon_splitter() -> None:
+    """Test PolygonSplitter() functionality
+    """
+
     validation_data_path = path.join(path.dirname(__file__),"resources/simulation_0.json")
     with open(validation_data_path,"r") as file:
         validation_data = json.load(file)
 
+    # Generate validation and test data
     burn_unit_validation = dt.unit.BurnUnit.from_json(validation_data["burn_unit"],wind_direction=validation_data["args"]["wind_direction"])
     fore_validation = shape(validation_data["burn_unit_fore"])
     aft_validation = shape(validation_data["burn_unit_aft"])

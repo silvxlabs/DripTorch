@@ -25,8 +25,13 @@ def test_geojson_io() -> None:
     geojson_from_Polygon = write_geojson([test_polygon_4326],4326)
 
     # Test recreated geoJSON for order
-    assert geojson_from_Polygon["features"][0]["geometry"]["coordinates"][0][0][0] == testgeoms.test_polygon["features"][0]["geometry"]["coordinates"][0][0][0]
+    test_a = geojson_from_Polygon["features"][0]["geometry"]["coordinates"][0]
+    test_b = testgeoms.test_polygon["features"][0]["geometry"]["coordinates"][0]
+    
+    assert_array_almost_equal(test_a,test_b,decimal=5,err_msg="\nTest polygon and validation polygon are not aligned\n")
 
+    
+    
 def test_projector() -> None:
     """Test the functionality of the Projector.forward(),Projector.backward(), and Projector.estimate_utm_epsg()
     """
@@ -47,11 +52,12 @@ def test_projector() -> None:
     # Generate testing objects. Note that projection operations cannot maintain floating point precision 
     # above that of the input points which warrants rounding down.
 
-    test_a = [round(x,5) for x in test_polygon_4326.bounds]
-    test_b = [round(x,5) for x in test_polygon_4326_to_UTM_to_4326.bounds]
+    test_a = test_polygon_4326.bounds
+    test_b = test_polygon_4326_to_UTM_to_4326.bounds
 
     # Test Projector.forward and Projector.backward
-    assert test_a == test_b
+    assert_array_almost_equal(test_a,test_b,decimal=5,err_msg="\nTest polygon and rectified polygon are not aligned\n")
+
     
 def test_web_mercator_funcs() -> None:
     """Test web mercator functionality
@@ -63,11 +69,12 @@ def test_web_mercator_funcs() -> None:
 
     # Generate testing objects. Note that projection operations cannot maintain floating point precision 
     # above that of the input points which warrants rounding down.
-    test_a = [round(x,5) for x in test_polygon_4326.bounds]
-    test_b = [round(x,5) for x in test_polygon_4326_to_UTM_to_4326.bounds]
+    test_a = test_polygon_4326.bounds
+    test_b = test_polygon_4326_to_UTM_to_4326.bounds
 
     # Test Projector.forward and Projector.backward
-    assert test_a == test_b
+    assert_array_almost_equal(test_a,test_b,decimal=5,err_msg="\nTest polygon and rectified polygon are not aligned\n")
+
 
 
     
@@ -99,4 +106,4 @@ def test_write_quickfire() -> None:
         # Truncate for speed
         test_a = '\n'.join(test_quicfire_output.readlines()).replace("\n\n","\n").split("/")[1].strip("\n").split(" ")[:20]
         test_b = quicfire_output.replace("\n\n","\n").split("/")[1].strip("\n").split(" ")[:20]
-        assert test_a == test_b
+    assert test_a == test_b
