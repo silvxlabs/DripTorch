@@ -5,6 +5,7 @@ from shapely.geometry import shape
 import numpy as np
 import os.path as path
 import json
+from numpy.testing import assert_array_almost_equal
 
 
 # Internal Imports
@@ -99,4 +100,3 @@ def test_write_quickfire() -> None:
         test_a = '\n'.join(test_quicfire_output.readlines()).replace("\n\n","\n").split("/")[1].strip("\n").split(" ")[:20]
         test_b = quicfire_output.replace("\n\n","\n").split("/")[1].strip("\n").split(" ")[:20]
         assert test_a == test_b
-    

@@ -61,6 +61,14 @@ def generate_simulations(
         }
 
     burn_unit = dt.BurnUnit.from_json(unit_bounds, wind_direction=wind_direction)
+    polygonsplitter = dt.unit.PolygonSplitter()
+    polygonsplitter.split(burn_unit.polygon)
+    simulation_data["burn_unit_fore"] = polygonsplitter.fore.__geo_interface__
+    simulation_data["burn_unit_aft"] = polygonsplitter.aft.__geo_interface__
+    simulation_data["burn_unit_port"] = polygonsplitter.port.__geo_interface__
+    simulation_data["burn_unit_starboard"] = polygonsplitter.starboard.__geo_interface__
+
+
     firing_area = burn_unit.buffer_control_line(front_buffer)
     firing_area = firing_area.buffer_downwind(back_buffer)
     blackline_area = burn_unit.difference(firing_area)

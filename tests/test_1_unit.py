@@ -2,6 +2,7 @@
 from shapely import affinity
 from shapely.geometry.polygon import Polygon
 import numpy as np
+from numpy.testing import assert_array_almost_equal
 import json
 
 # Core Imports
@@ -34,6 +35,12 @@ def test_json_from_to() -> None:
     test_b = dt.unit.BurnUnit.from_json(new_json,wind_direction=validation_data["args"]["wind_direction"]).polygon.bounds
     assert test_a == test_b
 
+    test_a = burn_unit.polygon_segments
+    test_b = burn_unit.polygon_segments
+    assert test_a == test_b
+
+
+
 
 
 def test_align_unalign() -> None:
@@ -43,7 +50,7 @@ def test_align_unalign() -> None:
     with open(validation_data_path,"r") as file:
         validation_data = json.load(file)
 
-     burn_unit = dt.unit.BurnUnit.from_json(validation_data["burn_unit"],wind_direction=validation_data["args"]["wind_direction"])
+    burn_unit = dt.unit.BurnUnit.from_json(validation_data["burn_unit"],wind_direction=validation_data["args"]["wind_direction"])
    
     # Align the burn unit, then unalign and compare to the original
     aligned = burn_unit.copy()
@@ -82,3 +89,38 @@ def test_buffer_functions() -> None:
     test_a = [truncate(x) for x in blackline_area.polygon.exterior.coords]
     test_b = [truncate(x) for x in validation_blackline_area.polygon.exterior.coords]
     assert test_a == test_b
+
+def test_polygon_splitter() -> None:
+    validation_data_path = path.join(path.dirname(__file__),"resources/simulation_0.json")
+    with open(validation_data_path,"r") as file:
+        validation_data = json.load(file)
+
+    burn_unit_validation = dt.unit.BurnUnit.from_json(validation_data["burn_unit"],wind_direction=validation_data["args"]["wind_direction"])
+    fore_validation = shape(validation_data["burn_unit_fore"])
+    aft_validation = shape(validation_data["burn_unit_aft"])
+    port_validation = shape(validation_data["burn_unit_port"])
+    starboard_validation = shape(validation_data["burn_unit_starboard"])
+    polygon_splitter_test = dt.unit.PolygonSplitter()
+    polygon_splitter_test.split(burn_unit_validation.polygon)
+
+    # Test PolygonSplitter.split() functionality 
+
+    # Check Fore
+    test_a = list(polygon_splitter_test.fore.coords)
+    test_b = list(fore_validation.coords)
+    assert_array_almost_equal(test_a,test_b,decimal=5,err_msg="\nTest fore and validation fore are not aligned\n")
+    
+    # Check Aft
+    test_a = list(polygon_splitter_test.aft.coords)
+    test_b = list(aft_validation.coords)
+    assert_array_almost_equal(test_a,test_b,decimal=5,err_msg="\nTest aft and validation aft are not aligned\n")
+
+    # Check Port
+    test_a = list(polygon_splitter_test.port.coords)
+    test_b = list(port_validation.coords)
+    assert_array_almost_equal(test_a,test_b,decimal=5,err_msg="\nTest port and validation port are not aligned\n")
+
+    # Check Starboard
+    test_a = list(polygon_splitter_test.starboard.coords)
+    test_b = list(starboard_validation.coords)
+    assert_array_almost_equal(test_a,test_b,decimal=5,err_msg="\nTest starboard and validation starboard are not aligned\n")
