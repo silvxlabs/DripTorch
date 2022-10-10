@@ -16,7 +16,13 @@ from driptorch._version import __version__
 from tests.resources import simulations
 
 """
-Testing functions for class objects of unit.py
+The following defined functions are for testing class objects of unit.py.
+
+We use the construct of "Validation data" for previously generated data,
+and the construct of "Test data" for data generated at run time.
+
+Test data is compared against validation data to assert the functionality of
+class objects and their associated methods.
 
 """
 

@@ -3,16 +3,25 @@ from shapely import affinity
 from shapely.geometry.polygon import Polygon
 from shapely.geometry import shape
 import numpy as np
+from numpy.testing import assert_array_almost_equal
 import os.path as path
 import json
-from numpy.testing import assert_array_almost_equal
-
 
 # Internal Imports
 import driptorch as dt
 from driptorch.io import *
-
 from tests.resources import testgeoms
+
+"""
+The following defined functions are for testing class objects of io.py.
+
+We use the construct of "Validation data" for previously generated data,
+and the construct of "Test data" for data generated at run time.
+
+Test data is compared against validation data to assert the functionality of
+class objects and their associated methods.
+
+"""
 
 def test_geojson_io() -> None:
     """Test geoJSON io functionality 
