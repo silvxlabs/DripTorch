@@ -14,10 +14,8 @@ import numpy as np
 
 
 class Strip(FiringBase):
-
     def __init__(self, burn_unit: BurnUnit, ignition_crew: IgnitionCrew):
         """Constructor
-
         Args:
             burn_unit (BurnUnit): Area bounding the ignition paths
             ignition_crew (IgnitionCrew): Ignition crew assigned to the burn
@@ -26,40 +24,41 @@ class Strip(FiringBase):
         # Initialize the base class
         super().__init__(burn_unit, ignition_crew)
 
-    def generate_pattern(self, spacing: float, depth: float, heat_depth: float = None, side: str = 'right') -> Pattern:
-        """Generate a strip head fire ignition pattern.
-
+    def generate_pattern(
+        self, depth=None, heat_depth=None, time_offset_heat=None
+    ) -> Pattern:
+        """ Generate a strip ignition pattern
+    
         Args:
-            spacing (float): Staggering distance in meters between igniters within a heat
-            depth (float): Horizontal distance in meters between igniters and heats
-            heat_depth (float): Depth in meters between igniter heats. If None,
-                heat_depth is equal to igniter depth. Defaults to None.
-            side (str): Side of the wind vector to start the ignition. Defaults to 'right'. Options are 'left' or 'right'.
+            depth (float): Depth in meters between igniters. If None, depth is computed by equally spacing igniters. Defaults to None.
+            heat_depth (float): Depth in meters between igniter heats. This argument is ignored if depth is None. Defaults to None.
+            time_offset_heat (float): Time delay between sequential heats. Defaults to None.
 
         Returns:
             Pattern: Spatiotemporal ignition pattern
         """
 
-        return self._generate_pattern(spacing=spacing, depth=depth, heat_depth=heat_depth, side=side)
+        return self._generate_pattern(
+            depth=depth,
+            heat_depth=heat_depth,
+            return_trip=True,
+            time_offset_heat=time_offset_heat,
+        )
 
     def _init_paths(self, paths: dict, **kwargs) -> dict:
         """Initialize spatial part of the ignition paths.
-
         Notes:
             Overrides the `_init_paths()` method in the base class.
-
         Args:
             paths (dict): Empty pattern path dictionary
-
         Returns:
             dict: Pattern path dictionary with initial untimed paths
         """
 
         # Get the depth parameter from the keyword args (This is required in the
         # `generate_pattern()` method of this class)
-        depth = kwargs['depth']
-        heat_depth = kwargs['heat_depth']
-        side = kwargs['side']
+        depth = kwargs["depth"]
+        heat_depth = kwargs["heat_depth"]
 
         # Extract the bounding extent of the firing area
         bbox = self._burn_unit.get_bounds()
@@ -78,7 +77,7 @@ class Strip(FiringBase):
             i = 0
             while cur_x < x_max:
                 x_range.append(cur_x)
-                if (i+1) % len(self._ignition_crew) == 0:
+                if (i + 1) % len(self._ignition_crew) == 0:
                     cur_x = x_range[i] + heat_depth
                 else:
                     cur_x = x_range[i] + depth
@@ -87,7 +86,7 @@ class Strip(FiringBase):
         # Initialize loop control parameters
         cur_heat = 0
         cur_igniter = 0
-        direction_toggle = False if side == 'left' else True
+        direction_toggle = True
 
         # For each start position, build a path and assign to a heat and igniter
         for i, x in enumerate(x_range):
@@ -109,14 +108,14 @@ class Strip(FiringBase):
 
             # Assign the path to a heat, igniter and leg
             for j, part in enumerate(line):
-                paths['heat'].append(cur_heat)
-                paths['igniter'].append(cur_igniter)
-                paths['leg'].append(j)
-                paths['geometry'].append(part)
+                paths["heat"].append(cur_heat)
+                paths["igniter"].append(cur_igniter)
+                paths["leg"].append(j)
+                paths["geometry"].append(part)
 
             # Update loop control parameters
             cur_igniter += 1
-            if (i+1) % len(self._ignition_crew) == 0:
+            if (i + 1) % len(self._ignition_crew) == 0:
                 cur_igniter = 0
                 cur_heat += 1
                 direction_toggle ^= True

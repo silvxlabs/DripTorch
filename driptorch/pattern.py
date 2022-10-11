@@ -317,7 +317,6 @@ class TemporalPropagator:
         self, spacing: float = 0, sync_end_time: bool = False, return_trip: bool = False
     ):
         """Class constructor
-
         Args:
             spacing (float): Stagger spacing between igniters in a heat (meters). Defaults to 0.
             sync_end_time (bool, optional): If true synchronize igniters within
@@ -331,7 +330,7 @@ class TemporalPropagator:
         self.sync_end_time = sync_end_time
         self.return_trip = return_trip
 
-    def forward(self, paths, ignition_crew):
+    def forward(self, paths, ignition_crew, time_offset_heat):
 
         # Create a Pandas DataFrame from the initialized paths dictionary
         self.paths = pd.DataFrame(paths)
@@ -351,7 +350,7 @@ class TemporalPropagator:
         )
 
         # Run the initial forward pass through the paths
-        self._init_path_time(self.spacing)
+        self._init_path_time(self.spacing, time_offset_heat)
 
         # Synchronize within heat end times if specified (e.g. ring ignition)
         if self.sync_end_time:
@@ -365,9 +364,8 @@ class TemporalPropagator:
 
         return self.paths.to_dict(orient="list")
 
-    def _init_path_time(self, spacing: float):
+    def _init_path_time(self, spacing: float, time_offset_heat):
         """Helper method to run the initial time propagation.
-
         Args:
             spacing (float): Stagger spacing between igniters in a heat
         """
@@ -414,6 +412,9 @@ class TemporalPropagator:
                 prev_heat_max_end_time = self.paths.loc[
                     self.paths.heat == i - 1, "end_time"
                 ].max()
+
+                # Add time offset between heats
+                prev_heat_max_end_time += time_offset_heat
 
                 # The current igniter's start time is the previous heat max end time
                 path.start_time = prev_heat_max_end_time
@@ -479,13 +480,11 @@ class TemporalPropagator:
         velocity: float,
     ) -> float:
         """Compute the offset time between the previous and current igniters
-
         Args:
             prev_igniter (pd.Series): Dataframe row of previous igniter
             cur_igniter (pd.Series): Dataframe row of current igniter
             spacing (float): Stagger spacing (meters)
             velocity (float): Speed of the igniter (meters/second)
-
         Returns:
             float: Offset time between previous and current igniters
         """

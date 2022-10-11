@@ -14,7 +14,6 @@ from shapely.geometry import Point, MultiPoint, LineString, MultiLineString
 
 
 class Flank(FiringBase):
-
     def __init__(self, burn_unit: BurnUnit, ignition_crew: IgnitionCrew):
         """Constructor
 
@@ -26,19 +25,26 @@ class Flank(FiringBase):
         # Initialize the base class
         super().__init__(burn_unit, ignition_crew)
 
-    def generate_pattern(self, depth: float = None, heat_depth: float = None, side: str = 'right') -> Pattern:
-        """Generate a flank fire ignition pattern
-
+    def generate_pattern(
+        self, depth=None, heat_depth=None, time_offset_heat=None
+    ) -> Pattern:
+        """ Generate a flank ignition pattern
+    
         Args:
-            depth (float, optional): Depth in meters between igniters. Defaults to None.
-            heat_depth (float, optional): Depth in meters between heats. Defaults to None.
-            side (str, optional): Side of the wind vector to start the ignition. Defaults to 'right'. Options are 'left' or 'right'.
+            depth (float): Depth in meters between igniters. If None, depth is computed by equally spacing igniters. Defaults to None.
+            heat_depth (float): Depth in meters between igniter heats. This argument is ignored if depth is None. Defaults to None.
+            time_offset_heat (float): Time delay between sequential heats. Defaults to None.
 
         Returns:
             Pattern: Spatiotemporal ignition pattern
         """
 
-        return self._generate_pattern(depth=depth, heat_depth=heat_depth, side=side, return_trip=True)
+        return self._generate_pattern(
+            depth=depth,
+            heat_depth=heat_depth,
+            return_trip=True,
+            time_offset_heat=time_offset_heat,
+        )
 
     def _init_paths(self, paths: dict, **kwargs) -> dict:
         """Initialize spatial part of the ignition paths.
@@ -55,9 +61,8 @@ class Flank(FiringBase):
 
         # Get the depth parameter from the keyword args (This is required in the
         # `generate_pattern()` method of this class)
-        depth = kwargs['depth']
-        heat_depth = kwargs['heat_depth']
-        side = kwargs['side']
+        depth = kwargs["depth"]
+        heat_depth = kwargs["heat_depth"]
 
         # Extract the bounding extent of the firing area
         bbox = self._burn_unit.get_bounds()
@@ -82,15 +87,11 @@ class Flank(FiringBase):
             i = 0
             while cur_y < y_max:
                 y_range.append(cur_y)
-                if (i+1) % len(self._ignition_crew) == 0:
+                if (i + 1) % len(self._ignition_crew) == 0:
                     cur_y = y_range[i] + heat_depth
                 else:
                     cur_y = y_range[i] + depth
                 i += 1
-
-        # Flip the y_range if we're on the right side
-        if side == 'left':
-            y_range = y_range[::-1]
 
         # Initialize loop control parameters
         cur_heat = 0
@@ -117,14 +118,14 @@ class Flank(FiringBase):
 
             # Assign the path to a heat, igniter and leg
             for j, part in enumerate(line):
-                paths['heat'].append(cur_heat)
-                paths['igniter'].append(cur_igniter)
-                paths['leg'].append(j)
-                paths['geometry'].append(part)
+                paths["heat"].append(cur_heat)
+                paths["igniter"].append(cur_igniter)
+                paths["leg"].append(j)
+                paths["geometry"].append(part)
 
             # Update loop control parameters
             cur_igniter += 1
-            if (i+1) % len(self._ignition_crew) == 0:
+            if (i + 1) % len(self._ignition_crew) == 0:
                 cur_igniter = 0
                 cur_heat += 1
 
