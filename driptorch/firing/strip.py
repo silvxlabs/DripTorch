@@ -26,10 +26,11 @@ class Strip(FiringBase):
         # Initialize the base class
         super().__init__(burn_unit, ignition_crew)
 
-    def generate_pattern(self, depth: float = None, heat_depth: float = None, side: str = 'right', time_offset_heat: float = 0) -> Pattern:
+    def generate_pattern(self, spacing:float,depth: float = None, heat_depth: float = None, side: str = 'right', time_offset_heat: float = 0) -> Pattern:
         """Generate a flank fire ignition pattern
 
         Args:
+            spacing (float): Staggering distance in meters between igniters within a heat
             depth (float, optional): Depth in meters between igniters. Defaults to None.
             heat_depth (float, optional): Depth in meters between heats. Defaults to None.
             side (str, optional): Side of the wind vector to start the ignition. Defaults to 'right'. Options are 'left' or 'right'.
@@ -39,7 +40,7 @@ class Strip(FiringBase):
             Pattern: Spatiotemporal ignition pattern
         """
 
-        return self._generate_pattern(depth=depth, heat_depth=heat_depth, side=side, return_trip=True,time_offset_heat=time_offset_heat)
+        return self._generate_pattern(spacing=spacing,depth=depth, heat_depth=heat_depth, side=side, return_trip=True,time_offset_heat=time_offset_heat)
 
     def _init_paths(self, paths: dict, **kwargs) -> dict:
         """Initialize spatial part of the ignition paths.
