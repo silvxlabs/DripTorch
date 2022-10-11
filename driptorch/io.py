@@ -65,7 +65,7 @@ class Projector:
         return transform(self.backward_proj.transform, geometry)
 
     @staticmethod
-    def estimate_utm_epsg(lon, lat):
+    def estimate_utm_epsg(lon, lat,**kwargs):
         return int(32700-round((45+lat)/90, 0)*100+round((183+lon)/6, 0))
 
     @classmethod

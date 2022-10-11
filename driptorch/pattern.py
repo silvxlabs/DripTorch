@@ -19,24 +19,35 @@ import numpy as np
 import pandas as pd
 from shapely.errors import ShapelyDeprecationWarning
 from shapely import affinity
-from shapely.geometry import MultiPoint, MultiLineString, LineString
+from shapely.geometry import MultiPoint, MultiLineString, LineString, shape
 
 
 # Turn off Pandas copy warning (or figure out how to do it like the Panda wants)
 pd.options.mode.chained_assignment = None
 
-# Turn off the Shapely deprecation warning about about future removal
-# of the array interface. This happens when a Pandas takes a list of Shapely
-# geometries and casts to a list of ndarray objects. GeoPandas would fix this
-# but it's not worth the added complexity of GDAL C binary deps. This is fine
-# as long as we don't upgrade the Shapely req to v2.
+
+"""
+
+Turn off the Shapely deprecation warning about about future removal
+of the array interface. This happens when a Pandas takes a list of Shapely
+geometries and casts to a list of ndarray objects. GeoPandas would fix this
+but it's not worth the added complexity of GDAL C binary deps. This is fine
+as long as we don't upgrade the Shapely req to v2.
+
+"""
 warnings.filterwarnings("ignore", category=ShapelyDeprecationWarning)
 
 
 class Pattern:
-
-    def __init__(self, heat: list[int], igniter: list[int], leg: list[int],
-                 times: list[list[float]], geometry: list[LineString], epsg: int):
+    def __init__(
+        self,
+        heat: list[int],
+        igniter: list[int],
+        leg: list[int],
+        times: list[list[float]],
+        geometry: list[LineString],
+        epsg: int,
+    ):
         """Constructor
 
         Args:
@@ -68,19 +79,20 @@ class Pattern:
 
         Args:
             paths_dict (dict): Dictionary of path parameters
-            burn_unit (BurnUnit): Burn unit object associated with the ignition pattern
+            epsg (Int): EPSG code of path geometries
 
         Returns:
             Pattern: A new instance of Pattern
         """
 
+        paths_dict["geometry"] = [shape(x) for x in paths_dict["geometry"]]
         return cls(
-            paths_dict['heat'],
-            paths_dict['igniter'],
-            paths_dict['leg'],
-            paths_dict['times'],
-            paths_dict['geometry'],
-            epsg
+            paths_dict["heat"],
+            paths_dict["igniter"],
+            paths_dict["leg"],
+            paths_dict["times"],
+            paths_dict["geometry"],
+            epsg,
         )
 
     def to_dict(self) -> dict:
@@ -91,11 +103,12 @@ class Pattern:
         """
 
         return {
-            'heat': self.heat,
-            'igniter': self.igniter,
-            'leg': self.leg,
-            'times': self.times,
-            'geometry': self.geometry
+            "heat": self.heat,
+            "igniter": self.igniter,
+            "leg": self.leg,
+            "times": self.times,
+            # convert to geoJSON for storage
+            "geometry": [x.__geo_interface__ for x in self.geometry],
         }
 
     @staticmethod
@@ -106,12 +119,7 @@ class Pattern:
             dict: Empty path dictionary
         """
 
-        return {
-            'heat': [],
-            'igniter': [],
-            'leg': [],
-            'geometry': []
-        }
+        return {"heat": [], "igniter": [], "leg": [], "geometry": []}
 
     def to_json(self) -> dict:
         """Write the Pattern to a GeoJSON dictionary
@@ -138,14 +146,22 @@ class Pattern:
         times = (times * 1000) + (unix_time() * 1000)
 
         # Set the props and styling
-        props = {'heat': self.heat, 'igniter': self.igniter,
-                 'leg': self.leg, 'times': times.to_list()}
-        style = {'icon': 'circle', 'style': {
-            'color': '#ff0000', 'radius': 1}}
+        props = {
+            "heat": self.heat,
+            "igniter": self.igniter,
+            "leg": self.leg,
+            "times": times.to_list(),
+        }
+        style = {"icon": "circle", "style": {"color": "#ff0000", "radius": 1}}
 
         # Send off to the GeoJSON writer and return
-        return write_geojson(self.geometry, self.epsg, properties=props, style=style,
-                             elapsed_time=self.elapsed_time)
+        return write_geojson(
+            self.geometry,
+            self.epsg,
+            properties=props,
+            style=style,
+            elapsed_time=self.elapsed_time,
+        )
 
     def translate(self, x_off: float, y_off: float) -> Pattern:
         """Translate pattern geometry along the x and y axis by the supplied
@@ -173,7 +189,14 @@ class Pattern:
         # Return the new Pattern object
         return obj_copy
 
-    def to_quicfire(self, burn_unit: BurnUnit, filename: str = None, time_offset=0, resolution: int = 1, dst_epsg: int = None) -> None | str:
+    def to_quicfire(
+        self,
+        burn_unit: BurnUnit,
+        filename: str = None,
+        time_offset=0,
+        resolution: int = 1,
+        dst_epsg: int = None,
+    ) -> None | str:
         """Write paths dictionary to QUIC-fire ignition file format.
 
         Args:
@@ -213,20 +236,26 @@ class Pattern:
         lower_left = domain.get_bounds().min(axis=0)
         trans_geoms = []
         for geom in geometry:
-            trans_geoms.append(affinity.translate(
-                geom, -lower_left[0], -lower_left[1]))
+            trans_geoms.append(affinity.translate(geom, -lower_left[0], -lower_left[1]))
         geometry = trans_geoms
 
         # Check if filename was provided and write to it if so
         if filename:
-            with open(filename, 'w') as f:
-                f.write(write_quicfire(geometry, times,
-                        self.elapsed_time, resolution=resolution))
+            with open(filename, "w") as f:
+                f.write(
+                    write_quicfire(
+                        geometry, times, self.elapsed_time, resolution=resolution
+                    )
+                )
         # Otherwise return QF ignition file to client as string
         else:
-            return write_quicfire(geometry, times, self.elapsed_time, resolution=resolution)
+            return write_quicfire(
+                geometry, times, self.elapsed_time, resolution=resolution
+            )
 
-    def merge(self, pattern: Pattern, time_offset: float = 0, inplace: bool = False) -> Pattern:
+    def merge(
+        self, pattern: Pattern, time_offset: float = 0, inplace: bool = False
+    ) -> Pattern:
         """Merge an input pattern with self
 
         Args:
@@ -249,18 +278,24 @@ class Pattern:
         merged_dict = self.empty_path_dict()
 
         # Delay times in the second pattern by the elapsed time of the first pattern and offset
-        delayed_times = (ak.max(self.times) + time_offset +
-                         ak.Array(pattern.times)).to_list()
+        delayed_times = (
+            ak.max(self.times) + time_offset + ak.Array(pattern.times)
+        ).to_list()
 
         # Build merged pattern attributes
-        merged_dict['heat'] = self.heat + pattern.heat
-        merged_dict['igniter'] = self.igniter + pattern.igniter
-        merged_dict['leg'] = self.leg + pattern.leg
-        merged_dict['times'] = self.times + delayed_times
-        merged_dict['geometry'] = self.geometry + pattern.geometry
+        merged_dict["heat"] = self.heat + pattern.heat
+        merged_dict["igniter"] = self.igniter + pattern.igniter
+        merged_dict["leg"] = self.leg + pattern.leg
+        merged_dict["times"] = self.times + delayed_times
+        merged_dict["geometry"] = self.geometry + pattern.geometry
 
         # Instantiate a new Pattern object
         merged_pattern = self.from_dict(merged_dict, self.epsg)
+
+        # Compute summed elapse time
+        merged_pattern.elapsed_time = (
+            self.elapsed_time + time_offset + pattern.elapsed_time
+        )
 
         # If inplace then overwrite self with the merged pattern
         if inplace:
@@ -278,7 +313,9 @@ class TemporalPropagator:
     through their coordinates.
     """
 
-    def __init__(self, spacing: float = 0, sync_end_time: bool = False, return_trip: bool = False):
+    def __init__(
+        self, spacing: float = 0, sync_end_time: bool = False, return_trip: bool = False
+    ):
         """Class constructor
 
         Args:
@@ -303,14 +340,15 @@ class TemporalPropagator:
         # Geometry must of type LineString
 
         # Setup some new dataframe columns
-        self.paths['start_time'] = 0
-        self.paths['end_time'] = 0
-        self.paths['times'] = None
-        self.paths['times'] = self.paths['times'].astype('object')
+        self.paths["start_time"] = 0
+        self.paths["end_time"] = 0
+        self.paths["times"] = None
+        self.paths["times"] = self.paths["times"].astype("object")
 
         # Sort dataframe by heat, igniter, leg (in that order)
-        self.paths.sort_values(by=['heat', 'igniter', 'leg'], ascending=[
-            True, True, True], inplace=True)
+        self.paths.sort_values(
+            by=["heat", "igniter", "leg"], ascending=[True, True, True], inplace=True
+        )
 
         # Run the initial forward pass through the paths
         self._init_path_time(self.spacing)
@@ -323,13 +361,12 @@ class TemporalPropagator:
         self._compute_arrival_times()
 
         # Drop the intermidary columns
-        self.paths.drop(['start_time', 'end_time'],
-                        axis=1, inplace=True)
+        self.paths.drop(["start_time", "end_time"], axis=1, inplace=True)
 
-        return self.paths.to_dict(orient='list')
+        return self.paths.to_dict(orient="list")
 
     def _init_path_time(self, spacing: float):
-        """ Helper method to run the initial time propagation.
+        """Helper method to run the initial time propagation.
 
         Args:
             spacing (float): Stagger spacing between igniters in a heat
@@ -349,8 +386,11 @@ class TemporalPropagator:
             if k != 0:
 
                 # Get the previous path leg
-                prev_leg = self.paths.loc[(self.paths.heat == i) & (
-                    self.paths.igniter == j) & (self.paths.leg == k-1)]
+                prev_leg = self.paths.loc[
+                    (self.paths.heat == i)
+                    & (self.paths.igniter == j)
+                    & (self.paths.leg == k - 1)
+                ]
 
                 # Grab the geometries of the previous and current leg
                 prev_leg_geom = prev_leg.geometry.iloc[0]
@@ -371,8 +411,9 @@ class TemporalPropagator:
             elif (i != 0) and (j == 0):
 
                 # Get the maximum end time from all igniters in the previous heat
-                prev_heat_max_end_time = self.paths.loc[self.paths.heat ==
-                                                        i-1, 'end_time'].max()
+                prev_heat_max_end_time = self.paths.loc[
+                    self.paths.heat == i - 1, "end_time"
+                ].max()
 
                 # The current igniter's start time is the previous heat max end time
                 path.start_time = prev_heat_max_end_time
@@ -394,10 +435,12 @@ class TemporalPropagator:
                 # Get the previous and current igniters (again, no need to use
                 # k the leg index, these will all be leg 0 due to the catch
                 # above)
-                cur_igniter = self.paths.loc[(
-                    self.paths.heat == i) & (self.paths.igniter == j)]
-                prev_igniter = self.paths.loc[(
-                    self.paths.heat == i) & (self.paths.igniter == j-1)]
+                cur_igniter = self.paths.loc[
+                    (self.paths.heat == i) & (self.paths.igniter == j)
+                ]
+                prev_igniter = self.paths.loc[
+                    (self.paths.heat == i) & (self.paths.igniter == j - 1)
+                ]
 
                 # Get the previous igniter's start time
                 prev_start_time = prev_igniter.start_time.values[0]
@@ -405,7 +448,8 @@ class TemporalPropagator:
                 # Compute the offset due to stagger spacing and incongruence
                 # along a coordinate frame axis
                 path.start_time = prev_start_time + self._get_offset(
-                    prev_igniter, cur_igniter, spacing, velocity)
+                    prev_igniter, cur_igniter, spacing, velocity
+                )
 
             # The last condition we have caught yet is the first igniter of the
             # first heat. That igniter gets a start time of zero
@@ -422,12 +466,18 @@ class TemporalPropagator:
         # Depending of the arrange of igniter start positions it is
         # possible that the minimum start time is less than zero. We fix
         # that by adding the minimum back to all start and end times
-        min_start_time = self.paths['start_time'].min()
+        min_start_time = self.paths["start_time"].min()
         if min_start_time != 0:
-            self.paths['start_time'] -= min_start_time
-            self.paths['end_time'] -= min_start_time
+            self.paths["start_time"] -= min_start_time
+            self.paths["end_time"] -= min_start_time
 
-    def _get_offset(self, prev_igniter: pd.Series, cur_igniter: pd.Series, spacing: float, velocity: float) -> float:
+    def _get_offset(
+        self,
+        prev_igniter: pd.Series,
+        cur_igniter: pd.Series,
+        spacing: float,
+        velocity: float,
+    ) -> float:
         """Compute the offset time between the previous and current igniters
 
         Args:
@@ -443,12 +493,9 @@ class TemporalPropagator:
         # We need three coordinates to construct two vectors: the
         # first coordinate from the current igniter and the first
         # and second coordinate from the preivous igniter
-        cur_igniter_first_pos = np.array(
-            cur_igniter.geometry.iloc[0].coords[0])
-        prev_igniter_first_pos = np.array(
-            prev_igniter.geometry.iloc[0].coords[0])
-        prev_igniter_second_pos = np.array(
-            prev_igniter.geometry.iloc[0].coords[1])
+        cur_igniter_first_pos = np.array(cur_igniter.geometry.iloc[0].coords[0])
+        prev_igniter_first_pos = np.array(prev_igniter.geometry.iloc[0].coords[0])
+        prev_igniter_second_pos = np.array(prev_igniter.geometry.iloc[0].coords[1])
 
         # Now construct two vectors. First a vector from the
         # previous igniter's first position to the current igniter's
@@ -460,15 +507,14 @@ class TemporalPropagator:
 
         # Now we can project the a vector onto the unit b vector and
         # compute its magnitude which give the offset distance
-        offset_distance = a_vec.dot(b_vec/np.linalg.norm(b_vec))
+        offset_distance = a_vec.dot(b_vec / np.linalg.norm(b_vec))
 
         # Add the stagger spacing distance and divide by velocity
         # for travel time
         return (spacing + offset_distance) / velocity
 
     def _sync_end_time(self):
-        """ Helper method to synchronize end times"""
-
+        """Helper method to synchronize end times"""
 
         # Get the unique heat indecies
         heats = np.sort(self.paths.heat.unique())
@@ -500,11 +546,9 @@ class TemporalPropagator:
             if cur_igniter.interval == 0:
                 self._lines(index, path, cur_igniter.velocity)
             elif cur_igniter.interval < 0:
-                self._dashes(index, path, cur_igniter.velocity,
-                             -cur_igniter.interval)
+                self._dashes(index, path, cur_igniter.velocity, -cur_igniter.interval)
             else:
-                self._dots(index, path, cur_igniter.velocity,
-                           cur_igniter.interval)
+                self._dots(index, path, cur_igniter.velocity, cur_igniter.interval)
 
     def _lines(self, index: int, path: pd.Series, velocity: float):
         """Compute arrival times along each igniter's coordinate sequence
@@ -525,15 +569,15 @@ class TemporalPropagator:
 
             # Get the next coordinate in the sequence and compute the distance
             # between it and the current coordinate
-            next_xy = coords[i+1]
+            next_xy = coords[i + 1]
             meters = np.linalg.norm(xy - next_xy)
 
             # Update the arrival time and add to the times array for the
             # current path
-            arrival_time = arrival_time + (meters/velocity)
+            arrival_time = arrival_time + (meters / velocity)
             path_times.append(arrival_time)
 
-        self.paths.at[index, 'times'] = path_times
+        self.paths.at[index, "times"] = path_times
 
     def _dashes(self, index: int, path: pd.Series, velocity: float, interval: float):
         """Compute arrival times along each igniter's coordinate sequence
@@ -549,8 +593,9 @@ class TemporalPropagator:
         distances = np.arange(0, path.geometry.length, interval)
 
         # Interpolate points at those distance along the path
-        points = MultiPoint([path.geometry.interpolate(distance)
-                             for distance in distances])
+        points = MultiPoint(
+            [path.geometry.interpolate(distance) for distance in distances]
+        )
 
         # Set the arrays for the current path arrival times and
         # dash geometries
@@ -566,11 +611,11 @@ class TemporalPropagator:
 
             # Get the current and next point coordinates
             xy = np.array(point.coords)[0]
-            next_xy = np.array(point_geoms[i+1].coords)[0]
+            next_xy = np.array(point_geoms[i + 1].coords)[0]
 
             # Comput the distance between points and the travel time
             meters = np.linalg.norm(xy - next_xy)
-            end_time = float(start_time + (meters/velocity))
+            end_time = float(start_time + (meters / velocity))
 
             # IF fire is active for this segment then add start and end
             # times to the current path arrival time arrray and append
@@ -587,8 +632,8 @@ class TemporalPropagator:
         # Add the current path arrival times to the global times array
         # and create a multileg line string and append to the new geometry
         # array
-        self.paths.at[index, 'times'] = path_times
-        self.paths.at[index, 'geometry'] = MultiLineString(line_segs)
+        self.paths.at[index, "times"] = path_times
+        self.paths.at[index, "geometry"] = MultiLineString(line_segs)
 
     def _dots(self, index: int, path: pd.Series, velocity: float, interval: float):
         """Compute arrival times along each igniter's coordinate sequence
@@ -602,8 +647,9 @@ class TemporalPropagator:
         distances = np.arange(0, path.geometry.length, interval)
 
         # Interpolate points at those distance along the path
-        points = MultiPoint([path.geometry.interpolate(distance)
-                             for distance in distances])
+        points = MultiPoint(
+            [path.geometry.interpolate(distance) for distance in distances]
+        )
 
         # Set the initial arrival time
         path_times = [arrival_time]
@@ -613,16 +659,16 @@ class TemporalPropagator:
 
             # Get the current and next points
             xy = np.array(point.coords)
-            next_xy = np.array(points[i+1].coords)
+            next_xy = np.array(points[i + 1].coords)
 
             # Compute the distance between points and travel time
             meters = np.linalg.norm(xy - next_xy)
-            arrival_time = arrival_time + (meters/velocity)
+            arrival_time = arrival_time + (meters / velocity)
 
             # Add the arrival time to the current path's time array
             path_times.append(arrival_time)
 
         # Add the current path's time array to the global time array and
         # add the multipar point geometry to the new geometries array
-        self.paths.at[index, 'times'] = path_times
-        self.paths.at[index, 'geometry'] = points
+        self.paths.at[index, "times"] = path_times
+        self.paths.at[index, "geometry"] = points
