@@ -313,9 +313,7 @@ class TemporalPropagator:
     through their coordinates.
     """
 
-    def __init__(
-        self, spacing: float = 0, sync_end_time: bool = False, return_trip: bool = False
-    ):
+    def __init__(self, spacing: float = 0, sync_end_time: bool = False, return_trip: bool = False):
         """Class constructor
         Args:
             spacing (float): Stagger spacing between igniters in a heat (meters). Defaults to 0.
