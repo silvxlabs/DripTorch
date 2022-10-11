@@ -1,22 +1,15 @@
 # External Imports
-from unicodedata import decimal
-from shapely import affinity
-from shapely.geometry.polygon import Polygon
-from shapely.geometry import shape
-import numpy as np
 from numpy.testing import assert_array_almost_equal
-import json
 
 # Core Imports
+import json
 import os
 import os.path as path
-from datetime import datetime
 import itertools
 import tempfile
 
 # Internal Imports
 import driptorch as dt
-from tests.resources import simulations
 
 """
 The following defined functions are for testing class objects of pattern.py.
@@ -37,8 +30,10 @@ QF_VALIDATION_PATH = "resources/quicfire_output_test.dat"
 def test_pattern_io() -> None:
     """Test the I/O functionality for Pattern
     """
+
     validation_data_path = path.join(path.dirname(__file__), SIMULATION_PATH)
-    qf_validation_data_path = path.join(path.dirname(__file__), QF_VALIDATION_PATH)
+    qf_validation_data_path = path.join(
+        path.dirname(__file__), QF_VALIDATION_PATH)
 
     with open(validation_data_path, "r") as file:
         validation_data = json.load(file)
@@ -67,7 +62,8 @@ def test_pattern_io() -> None:
     fd, pth = tempfile.mkstemp()
     test_pattern_1.to_quicfire(test_burn_unit, filename=pth)
     with open(pth, "r") as file:
-        test_b = "\n".join(file.readlines()).split("/")[-1].split("\n").remove("")
+        test_b = "\n".join(file.readlines()).split(
+            "/")[-1].split("\n").remove("")
     os.close(fd)
     assert test_a == test_b
 
@@ -75,8 +71,10 @@ def test_pattern_io() -> None:
 def test_merge() -> None:
     """Test the merging functionality for Pattern.merge()
     """
+
     validation_data_path = path.join(path.dirname(__file__), SIMULATION_PATH)
-    qf_validation_data_path = path.join(path.dirname(__file__), QF_VALIDATION_PATH)
+    qf_validation_data_path = path.join(
+        path.dirname(__file__), QF_VALIDATION_PATH)
 
     with open(validation_data_path, "r") as file:
         validation_data = json.load(file)
@@ -115,8 +113,10 @@ def test_merge() -> None:
 def test_translate() -> None:
     """Test the translation functionality for Pattern.translate()
     """
+
     validation_data_path = path.join(path.dirname(__file__), SIMULATION_PATH)
-    qf_validation_data_path = path.join(path.dirname(__file__), QF_VALIDATION_PATH)
+    qf_validation_data_path = path.join(
+        path.dirname(__file__), QF_VALIDATION_PATH)
 
     with open(validation_data_path, "r") as file:
         validation_data = json.load(file)
@@ -140,14 +140,16 @@ def test_translate() -> None:
     test_a = [
         x.coords
         for x in list(
-            itertools.chain.from_iterable([x.geoms for x in test_pattern_1.geometry])
+            itertools.chain.from_iterable(
+                [x.geoms for x in test_pattern_1.geometry])
         )
     ]
 
     test_b = [
         x.coords
         for x in list(
-            itertools.chain.from_iterable([x.geoms for x in un_translated.geometry])
+            itertools.chain.from_iterable(
+                [x.geoms for x in un_translated.geometry])
         )
     ]
 
@@ -164,7 +166,8 @@ def test_temporal_propgation() -> None:
     """
 
     validation_data_path = path.join(path.dirname(__file__), SIMULATION_PATH)
-    qf_validation_data_path = path.join(path.dirname(__file__), QF_VALIDATION_PATH)
+    qf_validation_data_path = path.join(
+        path.dirname(__file__), QF_VALIDATION_PATH)
 
     with open(validation_data_path, "r") as file:
         validation_data = json.load(file)

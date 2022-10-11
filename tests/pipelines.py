@@ -1,17 +1,12 @@
-# External Imports
-from shapely import affinity
-from shapely.geometry.polygon import Polygon
-import numpy as np
-import json
 
 # Core Imports
-import os.path as path
 from datetime import datetime
+import json
+import os.path as path
 
 # Internal Imports
 import driptorch as dt
 from driptorch.io import *
-from driptorch._version import __version__
 from resources import simulations
 
 
@@ -52,14 +47,15 @@ def generate_simulations(
     """
 
     simulation_date = datetime.now().isoformat()
-    simulation_version = __version__
+    simulation_version = dt.__version__
     simulation_data = {
         "version": simulation_version,
         "date": simulation_date,
         "args": locals(),
     }
 
-    burn_unit = dt.BurnUnit.from_json(unit_bounds, wind_direction=wind_direction)
+    burn_unit = dt.BurnUnit.from_json(
+        unit_bounds, wind_direction=wind_direction)
     polygonsplitter = dt.unit.PolygonSplitter()
     polygonsplitter.split(burn_unit.polygon)
     simulation_data["burn_unit_fore"] = polygonsplitter.fore.__geo_interface__
@@ -82,7 +78,7 @@ def generate_simulations(
 
     simulation_data["igniter"] = dash_igniter.to_json()
     simulation_data["firing_crew"] = point_crew.to_json()
-    
+
     # Inferno Technique
     inferno_technique = dt.firing.Inferno(firing_area)
     inferno_pattern = inferno_technique.generate_pattern()
@@ -97,6 +93,7 @@ def generate_simulations(
     head_technique = dt.firing.Head(firing_area, point_crew)
     head_pattern = head_technique.generate_pattern(offset)
     simulation_data["head_pattern"] = head_pattern.to_dict()
+
     # Back Technique
     back_technique = dt.firing.Back(firing_area, point_crew)
     back_pattern = back_technique.generate_pattern(offset)
@@ -105,7 +102,8 @@ def generate_simulations(
 
         # Flank Technique
         flank_technique = dt.firing.Flank(firing_area, point_crew)
-        flank_pattern = flank_technique.generate_pattern(igniter_depth, heat_depth)
+        flank_pattern = flank_technique.generate_pattern(
+            igniter_depth, heat_depth)
         simulation_data["flank_pattern"] = flank_pattern.to_dict()
     if igniter_depth and igniter_spacing:
 
@@ -122,6 +120,7 @@ def generate_simulations(
 if __name__ == "__main__":
     simargs = simulations.simulation_args
     simulation_data = generate_simulations(**simargs)
-    write_path = path.join(path.dirname(__file__), "resources/simulation_0.json")
+    write_path = path.join(path.dirname(__file__),
+                           "resources/simulation_0.json")
     with open(write_path, "w") as file:
         json.dump(simulation_data, file)

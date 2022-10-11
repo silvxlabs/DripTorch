@@ -1,16 +1,17 @@
 # External Imports
 from shapely import affinity
 from shapely.geometry.polygon import Polygon
-from shapely.geometry import shape
 import numpy as np
 from numpy.testing import assert_array_almost_equal
 import os.path as path
-import json
 
 # Internal Imports
 import driptorch as dt
 from driptorch.io import *
 from tests.resources import testgeoms
+
+# Core imports
+import json
 
 """
 The following defined functions are for testing class objects of io.py.
@@ -30,6 +31,7 @@ QF_VALIDATION_DATA = "resources/quicfire_output_test.dat"
 
 def test_geojson_io() -> None:
     """Test geoJSON io functionality"""
+
     test_polygon_4326: Polygon = read_geojson_polygon(testgeoms.test_polygon)
     polygon_points = np.array(
         testgeoms.test_polygon["features"][0]["geometry"]["coordinates"][0]
@@ -122,6 +124,7 @@ def test_web_mercator_funcs() -> None:
 
 def test_write_quickfire() -> None:
     """Test io.write_quicfire()"""
+
     validation_data_path = path.join(path.dirname(__file__), SIMULATION_PATH)
     with open(validation_data_path, "r") as file:
         validation_data = json.load(file)
@@ -136,7 +139,8 @@ def test_write_quickfire() -> None:
     # Translate geometries from the firing technique t
     trans_geoms = []
     for geom in geometries:
-        trans_geoms.append(affinity.translate(geom, -lower_left[0], -lower_left[1]))
+        trans_geoms.append(affinity.translate(
+            geom, -lower_left[0], -lower_left[1]))
     geometries = trans_geoms
 
     # Generate quicfire output

@@ -1,18 +1,13 @@
 # External Imports
-from shapely import affinity
-from shapely.geometry.polygon import Polygon
 from shapely.geometry import shape
-import numpy as np
 from numpy.testing import assert_array_almost_equal
-import json
 
 # Core Imports
+import json
 import os.path as path
-from datetime import datetime
 
 # Internal Imports
 import driptorch as dt
-from tests.resources import simulations
 
 """
 The following defined functions are for testing class objects of unit.py.
@@ -31,6 +26,7 @@ SIMULATION_PATH = "resources/simulation_0.json"
 
 def test_json_from_to() -> None:
     """Test BurnUnit JSON writing/reading functionality"""
+
     validation_data_path = path.join(path.dirname(__file__), SIMULATION_PATH)
     with open(validation_data_path, "r") as file:
         validation_data = json.load(file)
@@ -55,6 +51,7 @@ def test_json_from_to() -> None:
 
 def test_align_unalign() -> None:
     """Test BurnUnit align functionality"""
+
     validation_data_path = path.join(path.dirname(__file__), SIMULATION_PATH)
     with open(validation_data_path, "r") as file:
         validation_data = json.load(file)
@@ -82,10 +79,7 @@ def test_align_unalign() -> None:
 
 def test_buffer_functions() -> None:
     """Test BurnUnit buffer functionality"""
-    truncate = lambda x: (
-        round(x[0], 5),
-        round(x[1], 5),
-    )  # Helper function for rounding down coordinates
+
     validation_data_path = path.join(path.dirname(__file__), SIMULATION_PATH)
     with open(validation_data_path, "r") as file:
         validation_data = json.load(file)
