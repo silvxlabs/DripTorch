@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Firing Techniques &mdash; DripTorch 0.6.3 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,9 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -45,7 +48,33 @@
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">API Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="unit.html">Burn Unit</a></li>
 <li class="toctree-l2"><a class="reference internal" href="personnel.html">Personnel</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Firing Techniques</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Firing Techniques</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#driptorch.firing.Back"><code class="docutils literal notranslate"><span class="pre">Back</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#driptorch.firing.Back.generate_pattern"><code class="docutils literal notranslate"><span class="pre">Back.generate_pattern()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#driptorch.firing.Flank"><code class="docutils literal notranslate"><span class="pre">Flank</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#driptorch.firing.Flank.generate_pattern"><code class="docutils literal notranslate"><span class="pre">Flank.generate_pattern()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#driptorch.firing.Head"><code class="docutils literal notranslate"><span class="pre">Head</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#driptorch.firing.Head.generate_pattern"><code class="docutils literal notranslate"><span class="pre">Head.generate_pattern()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#driptorch.firing.Inferno"><code class="docutils literal notranslate"><span class="pre">Inferno</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#driptorch.firing.Inferno.generate_pattern"><code class="docutils literal notranslate"><span class="pre">Inferno.generate_pattern()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#driptorch.firing.Ring"><code class="docutils literal notranslate"><span class="pre">Ring</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#driptorch.firing.Ring.generate_pattern"><code class="docutils literal notranslate"><span class="pre">Ring.generate_pattern()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#driptorch.firing.Strip"><code class="docutils literal notranslate"><span class="pre">Strip</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#driptorch.firing.Strip.generate_pattern"><code class="docutils literal notranslate"><span class="pre">Strip.generate_pattern()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="pattern.html">Patterns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mapping.html">Mapping</a></li>
 <li class="toctree-l2"><a class="reference internal" href="io.html">I/O</a></li>
@@ -78,24 +107,24 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="module-driptorch.firing">
-<span id="firing-techniques"></span><h1>Firing Techniques<a class="headerlink" href="#module-driptorch.firing" title="Permalink to this headline"></a></h1>
+  <section id="module-driptorch.firing">
+<span id="firing-techniques"></span><h1>Firing Techniques<a class="headerlink" href="#module-driptorch.firing" title="Permalink to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="driptorch.firing.Back">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">driptorch.firing.</span></span><span class="sig-name descname"><span class="pre">Back</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">burn_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="unit.html#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><span class="pre">driptorch.unit.BurnUnit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignition_crew</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="personnel.html#driptorch.personnel.IgnitionCrew" title="driptorch.personnel.IgnitionCrew"><span class="pre">driptorch.personnel.IgnitionCrew</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#driptorch.firing.Back" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">driptorch.firing._base.FiringBase</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">driptorch.firing.</span></span><span class="sig-name descname"><span class="pre">Back</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">burn_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="unit.html#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><span class="pre">BurnUnit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignition_crew</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="personnel.html#driptorch.personnel.IgnitionCrew" title="driptorch.personnel.IgnitionCrew"><span class="pre">IgnitionCrew</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#driptorch.firing.Back" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FiringBase</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="driptorch.firing.Back.generate_pattern">
-<span class="sig-name descname"><span class="pre">generate_pattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="pattern.html#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern"><span class="pre">driptorch.pattern.Pattern</span></a></span></span><a class="headerlink" href="#driptorch.firing.Back.generate_pattern" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">generate_pattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="pattern.html#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern"><span class="pre">Pattern</span></a></span></span><a class="headerlink" href="#driptorch.firing.Back.generate_pattern" title="Permalink to this definition"></a></dt>
 <dd><p>Generate backing fire ignition pattern</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>offset</strong> (<em>float</em>) – Offset distance in meters from the unit boundary</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Spatiotemporal ignition pattern</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="pattern.html#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern">Pattern</a></p>
 </dd>
 </dl>
@@ -105,24 +134,24 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="driptorch.firing.Flank">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">driptorch.firing.</span></span><span class="sig-name descname"><span class="pre">Flank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">burn_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="unit.html#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><span class="pre">driptorch.unit.BurnUnit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignition_crew</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="personnel.html#driptorch.personnel.IgnitionCrew" title="driptorch.personnel.IgnitionCrew"><span class="pre">driptorch.personnel.IgnitionCrew</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#driptorch.firing.Flank" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">driptorch.firing._base.FiringBase</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">driptorch.firing.</span></span><span class="sig-name descname"><span class="pre">Flank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">burn_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="unit.html#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><span class="pre">BurnUnit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignition_crew</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="personnel.html#driptorch.personnel.IgnitionCrew" title="driptorch.personnel.IgnitionCrew"><span class="pre">IgnitionCrew</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#driptorch.firing.Flank" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FiringBase</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="driptorch.firing.Flank.generate_pattern">
-<span class="sig-name descname"><span class="pre">generate_pattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heat_depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">side</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'right'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="pattern.html#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern"><span class="pre">driptorch.pattern.Pattern</span></a></span></span><a class="headerlink" href="#driptorch.firing.Flank.generate_pattern" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">generate_pattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heat_depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">side</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'right'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="pattern.html#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern"><span class="pre">Pattern</span></a></span></span><a class="headerlink" href="#driptorch.firing.Flank.generate_pattern" title="Permalink to this definition"></a></dt>
 <dd><p>Generate a flank fire ignition pattern</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>depth</strong> (<em>float</em><em>, </em><em>optional</em>) – Depth in meters between igniters. Defaults to None.</p></li>
 <li><p><strong>heat_depth</strong> (<em>float</em><em>, </em><em>optional</em>) – Depth in meters between heats. Defaults to None.</p></li>
 <li><p><strong>side</strong> (<em>str</em><em>, </em><em>optional</em>) – Side of the wind vector to start the ignition. Defaults to ‘right’. Options are ‘left’ or ‘right’.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Spatiotemporal ignition pattern</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="pattern.html#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern">Pattern</a></p>
 </dd>
 </dl>
@@ -132,20 +161,20 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="driptorch.firing.Head">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">driptorch.firing.</span></span><span class="sig-name descname"><span class="pre">Head</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">burn_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="unit.html#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><span class="pre">driptorch.unit.BurnUnit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignition_crew</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="personnel.html#driptorch.personnel.IgnitionCrew" title="driptorch.personnel.IgnitionCrew"><span class="pre">driptorch.personnel.IgnitionCrew</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#driptorch.firing.Head" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">driptorch.firing._base.FiringBase</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">driptorch.firing.</span></span><span class="sig-name descname"><span class="pre">Head</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">burn_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="unit.html#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><span class="pre">BurnUnit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignition_crew</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="personnel.html#driptorch.personnel.IgnitionCrew" title="driptorch.personnel.IgnitionCrew"><span class="pre">IgnitionCrew</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#driptorch.firing.Head" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FiringBase</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="driptorch.firing.Head.generate_pattern">
-<span class="sig-name descname"><span class="pre">generate_pattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="pattern.html#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern"><span class="pre">driptorch.pattern.Pattern</span></a></span></span><a class="headerlink" href="#driptorch.firing.Head.generate_pattern" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">generate_pattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="pattern.html#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern"><span class="pre">Pattern</span></a></span></span><a class="headerlink" href="#driptorch.firing.Head.generate_pattern" title="Permalink to this definition"></a></dt>
 <dd><p>Generate head fire ignition pattern</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>offset</strong> (<em>float</em>) – Offset distance in meters from the unit boundary</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Spatiotemporal ignition pattern</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="pattern.html#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern">Pattern</a></p>
 </dd>
 </dl>
@@ -155,20 +184,20 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="driptorch.firing.Inferno">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">driptorch.firing.</span></span><span class="sig-name descname"><span class="pre">Inferno</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">burn_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="unit.html#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><span class="pre">driptorch.unit.BurnUnit</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#driptorch.firing.Inferno" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">driptorch.firing.</span></span><span class="sig-name descname"><span class="pre">Inferno</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">burn_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="unit.html#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><span class="pre">BurnUnit</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#driptorch.firing.Inferno" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>This technique is set up differently than the other firing techniques. It doesn’t
 inherit from the FiringBase class. Time does not need to be propagated so we
 don’t pass to the Temporal Propagator.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="driptorch.firing.Inferno.generate_pattern">
-<span class="sig-name descname"><span class="pre">generate_pattern</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="pattern.html#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern"><span class="pre">driptorch.pattern.Pattern</span></a></span></span><a class="headerlink" href="#driptorch.firing.Inferno.generate_pattern" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">generate_pattern</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="pattern.html#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern"><span class="pre">Pattern</span></a></span></span><a class="headerlink" href="#driptorch.firing.Inferno.generate_pattern" title="Permalink to this definition"></a></dt>
 <dd><p>Generate an inferno ignition pattern</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Spatiotemporal ignition pattern</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="pattern.html#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern">Pattern</a></p>
 </dd>
 </dl>
@@ -178,20 +207,20 @@ don’t pass to the Temporal Propagator.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="driptorch.firing.Ring">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">driptorch.firing.</span></span><span class="sig-name descname"><span class="pre">Ring</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">burn_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="unit.html#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><span class="pre">driptorch.unit.BurnUnit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignition_crew</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="personnel.html#driptorch.personnel.IgnitionCrew" title="driptorch.personnel.IgnitionCrew"><span class="pre">driptorch.personnel.IgnitionCrew</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#driptorch.firing.Ring" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">driptorch.firing._base.FiringBase</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">driptorch.firing.</span></span><span class="sig-name descname"><span class="pre">Ring</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">burn_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="unit.html#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><span class="pre">BurnUnit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignition_crew</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="personnel.html#driptorch.personnel.IgnitionCrew" title="driptorch.personnel.IgnitionCrew"><span class="pre">IgnitionCrew</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#driptorch.firing.Ring" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FiringBase</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="driptorch.firing.Ring.generate_pattern">
-<span class="sig-name descname"><span class="pre">generate_pattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="pattern.html#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern"><span class="pre">driptorch.pattern.Pattern</span></a></span></span><a class="headerlink" href="#driptorch.firing.Ring.generate_pattern" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">generate_pattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="pattern.html#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern"><span class="pre">Pattern</span></a></span></span><a class="headerlink" href="#driptorch.firing.Ring.generate_pattern" title="Permalink to this definition"></a></dt>
 <dd><p>Generate a ring fire ignition patter</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>offset</strong> (<em>float</em>) – Offset in meters from the boundary that the igniter will walk</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Spatiotemporal ignition pattern</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="pattern.html#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern">Pattern</a></p>
 </dd>
 </dl>
@@ -201,14 +230,14 @@ don’t pass to the Temporal Propagator.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="driptorch.firing.Strip">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">driptorch.firing.</span></span><span class="sig-name descname"><span class="pre">Strip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">burn_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="unit.html#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><span class="pre">driptorch.unit.BurnUnit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignition_crew</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="personnel.html#driptorch.personnel.IgnitionCrew" title="driptorch.personnel.IgnitionCrew"><span class="pre">driptorch.personnel.IgnitionCrew</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#driptorch.firing.Strip" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">driptorch.firing._base.FiringBase</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">driptorch.firing.</span></span><span class="sig-name descname"><span class="pre">Strip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">burn_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="unit.html#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><span class="pre">BurnUnit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignition_crew</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="personnel.html#driptorch.personnel.IgnitionCrew" title="driptorch.personnel.IgnitionCrew"><span class="pre">IgnitionCrew</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#driptorch.firing.Strip" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FiringBase</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="driptorch.firing.Strip.generate_pattern">
-<span class="sig-name descname"><span class="pre">generate_pattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heat_depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">side</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'right'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="pattern.html#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern"><span class="pre">driptorch.pattern.Pattern</span></a></span></span><a class="headerlink" href="#driptorch.firing.Strip.generate_pattern" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">generate_pattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heat_depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">side</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'right'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="pattern.html#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern"><span class="pre">Pattern</span></a></span></span><a class="headerlink" href="#driptorch.firing.Strip.generate_pattern" title="Permalink to this definition"></a></dt>
 <dd><p>Generate a strip head fire ignition pattern.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>spacing</strong> (<em>float</em>) – Staggering distance in meters between igniters within a heat</p></li>
 <li><p><strong>depth</strong> (<em>float</em>) – Horizontal distance in meters between igniters and heats</p></li>
@@ -217,10 +246,10 @@ heat_depth is equal to igniter depth. Defaults to None.</p></li>
 <li><p><strong>side</strong> (<em>str</em>) – Side of the wind vector to start the ignition. Defaults to ‘right’. Options are ‘left’ or ‘right’.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Spatiotemporal ignition pattern</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="pattern.html#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern">Pattern</a></p>
 </dd>
 </dl>
@@ -228,7 +257,7 @@ heat_depth is equal to igniter depth. Defaults to None.</p></li>
 
 </dd></dl>
 
-</div>
+</section>
 
 
            </div>

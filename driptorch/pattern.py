@@ -236,7 +236,8 @@ class Pattern:
         lower_left = domain.get_bounds().min(axis=0)
         trans_geoms = []
         for geom in geometry:
-            trans_geoms.append(affinity.translate(geom, -lower_left[0], -lower_left[1]))
+            trans_geoms.append(affinity.translate(
+                geom, -lower_left[0], -lower_left[1]))
         geometry = trans_geoms
 
         # Check if filename was provided and write to it if so
@@ -493,9 +494,12 @@ class TemporalPropagator:
         # We need three coordinates to construct two vectors: the
         # first coordinate from the current igniter and the first
         # and second coordinate from the preivous igniter
-        cur_igniter_first_pos = np.array(cur_igniter.geometry.iloc[0].coords[0])
-        prev_igniter_first_pos = np.array(prev_igniter.geometry.iloc[0].coords[0])
-        prev_igniter_second_pos = np.array(prev_igniter.geometry.iloc[0].coords[1])
+        cur_igniter_first_pos = np.array(
+            cur_igniter.geometry.iloc[0].coords[0])
+        prev_igniter_first_pos = np.array(
+            prev_igniter.geometry.iloc[0].coords[0])
+        prev_igniter_second_pos = np.array(
+            prev_igniter.geometry.iloc[0].coords[1])
 
         # Now construct two vectors. First a vector from the
         # previous igniter's first position to the current igniter's
@@ -543,12 +547,14 @@ class TemporalPropagator:
 
         for index, path in self.paths.iterrows():
             cur_igniter = self.ignition_crew[path.igniter]
-            if cur_igniter.interval == 0:
+            if (cur_igniter.gap_length == None) and (cur_igniter.dash_length == None):
                 self._lines(index, path, cur_igniter.velocity)
-            elif cur_igniter.interval < 0:
-                self._dashes(index, path, cur_igniter.velocity, -cur_igniter.interval)
+            elif cur_igniter.dash_length != None:
+                self._dashes(index, path, cur_igniter.velocity,
+                             cur_igniter.gap_length, cur_igniter.dash_length)
             else:
-                self._dots(index, path, cur_igniter.velocity, cur_igniter.interval)
+                self._dots(index, path, cur_igniter.velocity,
+                           cur_igniter.gap_length)
 
     def _lines(self, index: int, path: pd.Series, velocity: float):
         """Compute arrival times along each igniter's coordinate sequence
@@ -579,7 +585,7 @@ class TemporalPropagator:
 
         self.paths.at[index, "times"] = path_times
 
-    def _dashes(self, index: int, path: pd.Series, velocity: float, interval: float):
+    def _dashes(self, index: int, path: pd.Series, velocity: float, gap_length: float, dash_length: float):
         """Compute arrival times along each igniter's coordinate sequence
         by picking up and putting down ignitions (dashes)
         """
@@ -590,7 +596,19 @@ class TemporalPropagator:
 
         # Get a range of distances along the length of the path spaced by
         # the ignition rate
-        distances = np.arange(0, path.geometry.length, interval)
+        if not gap_length:
+            distances = np.arange(0, path.geometry.length, dash_length)
+        else:
+            distances = []
+            sum_length = 0
+            toggle = True
+            while sum_length < path.geometry.length:
+                distances.append(sum_length)
+                if toggle:
+                    sum_length += dash_length
+                else:
+                    sum_length += gap_length
+                toggle ^= True
 
         # Interpolate points at those distance along the path
         points = MultiPoint(
@@ -635,7 +653,7 @@ class TemporalPropagator:
         self.paths.at[index, "times"] = path_times
         self.paths.at[index, "geometry"] = MultiLineString(line_segs)
 
-    def _dots(self, index: int, path: pd.Series, velocity: float, interval: float):
+    def _dots(self, index: int, path: pd.Series, velocity: float, gap_length: float):
         """Compute arrival times along each igniter's coordinate sequence
         for interpolated equally spaced points (dots)
         """
@@ -644,7 +662,7 @@ class TemporalPropagator:
 
         # Get a range of distances along the length of the path space by
         # the ignition rate
-        distances = np.arange(0, path.geometry.length, interval)
+        distances = np.arange(0, path.geometry.length, gap_length)
 
         # Interpolate points at those distance along the path
         points = MultiPoint(

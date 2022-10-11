@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Burn Unit &mdash; DripTorch 0.6.3 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,9 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -43,7 +46,24 @@
 <li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quickstart</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">API Reference</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Burn Unit</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Burn Unit</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#driptorch.unit.BurnUnit"><code class="docutils literal notranslate"><span class="pre">BurnUnit</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#driptorch.unit.BurnUnit.buffer_control_line"><code class="docutils literal notranslate"><span class="pre">BurnUnit.buffer_control_line()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#driptorch.unit.BurnUnit.buffer_downwind"><code class="docutils literal notranslate"><span class="pre">BurnUnit.buffer_downwind()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#driptorch.unit.BurnUnit.copy"><code class="docutils literal notranslate"><span class="pre">BurnUnit.copy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#driptorch.unit.BurnUnit.difference"><code class="docutils literal notranslate"><span class="pre">BurnUnit.difference()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#driptorch.unit.BurnUnit.from_json"><code class="docutils literal notranslate"><span class="pre">BurnUnit.from_json()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#driptorch.unit.BurnUnit.get_bounds"><code class="docutils literal notranslate"><span class="pre">BurnUnit.get_bounds()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#driptorch.unit.BurnUnit.to_json"><code class="docutils literal notranslate"><span class="pre">BurnUnit.to_json()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#driptorch.unit.PolygonSplitter"><code class="docutils literal notranslate"><span class="pre">PolygonSplitter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#driptorch.unit.PolygonSplitter.rotate"><code class="docutils literal notranslate"><span class="pre">PolygonSplitter.rotate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#driptorch.unit.PolygonSplitter.split"><code class="docutils literal notranslate"><span class="pre">PolygonSplitter.split()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="personnel.html">Personnel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="firing.html">Firing Techniques</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pattern.html">Patterns</a></li>
@@ -78,26 +98,26 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="module-driptorch.unit">
-<span id="burn-unit"></span><h1>Burn Unit<a class="headerlink" href="#module-driptorch.unit" title="Permalink to this headline"></a></h1>
+  <section id="module-driptorch.unit">
+<span id="burn-unit"></span><h1>Burn Unit<a class="headerlink" href="#module-driptorch.unit" title="Permalink to this heading"></a></h1>
 <p>Reading and manipulating a burn unit geometry and splitting
 the boundary to wind-centric segments</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="driptorch.unit.BurnUnit">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">driptorch.unit.</span></span><span class="sig-name descname"><span class="pre">BurnUnit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">polygon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">shapely.geometry.polygon.Polygon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_direction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">utm_epsg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#driptorch.unit.BurnUnit" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">driptorch.unit.</span></span><span class="sig-name descname"><span class="pre">BurnUnit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">polygon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Polygon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_direction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">utm_epsg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#driptorch.unit.BurnUnit" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="driptorch.unit.BurnUnit.buffer_control_line">
-<span class="sig-name descname"><span class="pre">buffer_control_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><span class="pre">driptorch.unit.BurnUnit</span></a></span></span><a class="headerlink" href="#driptorch.unit.BurnUnit.buffer_control_line" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">buffer_control_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><span class="pre">BurnUnit</span></a></span></span><a class="headerlink" href="#driptorch.unit.BurnUnit.buffer_control_line" title="Permalink to this definition"></a></dt>
 <dd><p>Shrink the burn unit to account for the width of the control line</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>distance</strong> (<em>with</em>) – Width of the control line (meters)</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>New instance of a BurnUnit</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit">BurnUnit</a></p>
 </dd>
 </dl>
@@ -105,16 +125,16 @@ the boundary to wind-centric segments</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="driptorch.unit.BurnUnit.buffer_downwind">
-<span class="sig-name descname"><span class="pre">buffer_downwind</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><span class="pre">driptorch.unit.BurnUnit</span></a></span></span><a class="headerlink" href="#driptorch.unit.BurnUnit.buffer_downwind" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">buffer_downwind</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><span class="pre">BurnUnit</span></a></span></span><a class="headerlink" href="#driptorch.unit.BurnUnit.buffer_downwind" title="Permalink to this definition"></a></dt>
 <dd><p>Create a downwind blackline buffer</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>width</strong> (<em>float</em>) – Width of downwind buffer (meters)</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>New instance of a BurnUnit</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit">BurnUnit</a></p>
 </dd>
 </dl>
@@ -122,13 +142,13 @@ the boundary to wind-centric segments</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="driptorch.unit.BurnUnit.copy">
-<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><span class="pre">driptorch.unit.BurnUnit</span></a></span></span><a class="headerlink" href="#driptorch.unit.BurnUnit.copy" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><span class="pre">BurnUnit</span></a></span></span><a class="headerlink" href="#driptorch.unit.BurnUnit.copy" title="Permalink to this definition"></a></dt>
 <dd><p>Utility method for copying a BurnUnit instance</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>New instance of a BurnUnit</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit">BurnUnit</a></p>
 </dd>
 </dl>
@@ -136,18 +156,18 @@ the boundary to wind-centric segments</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="driptorch.unit.BurnUnit.difference">
-<span class="sig-name descname"><span class="pre">difference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">burn_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><span class="pre">driptorch.unit.BurnUnit</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><span class="pre">driptorch.unit.BurnUnit</span></a></span></span><a class="headerlink" href="#driptorch.unit.BurnUnit.difference" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">difference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">burn_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><span class="pre">BurnUnit</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><span class="pre">BurnUnit</span></a></span></span><a class="headerlink" href="#driptorch.unit.BurnUnit.difference" title="Permalink to this definition"></a></dt>
 <dd><p>Return a burn unit instance that is the difference between
 this burn unit and another. Useful for obtaining the blackline
 area for clearing fuels.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>burn_unit</strong> (<a class="reference internal" href="#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><em>BurnUnit</em></a>) – The BurnUnit instance to difference against</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A new instance of a BurnUnit</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit">BurnUnit</a></p>
 </dd>
 </dl>
@@ -155,21 +175,21 @@ area for clearing fuels.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="driptorch.unit.BurnUnit.from_json">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geojson</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_direction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><span class="pre">driptorch.unit.BurnUnit</span></a></span></span><a class="headerlink" href="#driptorch.unit.BurnUnit.from_json" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geojson</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_direction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><span class="pre">BurnUnit</span></a></span></span><a class="headerlink" href="#driptorch.unit.BurnUnit.from_json" title="Permalink to this definition"></a></dt>
 <dd><p>Alternative constructor used to create a BurnUnit object from
 a GeoJSON dictionary.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>geojson</strong> (<em>dict</em>) – GeoJSON dictionary</p></li>
 <li><p><strong>wind_direction</strong> (<em>float</em>) – Wind direction (degrees)</p></li>
 <li><p><strong>epsg</strong> (<em>int</em>) – EPSG code of the input GeoJSON. Defaults to 4326.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>New instance of a BurnUnit</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit">BurnUnit</a></p>
 </dd>
 </dl>
@@ -177,13 +197,13 @@ a GeoJSON dictionary.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="driptorch.unit.BurnUnit.get_bounds">
-<span class="sig-name descname"><span class="pre">get_bounds</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="headerlink" href="#driptorch.unit.BurnUnit.get_bounds" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_bounds</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#driptorch.unit.BurnUnit.get_bounds" title="Permalink to this definition"></a></dt>
 <dd><p>Helper method for fetching the bounding box of the unit</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Bounding box of the unit</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>np.ndarray</p>
 </dd>
 </dl>
@@ -194,10 +214,10 @@ a GeoJSON dictionary.</p>
 <span class="sig-name descname"><span class="pre">to_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#driptorch.unit.BurnUnit.to_json" title="Permalink to this definition"></a></dt>
 <dd><p>Write the BurnUnit boundary to a GeoJSON dictionary</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>GeoJSON dictionary</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>dict</p>
 </dd>
 </dl>
@@ -211,10 +231,10 @@ a GeoJSON dictionary.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="driptorch.unit.PolygonSplitter.rotate">
-<span class="sig-name descname"><span class="pre">rotate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">angle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">origin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">shapely.geometry.point.Point</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#driptorch.unit.PolygonSplitter.rotate" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">rotate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">angle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">origin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Point</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#driptorch.unit.PolygonSplitter.rotate" title="Permalink to this definition"></a></dt>
 <dd><p>Helper method to rotate all four boundary segs</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>angle</strong> (<em>float</em>) – Angle to rotate line by (degrees)</p></li>
 <li><p><strong>origin</strong> (<em>Point</em>) – Origin of rotation</p></li>
@@ -225,10 +245,10 @@ a GeoJSON dictionary.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="driptorch.unit.PolygonSplitter.split">
-<span class="sig-name descname"><span class="pre">split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">polygon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">shapely.geometry.polygon.Polygon</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#driptorch.unit.PolygonSplitter.split" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">polygon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Polygon</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#driptorch.unit.PolygonSplitter.split" title="Permalink to this definition"></a></dt>
 <dd><p>Split the polygon to four wind-centric segments</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>polygon</strong> (<em>Polygon</em>) – Polygon to split</p>
 </dd>
 </dl>
@@ -236,7 +256,7 @@ a GeoJSON dictionary.</p>
 
 </dd></dl>
 
-</div>
+</section>
 
 
            </div>
