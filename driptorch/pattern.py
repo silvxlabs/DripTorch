@@ -8,6 +8,8 @@ import copy
 from time import time as unix_time
 import warnings
 
+from driptorch.personnel import IgnitionCrew
+
 # Internal imports
 from .io import Projector, write_geojson, write_quicfire
 from .unit import BurnUnit
@@ -328,7 +330,18 @@ class TemporalPropagator:
         self.sync_end_time = sync_end_time
         self.return_trip = return_trip
 
-    def forward(self, paths, ignition_crew, time_offset_heat):
+    def forward(self, paths: dict, ignition_crew: IgnitionCrew, time_offset_heat:float) -> dict:
+        """Compute and store time values for a given set of Igniters and their respective paths
+
+        Args:
+            paths (dict): Dictionary containing pattern paths
+            ignition_crew (IgnitionCrew): Respective ignition crew that generates the patterns
+            time_offset_heat (float): Time delay between ignition heats
+
+        Returns:
+            dict: Dictionary containing pattern paths with computed time values
+        """
+        
 
         # Create a Pandas DataFrame from the initialized paths dictionary
         self.paths = pd.DataFrame(paths)
@@ -469,6 +482,7 @@ class TemporalPropagator:
         if min_start_time != 0:
             self.paths["start_time"] -= min_start_time
             self.paths["end_time"] -= min_start_time
+
 
     def _get_offset(
         self,
