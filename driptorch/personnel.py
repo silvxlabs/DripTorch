@@ -35,19 +35,22 @@ class Igniter:
     Example:
         >>> import driptorch as dt
         >>> # Create a continuous line igniter
-        >>> line_igniter = dt.Igniter(1.8)
+        >>> line_igniter = dt.Igniter(0.804672)
         >>> # Create a dash igniter with equal dashes and gaps
-        >>> equal_dash_igniter = dt.Igniter(1.8, dash_length=10)
+        >>> equal_dash_igniter = dt.Igniter(0.804672, dash_length=10)
         >>> # Create a dash igniter with unequal dashes and gaps
-        >>> unequal_dash_igniter = dt.Igniter(1.8, gap_length=10, dash_length=20)
+        >>> unequal_dash_igniter = dt.Igniter(0.804672, gap_length=10, dash_length=20)
         >>> # Create a point igniter
-        >>> point_igniter = dt.Igniter(1.8, gap_length=10)
+        >>> point_igniter = dt.Igniter(0.804672, gap_length=10)
 
     """
 
-    def __init__(self, velocity: float, gap_length: float = None, dash_length: float = None):
+    def __init__(self, velocity: float = 0.805, gap_length: float = None, dash_length: float = None):
         """Constructor"""
 
+        if velocity >= 2.5:
+            raise IgniterError.velocity_warning
+            
         self.velocity = velocity
         self.gap_length = gap_length
         self.dash_length = dash_length
