@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Quickstart &mdash; DripTorch 0.6.3 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +15,9 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -77,10 +80,10 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="quickstart">
-<h1>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline"></a></h1>
-<div class="section" id="burn-unit-and-wind-direction">
-<h2>Burn unit and wind direction<a class="headerlink" href="#burn-unit-and-wind-direction" title="Permalink to this headline"></a></h2>
+  <section id="quickstart">
+<h1>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this heading"></a></h1>
+<section id="burn-unit-and-wind-direction">
+<h2>Burn unit and wind direction<a class="headerlink" href="#burn-unit-and-wind-direction" title="Permalink to this heading"></a></h2>
 <p>A burn unit is the spatial boundary of a firing operation while the wind direction determines the arrangement and timing of the ignition pattern. Everything that happens downstream in DripTorch depends on the unit boundary and the wind direction.</p>
 <p>You can create a burn unit in DripTorch by providing a Shapely <code class="docutils literal notranslate"><span class="pre">Polygon</span></code> object to the <code class="docutils literal notranslate"><span class="pre">BurnUnit</span></code> constructor. DripTorch expects the polygon CRS to be Web Mercator (EPSG: 4326). You can use the following function to convert any Shapely geometry or GeoJSON dictionary from a specific EPSG code to 4326.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">driptorch</span> <span class="k">as</span> <span class="nn">dt</span>
@@ -114,9 +117,9 @@
 <span class="n">burn_unit</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">BurnUnit</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">geojson</span><span class="p">,</span> <span class="mi">217</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="control-line-and-downwind-blackline-buffering">
-<h2>Control line and downwind blackline buffering<a class="headerlink" href="#control-line-and-downwind-blackline-buffering" title="Permalink to this headline"></a></h2>
+</section>
+<section id="control-line-and-downwind-blackline-buffering">
+<h2>Control line and downwind blackline buffering<a class="headerlink" href="#control-line-and-downwind-blackline-buffering" title="Permalink to this heading"></a></h2>
 <p>You can emmulate a plowline or handline operation by buffering the burn unit.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Buffer the burn unit to inside a control line of 2 meters</span>
 <span class="n">firing_area</span> <span class="o">=</span> <span class="n">burn_unit</span><span class="o">.</span><span class="n">buffer_control_line</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
@@ -143,9 +146,9 @@
 <div><p>Note: DripTorch caches the source EPSG code when loading a geometry, whether you specified it manual or left it as the default (4326). Everything under the hood operates in UTM, however when you export to GeoJSON DripTorch will always convert the coordinates to 4326. For other types of exports, such as exports to fire model ignition files, the projection will stay in UTM if you don’t specify a destination CRS.</p>
 </div></blockquote>
 <p>Buffering the burn unit to account for the control line and blackline operation is optional. Just remember that the <code class="docutils literal notranslate"><span class="pre">BurnUnit</span></code> instance you pass to the built-in pattern ignition generators (discussed below) determines the where the ignition paths are clipped. So, if you create an interior firing area polygon by buffering the original burn unit, what we called <code class="docutils literal notranslate"><span class="pre">firing_area</span></code> above, be sure to pass that polygon to downstream operations in DripTorch if you don’t want ignitions in your control line or blackline area.</p>
-</div>
-<div class="section" id="igniters-and-ignition-crews">
-<h2>Igniters and ignition crews<a class="headerlink" href="#igniters-and-ignition-crews" title="Permalink to this headline"></a></h2>
+</section>
+<section id="igniters-and-ignition-crews">
+<h2>Igniters and ignition crews<a class="headerlink" href="#igniters-and-ignition-crews" title="Permalink to this heading"></a></h2>
 <p>Ignition personnel can be configured and assembled in an <em>ignition crew</em>. For individual igniters, you can specify their velocity in meters/second and ignition rate in either ignitions/meter or ignitions/second. The line type of the igniter is implicitly defined using the <code class="docutils literal notranslate"><span class="pre">rate</span></code> parameter in the <code class="docutils literal notranslate"><span class="pre">Igniter</span></code> constructor. For example, use an ignition rate of zero for an igniter that produces a continuous line of fire, use a positive rate value for point ignitions and a negative rate for dash ignitions. By default, the rate parameter is in units of ignitions/meter. If you want your igniter to produce a point ignition every 5 meters then set <code class="docutils literal notranslate"><span class="pre">rate=1/5</span></code>. To specify the rate in ignitions/second, set <code class="docutils literal notranslate"><span class="pre">rate_units='seconds'</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a few igniters with different line types</span>
 <span class="n">fast_line_igniter</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">Igniter</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
@@ -174,9 +177,9 @@
 <span class="n">drone_crew</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">IgnitionCrew</span><span class="o">.</span><span class="n">from_list</span><span class="p">([</span><span class="n">drone_igniter</span><span class="p">])</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="firing-techniques-pattern-generators">
-<h2>Firing techniques (pattern generators)<a class="headerlink" href="#firing-techniques-pattern-generators" title="Permalink to this headline"></a></h2>
+</section>
+<section id="firing-techniques-pattern-generators">
+<h2>Firing techniques (pattern generators)<a class="headerlink" href="#firing-techniques-pattern-generators" title="Permalink to this heading"></a></h2>
 <p>Once your burn unit has been specified and you’ve allocated your ignition resources, you can simulate various firing techniques using DripTorch pattern generators. Currently, DripTorch supports the following firing techniques:</p>
 <ul class="simple">
 <li><p>Strip-heading fire - <code class="docutils literal notranslate"><span class="pre">strip(spacing,</span> <span class="pre">depth)</span></code></p></li>
@@ -215,9 +218,9 @@
 </pre></div>
 </div>
 <p>Once you have an ignition pattern you can view it in an interactive map and export the pattern to a fire simulator input file.</p>
-</div>
-<div class="section" id="mapping">
-<h2>Mapping<a class="headerlink" href="#mapping" title="Permalink to this headline"></a></h2>
+</section>
+<section id="mapping">
+<h2>Mapping<a class="headerlink" href="#mapping" title="Permalink to this heading"></a></h2>
 <p>Thanks to <a class="reference external" href="https://python-visualization.github.io/folium/">Folium</a>, you can map burn unit boundaries and animated ignition paths. DripTorch has some convenience methods to make creating maps super simple. The mapping class takes the burn unit and you can optionally add the interior firing area and blackline area if you created those. Finally, adding the pattern will animate the ignition paths.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Initialize a map with the burn unit</span>
 <span class="nb">map</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="n">burn_unit</span><span class="p">)</span>
@@ -234,9 +237,9 @@
 </pre></div>
 </div>
 <p><img alt="strip-pattern-map" src="https://storage.googleapis.com/holtz-driptorch/gh-repo/img/map-strip.png" /></p>
-</div>
-<div class="section" id="exports">
-<h2>Exports<a class="headerlink" href="#exports" title="Permalink to this headline"></a></h2>
+</section>
+<section id="exports">
+<h2>Exports<a class="headerlink" href="#exports" title="Permalink to this heading"></a></h2>
 <p>If you want to use your ignition pattern to set something on fire (at least in a simulator) then use one of the export methods in the pattern instance to write the ignition paths in a model-specific format. Currently, DripTorch only supports QUIC-fire, but other formats are on our roadmap.</p>
 <p>The origin of the simulation domain in QUIC-fire is the lower lefthand corner. You can specify the extent of the domain using a <code class="docutils literal notranslate"><span class="pre">BurnUnit</span></code> object. In most cases, you’ll simply provide the first burn unit you created in the pipeline, prior to any control line or downwind buffering. The extent of the burn unit object will be extracted and the ignition patterns will be translated to the origin of the CRS internally. Optionally, you can specify a destination EPSG code if you want to reproject the ignition pattern before exporting to QUIC-fire.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Write the pattern to a QUIC-Fire ignition file</span>
@@ -249,8 +252,8 @@
 <span class="n">qf_ignition_str</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">to_quicfire</span><span class="p">(</span><span class="n">burn_unit</span><span class="p">,</span> <span class="n">dst_epsg</span><span class="o">=</span><span class="mi">5070</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

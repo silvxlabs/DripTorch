@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>I/O &mdash; DripTorch 0.6.3 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,9 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -47,7 +50,20 @@
 <li class="toctree-l2"><a class="reference internal" href="firing.html">Firing Techniques</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pattern.html">Patterns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mapping.html">Mapping</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">I/O</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">I/O</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#driptorch.io.Projector"><code class="docutils literal notranslate"><span class="pre">Projector</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#driptorch.io.Projector.backward"><code class="docutils literal notranslate"><span class="pre">Projector.backward()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#driptorch.io.Projector.estimate_utm_epsg"><code class="docutils literal notranslate"><span class="pre">Projector.estimate_utm_epsg()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#driptorch.io.Projector.forward"><code class="docutils literal notranslate"><span class="pre">Projector.forward()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#driptorch.io.Projector.to_web_mercator"><code class="docutils literal notranslate"><span class="pre">Projector.to_web_mercator()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#driptorch.io.Projector.web_mercator_to_utm"><code class="docutils literal notranslate"><span class="pre">Projector.web_mercator_to_utm()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#driptorch.io.read_geojson_polygon"><code class="docutils literal notranslate"><span class="pre">read_geojson_polygon()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#driptorch.io.write_geojson"><code class="docutils literal notranslate"><span class="pre">write_geojson()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#driptorch.io.write_quicfire"><code class="docutils literal notranslate"><span class="pre">write_quicfire()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -77,8 +93,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="module-driptorch.io">
-<span id="i-o"></span><h1>I/O<a class="headerlink" href="#module-driptorch.io" title="Permalink to this headline"></a></h1>
+  <section id="module-driptorch.io">
+<span id="i-o"></span><h1>I/O<a class="headerlink" href="#module-driptorch.io" title="Permalink to this heading"></a></h1>
 <p>DripTorch I/O helper functions</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="driptorch.io.Projector">
@@ -87,16 +103,16 @@
 <p>Helper class to handle reprojections during I/O operations.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="driptorch.io.Projector.backward">
-<span class="sig-name descname"><span class="pre">backward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">shapely.geometry.base.BaseGeometry</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">shapely.geometry.base.BaseGeometry</span></span></span><a class="headerlink" href="#driptorch.io.Projector.backward" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">backward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BaseGeometry</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">BaseGeometry</span></span></span><a class="headerlink" href="#driptorch.io.Projector.backward" title="Permalink to this definition"></a></dt>
 <dd><p>Project from destimation EPSG to source EPSG</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>geometry</strong> (<em>BaseGeometry</em>) – Input geometry to reproject</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Reprojected geometry</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>BaseGeometry</p>
 </dd>
 </dl>
@@ -104,21 +120,21 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="driptorch.io.Projector.estimate_utm_epsg">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">estimate_utm_epsg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#driptorch.io.Projector.estimate_utm_epsg" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">estimate_utm_epsg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#driptorch.io.Projector.estimate_utm_epsg" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="driptorch.io.Projector.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">shapely.geometry.base.BaseGeometry</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">shapely.geometry.base.BaseGeometry</span></span></span><a class="headerlink" href="#driptorch.io.Projector.forward" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BaseGeometry</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">BaseGeometry</span></span></span><a class="headerlink" href="#driptorch.io.Projector.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Project from source EPSG to destination EPSG</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>geometry</strong> (<em>BaseGeometry</em>) – Input geometry to reproject</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Reprojected geometry</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>BaseGeometry</p>
 </dd>
 </dl>
@@ -126,10 +142,10 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="driptorch.io.Projector.to_web_mercator">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">to_web_mercator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">shapely.geometry.base.BaseGeometry</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_epsg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">shapely.geometry.base.BaseGeometry</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#driptorch.io.Projector.to_web_mercator" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">to_web_mercator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">BaseGeometry</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_epsg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">BaseGeometry</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#driptorch.io.Projector.to_web_mercator" title="Permalink to this definition"></a></dt>
 <dd><p>Convenience method to project a shapely geometry or GeoJSON feature to web mercator</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Optional</strong><strong>[</strong><strong>BaseGeometry</strong> (<em>geometry</em>) – Either a shapely geometry or GeoJSON
 feature (not a feature collection).</p></li>
@@ -138,10 +154,10 @@ feature (not a feature collection).</p></li>
 <li><p><strong>src_epsg</strong> (<em>int</em>) – EPSG code of the CRS that the spatial data are currently projected in.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A shapely geometry or GeoJSON feature projected in 4326</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>BaseGeometry | dict</p>
 </dd>
 </dl>
@@ -149,26 +165,26 @@ feature (not a feature collection).</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="driptorch.io.Projector.web_mercator_to_utm">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">web_mercator_to_utm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">shapely.geometry.base.BaseGeometry</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">shapely.geometry.base.BaseGeometry</span></span></span><a class="headerlink" href="#driptorch.io.Projector.web_mercator_to_utm" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">web_mercator_to_utm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BaseGeometry</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">BaseGeometry</span></span></span><a class="headerlink" href="#driptorch.io.Projector.web_mercator_to_utm" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="driptorch.io.read_geojson_polygon">
-<span class="sig-prename descclassname"><span class="pre">driptorch.io.</span></span><span class="sig-name descname"><span class="pre">read_geojson_polygon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geojson</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">folium.vector_layers.Polygon</span></span></span><a class="headerlink" href="#driptorch.io.read_geojson_polygon" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">driptorch.io.</span></span><span class="sig-name descname"><span class="pre">read_geojson_polygon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geojson</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Polygon</span></span></span><a class="headerlink" href="#driptorch.io.read_geojson_polygon" title="Permalink to this definition"></a></dt>
 <dd><p>Parse a GeoJSON to a shapely Polygon</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>geojson</strong> (<em>dict</em>) – Input GeoJSON dictionary projected in 4326</p>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>GeojsonError</strong> – Raise error if we can’t figure out the formatting</p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Shapely polygon geometry</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>Polygon</p>
 </dd>
 </dl>
@@ -179,7 +195,7 @@ feature (not a feature collection).</p></li>
 <span class="sig-prename descclassname"><span class="pre">driptorch.io.</span></span><span class="sig-name descname"><span class="pre">write_geojson</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometries</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">shapely.geometry.base.BaseGeometry</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_epsg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_epsg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4326</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elapsed_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#driptorch.io.write_geojson" title="Permalink to this definition"></a></dt>
 <dd><p>Write a list of shapely geometries to GeoJSON</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>geometries</strong> (<em>list</em><em>[</em><em>BaseGeometry</em><em>]</em>) – List of shapely geometries</p></li>
 <li><p><strong>src_epsg</strong> (<em>int</em>) – EPSG code of the CRS that the spatial data are currently projected in.</p></li>
@@ -189,10 +205,10 @@ feature (not a feature collection).</p></li>
 <li><p><strong>elapsed_time</strong> (<em>float</em><em>, </em><em>optional</em>) – Time elapsed during the firing operation. Defaults to None.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>GeoJSON</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -203,26 +219,26 @@ feature (not a feature collection).</p></li>
 <span class="sig-prename descclassname"><span class="pre">driptorch.io.</span></span><span class="sig-name descname"><span class="pre">write_quicfire</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">times</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elapsed_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#driptorch.io.write_quicfire" title="Permalink to this definition"></a></dt>
 <dd><p>Writes a QUIC-fire ignition file</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>geometry</strong> (<em>list</em>) – List of geometry to write</p></li>
 <li><p><strong>times</strong> (<em>list</em>) – Arrival times corresponding to the geometry coordinates (seconds)</p></li>
 <li><p><strong>resolution</strong> (<em>int</em>) – Horizontal resolution of QUIC-fire domain (meters). Defaults to 1.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>ExportError</strong> – Error if Point and (Multi)LineString geometry types are mixed</p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>QUIC-fire formated ignition file</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>str</p>
 </dd>
 </dl>
 </dd></dl>
 
-</div>
+</section>
 
 
            </div>

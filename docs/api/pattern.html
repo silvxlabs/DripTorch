@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Patterns &mdash; DripTorch 0.6.3 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,9 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -46,7 +49,23 @@
 <li class="toctree-l2"><a class="reference internal" href="unit.html">Burn Unit</a></li>
 <li class="toctree-l2"><a class="reference internal" href="personnel.html">Personnel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="firing.html">Firing Techniques</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Patterns</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Patterns</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#driptorch.pattern.Pattern"><code class="docutils literal notranslate"><span class="pre">Pattern</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#driptorch.pattern.Pattern.empty_path_dict"><code class="docutils literal notranslate"><span class="pre">Pattern.empty_path_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#driptorch.pattern.Pattern.from_dict"><code class="docutils literal notranslate"><span class="pre">Pattern.from_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#driptorch.pattern.Pattern.merge"><code class="docutils literal notranslate"><span class="pre">Pattern.merge()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#driptorch.pattern.Pattern.to_dict"><code class="docutils literal notranslate"><span class="pre">Pattern.to_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#driptorch.pattern.Pattern.to_json"><code class="docutils literal notranslate"><span class="pre">Pattern.to_json()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#driptorch.pattern.Pattern.to_quicfire"><code class="docutils literal notranslate"><span class="pre">Pattern.to_quicfire()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#driptorch.pattern.Pattern.translate"><code class="docutils literal notranslate"><span class="pre">Pattern.translate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#driptorch.pattern.TemporalPropagator"><code class="docutils literal notranslate"><span class="pre">TemporalPropagator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#driptorch.pattern.TemporalPropagator.forward"><code class="docutils literal notranslate"><span class="pre">TemporalPropagator.forward()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="mapping.html">Mapping</a></li>
 <li class="toctree-l2"><a class="reference internal" href="io.html">I/O</a></li>
 </ul>
@@ -78,8 +97,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="module-driptorch.pattern">
-<span id="patterns"></span><h1>Patterns<a class="headerlink" href="#module-driptorch.pattern" title="Permalink to this headline"></a></h1>
+  <section id="module-driptorch.pattern">
+<span id="patterns"></span><h1>Patterns<a class="headerlink" href="#module-driptorch.pattern" title="Permalink to this heading"></a></h1>
 <p>Spatiotemporal patterns and the infamous temporal propagator</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="driptorch.pattern.Pattern">
@@ -90,10 +109,10 @@
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">empty_path_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#driptorch.pattern.Pattern.empty_path_dict" title="Permalink to this definition"></a></dt>
 <dd><p>Helper method for initializing a path parameter dictionary</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Empty path dictionary</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>dict</p>
 </dd>
 </dl>
@@ -101,20 +120,20 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="driptorch.pattern.Pattern.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paths_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern"><span class="pre">driptorch.pattern.Pattern</span></a></span></span><a class="headerlink" href="#driptorch.pattern.Pattern.from_dict" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paths_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern"><span class="pre">Pattern</span></a></span></span><a class="headerlink" href="#driptorch.pattern.Pattern.from_dict" title="Permalink to this definition"></a></dt>
 <dd><p>Alternative constructor for initializing a Pattern object with a dictionary
 of path parameters</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>paths_dict</strong> (<em>dict</em>) – Dictionary of path parameters</p></li>
-<li><p><strong>burn_unit</strong> (<a class="reference internal" href="unit.html#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><em>BurnUnit</em></a>) – Burn unit object associated with the ignition pattern</p></li>
+<li><p><strong>epsg</strong> (<em>Int</em>) – EPSG code of path geometries</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A new instance of Pattern</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern">Pattern</a></p>
 </dd>
 </dl>
@@ -122,23 +141,23 @@ of path parameters</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="driptorch.pattern.Pattern.merge">
-<span class="sig-name descname"><span class="pre">merge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern"><span class="pre">driptorch.pattern.Pattern</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern"><span class="pre">driptorch.pattern.Pattern</span></a></span></span><a class="headerlink" href="#driptorch.pattern.Pattern.merge" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">merge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern"><span class="pre">Pattern</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern"><span class="pre">Pattern</span></a></span></span><a class="headerlink" href="#driptorch.pattern.Pattern.merge" title="Permalink to this definition"></a></dt>
 <dd><p>Merge an input pattern with self</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pattern</strong> (<a class="reference internal" href="#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern"><em>Pattern</em></a>) – Input pattern to be merged into self</p></li>
 <li><p><strong>time_offset</strong> (<em>float</em>) – Time offset between patterns (seconds)</p></li>
 <li><p><strong>inplace</strong> (<em>bool</em><em>, </em><em>optional</em>) – Overwrites Pattern object if true, otherwise return new Pattern object. Defaults to True.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>EPSGError.non_equivalent</strong> – EPSG code for input pattern does not match self.epsg</p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Merged pattern object</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern">Pattern</a></p>
 </dd>
 </dl>
@@ -149,10 +168,10 @@ of path parameters</p>
 <span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#driptorch.pattern.Pattern.to_dict" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the Pattern path parameters as a dictionary</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Pattern path parameters</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>dict</p>
 </dd>
 </dl>
@@ -163,10 +182,10 @@ of path parameters</p>
 <span class="sig-name descname"><span class="pre">to_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#driptorch.pattern.Pattern.to_json" title="Permalink to this definition"></a></dt>
 <dd><p>Write the Pattern to a GeoJSON dictionary</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Timestamped GeoJSON representation of the firing pattern</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>dict</p>
 </dd>
 </dl>
@@ -174,10 +193,10 @@ of path parameters</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="driptorch.pattern.Pattern.to_quicfire">
-<span class="sig-name descname"><span class="pre">to_quicfire</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">burn_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="unit.html#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><span class="pre">driptorch.unit.BurnUnit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_epsg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></span><a class="headerlink" href="#driptorch.pattern.Pattern.to_quicfire" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">to_quicfire</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">burn_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="unit.html#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><span class="pre">BurnUnit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_epsg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></span><a class="headerlink" href="#driptorch.pattern.Pattern.to_quicfire" title="Permalink to this definition"></a></dt>
 <dd><p>Write paths dictionary to QUIC-fire ignition file format.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>burn_unit</strong> (<a class="reference internal" href="unit.html#driptorch.unit.BurnUnit" title="driptorch.unit.BurnUnit"><em>BurnUnit</em></a>) – Burn unit that defines the extent of the QF simulation</p></li>
 <li><p><strong>filename</strong> (<em>str</em><em>, </em><em>optional</em>) – If provided, write the ignition file to the
@@ -187,10 +206,10 @@ filename. Defaults to None.</p></li>
 <li><p><strong>dst_epsg</strong> (<em>int</em><em>, </em><em>optional</em>) – EPSG code for the destination projection. Defaults to None.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>None if filename provided, string containing the ignition file if not.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>None | str</p>
 </dd>
 </dl>
@@ -198,20 +217,20 @@ filename. Defaults to None.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="driptorch.pattern.Pattern.translate">
-<span class="sig-name descname"><span class="pre">translate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_off</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_off</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern"><span class="pre">driptorch.pattern.Pattern</span></a></span></span><a class="headerlink" href="#driptorch.pattern.Pattern.translate" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">translate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_off</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_off</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern"><span class="pre">Pattern</span></a></span></span><a class="headerlink" href="#driptorch.pattern.Pattern.translate" title="Permalink to this definition"></a></dt>
 <dd><p>Translate pattern geometry along the x and y axis by the supplied
 x and y offset amounts.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x_off</strong> (<em>float</em>) – Offset along the x axis</p></li>
 <li><p><strong>y_off</strong> (<em>float</em>) – Offset along the y axis</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>New Pattern object with translated geometries</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#driptorch.pattern.Pattern" title="driptorch.pattern.Pattern">Pattern</a></p>
 </dd>
 </dl>
@@ -232,7 +251,7 @@ through their coordinates.</p>
 
 </dd></dl>
 
-</div>
+</section>
 
 
            </div>
