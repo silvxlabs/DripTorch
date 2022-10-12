@@ -167,6 +167,7 @@ if __name__ == "__main__":
 
     patch_simulation(simulation_path, input_data)
     
+    
     '''
     with open(write_path, "w") as file:
         json.dump(simulation_data, file)
