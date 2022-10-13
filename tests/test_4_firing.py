@@ -24,6 +24,8 @@ To run these tests, call "pytest -ss -v" from the terminal.
 SIMULATION_PATH = "resources/simulation_0.json"
 
 def test_back_technique() -> None:
+    """Test back firing technique
+    """
 
     validation_data_path = path.join(path.dirname(__file__), SIMULATION_PATH)
     with open(validation_data_path, "r") as file:
@@ -51,7 +53,15 @@ def test_back_technique() -> None:
 
     assert_array_almost_equal(test_a, test_b,decimal=5)
 
+    test_a = [x for x in test_pattern.geometry[0].coords]
+    test_b = validation_pattern["geometry"][0]["coordinates"]
+
+    assert_array_almost_equal(test_a, test_b,decimal=5)
+
+
 def test_head_technique() -> None:
+    """Test head firing technique
+    """
 
     validation_data_path = path.join(path.dirname(__file__), SIMULATION_PATH)
     with open(validation_data_path, "r") as file:
@@ -79,8 +89,15 @@ def test_head_technique() -> None:
 
     assert_array_almost_equal(test_a, test_b,decimal=5)
 
+    test_a = [x for x in test_pattern.geometry[0].coords]
+    test_b = validation_pattern["geometry"][0]["coordinates"]
+
+    assert_array_almost_equal(test_a, test_b,decimal=5)
+
 
 def test_flank_technique() -> None:
+    """Test flank firing technique
+    """
 
     validation_data_path = path.join(path.dirname(__file__), SIMULATION_PATH)
     with open(validation_data_path, "r") as file:
@@ -108,8 +125,15 @@ def test_flank_technique() -> None:
 
     assert_array_almost_equal(test_a, test_b,decimal=5)
 
+    test_a = [x for x in test_pattern.geometry[0].coords]
+    test_b = validation_pattern["geometry"][0]["coordinates"]
+
+    assert_array_almost_equal(test_a, test_b,decimal=5)
+
 
 def test_strip_technique() -> None:
+    """Test strip firing technique
+    """
 
     validation_data_path = path.join(path.dirname(__file__), SIMULATION_PATH)
     with open(validation_data_path, "r") as file:
@@ -137,8 +161,15 @@ def test_strip_technique() -> None:
 
     assert_array_almost_equal(test_a, test_b,decimal=5)
 
+    test_a = [x for x in test_pattern.geometry[0].coords]
+    test_b = validation_pattern["geometry"][0]["coordinates"]
+
+    assert_array_almost_equal(test_a, test_b,decimal=5)
+
 
 def test_inferno_technique() -> None:
+    """Test inferno firing technique
+    """
 
     validation_data_path = path.join(path.dirname(__file__), SIMULATION_PATH)
     with open(validation_data_path, "r") as file:
@@ -161,8 +192,15 @@ def test_inferno_technique() -> None:
 
     assert_array_almost_equal(test_a, test_b,decimal=5)
 
+    test_a = [x for x in test_pattern.geometry[0].coords]
+    test_b = validation_pattern["geometry"][0]["coordinates"]
+
+    assert_array_almost_equal(test_a, test_b,decimal=5)
+
 
 def test_ring_technique() -> None:
+    """Test ring firing technique
+    """
 
     validation_data_path = path.join(path.dirname(__file__), SIMULATION_PATH)
     with open(validation_data_path, "r") as file:
@@ -187,5 +225,10 @@ def test_ring_technique() -> None:
 
     test_a = test_pattern.times[0]
     test_b = validation_pattern["times"][0]
+
+    assert_array_almost_equal(test_a, test_b,decimal=5)
+
+    test_a = [x for x in test_pattern.geometry[0].coords]
+    test_b = validation_pattern["geometry"][0]["coordinates"]
 
     assert_array_almost_equal(test_a, test_b,decimal=5)
