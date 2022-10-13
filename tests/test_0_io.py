@@ -26,7 +26,7 @@ To run these tests, call "pytest -ss -v" from the terminal.
 """
 
 SIMULATION_PATH = "resources/simulation_0.json"
-QF_VALIDATION_DATA = "resources/quicfire_output_test.dat"
+QF_VALIDATION_DATA = "resources/quicfire_output_test_ring.dat"
 
 
 def test_geojson_io() -> None:
@@ -128,6 +128,7 @@ def test_write_quickfire() -> None:
     validation_data_path = path.join(path.dirname(__file__), SIMULATION_PATH)
     with open(validation_data_path, "r") as file:
         validation_data = json.load(file)
+
     pattern = dt.pattern.Pattern.from_dict(
         validation_data["ring_pattern"], epsg=validation_data["epsg"]
     )
@@ -145,7 +146,7 @@ def test_write_quickfire() -> None:
 
     # Generate quicfire output
     quicfire_output = write_quicfire(
-        geometry=geometries, times=times, elapsed_time=elapsed_time, resolution=1
+        geometry=geometries, times=times, elapsed_time=elapsed_time
     )
     test_quicfire_path = path.join(path.dirname(__file__), QF_VALIDATION_DATA)
 

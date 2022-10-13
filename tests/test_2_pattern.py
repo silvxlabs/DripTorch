@@ -24,7 +24,7 @@ To run these tests, call "pytest -ss -v" from the terminal.
 """
 
 SIMULATION_PATH = "resources/simulation_0.json"
-QF_VALIDATION_PATH = "resources/quicfire_output_test.dat"
+QF_VALIDATION_DATA = "resources/quicfire_output_test_ring.dat"
 
 
 def test_pattern_io() -> None:
@@ -33,7 +33,7 @@ def test_pattern_io() -> None:
 
     validation_data_path = path.join(path.dirname(__file__), SIMULATION_PATH)
     qf_validation_data_path = path.join(
-        path.dirname(__file__), QF_VALIDATION_PATH)
+        path.dirname(__file__), QF_VALIDATION_DATA)
 
     with open(validation_data_path, "r") as file:
         validation_data = json.load(file)
@@ -74,7 +74,7 @@ def test_merge() -> None:
 
     validation_data_path = path.join(path.dirname(__file__), SIMULATION_PATH)
     qf_validation_data_path = path.join(
-        path.dirname(__file__), QF_VALIDATION_PATH)
+        path.dirname(__file__), QF_VALIDATION_DATA)
 
     with open(validation_data_path, "r") as file:
         validation_data = json.load(file)
@@ -116,7 +116,7 @@ def test_translate() -> None:
 
     validation_data_path = path.join(path.dirname(__file__), SIMULATION_PATH)
     qf_validation_data_path = path.join(
-        path.dirname(__file__), QF_VALIDATION_PATH)
+        path.dirname(__file__), QF_VALIDATION_DATA)
 
     with open(validation_data_path, "r") as file:
         validation_data = json.load(file)
@@ -136,22 +136,17 @@ def test_translate() -> None:
 
     translated = test_pattern_1.translate(x_off=x_off, y_off=y_off)
     un_translated = translated.translate(x_off=-1 * x_off, y_off=-1 * y_off)
+  
+    test_a = []
+    for geom in test_pattern_1.geometry:
+        for x in geom.coords:
+            test_a.append(x)
 
-    test_a = [
-        x.coords
-        for x in list(
-            itertools.chain.from_iterable(
-                [x.geoms for x in test_pattern_1.geometry])
-        )
-    ]
-
-    test_b = [
-        x.coords
-        for x in list(
-            itertools.chain.from_iterable(
-                [x.geoms for x in un_translated.geometry])
-        )
-    ]
+    test_b = []
+    for geom in un_translated.geometry:
+        for x in geom.coords:
+            test_b.append(x)
+  
 
     assert_array_almost_equal(
         test_a,
@@ -167,7 +162,7 @@ def test_temporal_propgation() -> None:
 
     validation_data_path = path.join(path.dirname(__file__), SIMULATION_PATH)
     qf_validation_data_path = path.join(
-        path.dirname(__file__), QF_VALIDATION_PATH)
+        path.dirname(__file__), QF_VALIDATION_DATA)
 
     with open(validation_data_path, "r") as file:
         validation_data = json.load(file)
@@ -177,7 +172,6 @@ def test_temporal_propgation() -> None:
 
     dash_igniter = dt.Igniter(
         validation_data["args"]["igniter_speed"],
-        validation_data["args"]["igniter_rate"],
     )
     point_crew = dt.IgnitionCrew.clone_igniter(
         dash_igniter, validation_data["args"]["number_igniters"]

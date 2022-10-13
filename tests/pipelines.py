@@ -17,7 +17,6 @@ def generate_simulations(
     back_buffer: int,
     wind_direction: float,
     igniter_speed: float,
-    igniter_rate: float,
     number_igniters: float,
     offset: float,
     igniter_spacing: float = None,
@@ -74,7 +73,7 @@ def generate_simulations(
     simulation_data["firing_area"] = firing_area.to_json()
     simulation_data["blackline"] = blackline_area.to_json()
 
-    dash_igniter = dt.Igniter(igniter_speed, igniter_rate)
+    dash_igniter = dt.Igniter(igniter_speed)
     point_crew = dt.IgnitionCrew.clone_igniter(dash_igniter, number_igniters)
 
     simulation_data["igniter"] = dash_igniter.to_json()
@@ -89,6 +88,9 @@ def generate_simulations(
     ring_technique = dt.firing.Ring(firing_area, point_crew)
     ring_pattern = ring_technique.generate_pattern(offset)
     simulation_data["ring_pattern"] = ring_pattern.to_dict()
+
+    # Make validation data for quicfire
+    ring_pattern.to_quicfire(firing_area,"quicfire_output_test_ring.dat")
 
     # Head Technique
     head_technique = dt.firing.Head(firing_area, point_crew)
@@ -118,57 +120,10 @@ def generate_simulations(
     return simulation_data
 
 
-
-def patch_simulation(simulation_path:str, input_data:dict) -> None:
-    """Patch a given simulation data set with input data. Marks the time, current Drip Torch Verion
-       and updated fields
-
-    Args:
-        simulation_path (str): Path to the simulation data
-        input_data (dict): Data to be patched into the simulation formated as {Field:Data}
-    """
-
-    simulation_data_path = path.join(path.dirname(__file__), simulation_path)
-    with open(simulation_data_path, "r") as file:
-        simulation_data = json.load(file)
-
-    fields = list(input_data.keys())
-    patch_data = {
-        "date": datetime.now().isoformat(),
-        "version": dt._version.__version__,
-        "fields":fields
-    }
-    try:
-        simulation_data["patch_history"].append(patch_data)
-    except KeyError:
-        simulation_data["patch_history"] = [patch_data]
-
-    for k,v in input_data.items():
-        try:
-            simulation_data[k] = json.dumps(v)
-        except Error as e:
-            print(f"\n Error: {e} \n Patching to {simulation_path} failed for {k}\n")
-
-    with open(simulation_data_path, "w") as file:
-        json.dump(simulation_data, file)
-    
-
 if __name__ == "__main__":
     simargs = simulations.simulation_args
     simulation_data = generate_simulations(**simargs)
-    input_data_fields = ["igniter","firing_crew"]
-
-    input_data = {
-        k : simulation_data[k] for k in input_data_fields
-    }
-
-    simulation_path = path.join(path.dirname(__file__),
+    write_path = path.join(path.dirname(__file__),
                            "resources/simulation_0.json")
-
-    patch_simulation(simulation_path, input_data)
-    
-    
-    '''
     with open(write_path, "w") as file:
         json.dump(simulation_data, file)
-    '''

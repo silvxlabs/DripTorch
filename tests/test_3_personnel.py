@@ -21,7 +21,6 @@ To run these tests, call "pytest -ss -v" from the terminal.
 
 SIMULATION_PATH = "resources/simulation_0.json"
 
-
 def test_igniter() -> None:
     """Test personnel.Igniter() and personnel.IgnitionCrew() functionality
     """
@@ -31,20 +30,20 @@ def test_igniter() -> None:
     with open(validation_data_path, "r") as file:
         validation_data = json.load(file)
     igniter_test = dt.Igniter(
-        validation_data["args"]["igniter_speed"], validation_data["args"]["igniter_rate"])
+        validation_data["args"]["igniter_speed"])
     ignition_crew_test = dt.IgnitionCrew.clone_igniter(
         igniter_test, validation_data["args"]["number_igniters"])
 
     igniter_validation = dt.Igniter.from_json(validation_data["igniter"])
     ignition_crew_validation = dt.IgnitionCrew.from_json(
         validation_data["firing_crew"])
-
-    test_a = igniter_test
-    test_b = igniter_validation
+   
+    test_a = igniter_test.__dict__
+    test_b = igniter_validation.__dict__
     assert test_a == test_b
-
-    test_a = ignition_crew_test
-    test_b = ignition_crew_validation
+    
+    test_a = ignition_crew_test.to_json()
+    test_b = ignition_crew_validation.to_json()
     assert test_a == test_b
 
     test_a = ignition_crew_test.add_igniter(igniter_test)

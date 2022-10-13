@@ -11,9 +11,11 @@ simulation_args = {
     "front_buffer": 5,
     "back_buffer": 20,
     "wind_direction": 0,
-    "igniter_speed": 1.8,
-    "igniter_rate": -20,
+    "igniter_speed": 0.804,
+    "igniter_depth": 10,
+    "igniter_spacing": 10,
     "number_igniters": 2,
+    "heat_depth": 10,
     "offset": 50
 }
 
