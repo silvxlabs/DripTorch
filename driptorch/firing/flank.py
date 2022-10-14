@@ -53,7 +53,7 @@ class Flank(FiringBase):
             Spatiotemporal ignition pattern
         """
 
-        return self._generate_pattern(depth=depth, heat_depth=heat_depth, side=side, return_trip=True,time_offset_heat=time_offset_heat)
+        return self._generate_pattern(depth=depth, heat_depth=heat_depth, side=side, return_trip=True, time_offset_heat=time_offset_heat)
 
     def _init_paths(self, paths: dict, **kwargs) -> dict:
         """Initialize spatial part of the ignition paths.
@@ -75,7 +75,7 @@ class Flank(FiringBase):
         side = kwargs['side']
 
         # Extract the bounding extent of the firing area
-        bbox = self._burn_unit.bounds()
+        bbox = self._burn_unit.bounds
         x_min, y_min = bbox[:, 0].min(), bbox[:, 1].min()
         x_max, y_max = bbox[:, 0].max(), bbox[:, 1].max()
 
