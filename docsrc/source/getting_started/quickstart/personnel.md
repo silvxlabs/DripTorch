@@ -5,7 +5,7 @@ Ignition personnel can be configured and assembled in an _ignition crew_. For in
 ```python
 # Create a few igniters with different line types
 fast_line_igniter = dt.Igniter(2)
-slow_dot_igniter = dt.Igniter(0.1, gap_legnth=10)
+slow_dot_igniter = dt.Igniter(0.1, gap_length=10)
 medium_dash_igniter = dt.Igniter(1, dash_length=10)
 irregular_dash_igniter = dt.Igniter(1, dash_length=10, gap_length=50)
 ```
@@ -35,6 +35,6 @@ six_man_crew = dt.IgnitionCrew.clone_igniter(medium_dash_igniter, 6)
 It is also possible to create other types of igniters, such as drone-base PSD/DAID devices. Just remember that even when you only have a single igniter resource, you still need to add it to an ignition crew to be passes to pattern generation methods.
 
 ```python
-drone_igniter = dt.Igniter(10, 0.5, rate_units='seconds')
+drone_igniter = dt.Igniter(1, dash_length=10, gap_length=50)
 drone_crew = dt.IgnitionCrew.from_list([drone_igniter])
 ```
