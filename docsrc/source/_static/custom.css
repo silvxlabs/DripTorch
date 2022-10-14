@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Open+Sans:ital,wght@0,400;0,600;1,400;1,600&display=swap');
+
+.navbar-brand img {
+   height: 30px;
+}
+.navbar-brand {
+   height: 50px;
+}
+
+
+html[data-theme="light"] {
+  --pst-color-primary: #22C55E;
+  --pst-color-secondary: rgb(240, 137, 18);
+}
+
+html[data-theme="dark"] {
+  --pst-color-primary: #22C55E;
+  --pst-color-secondary: rgb(240, 137, 18);
+}
+
+/* buttons */
+
+.button>p>a {
+  box-shadow: 0px 4px 14px -7px #999999;
+  background-color: #22C55E;
+  border: 1px solid #18a14a;
+  border-radius: 0.25rem;
+  display: inline-block;
+  cursor: pointer;
+  color: white;
+  padding: 0.5em 0.5em;
+  text-align: center;
+  text-decoration: none;
+  font-size: 120%;
+  margin: 2%;
+  width: 40%;
+}
+
+.button>p>a:hover {
+  background-color: #18a14a;
+}
+
+.button>p>a:active {
+  position: relative;
+  top: 1px;
+}

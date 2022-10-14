@@ -1,0 +1,30 @@
+﻿Spatial Boundary
+==============
+
+.. automodule:: driptorch.unit
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      BurnUnit
+      PolygonSplitter
+   
+   
+
+   
+   
+   
+
+
+

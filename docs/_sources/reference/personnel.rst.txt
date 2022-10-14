@@ -1,0 +1,24 @@
+.. currentmodule:: driptorch
+
+.. personnel.Igniter
+
+Igniters
+========
+
+Constructors
+------------
+
+.. autosummary::
+    :toctree: api/
+
+    Igniter
+
+Methods
+-------
+
+.. autosummary::
+    :toctree: api/
+
+    Igniter.to_json
+
+

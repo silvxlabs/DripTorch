@@ -1,0 +1,15 @@
+.. currentmodule:: driptorch
+
+.. unit.BurnUnit:
+
+Burn Unit
+=========
+
+Methods
+-------
+
+.. autosummary:: 
+    :toctree: generated/
+
+    BurnUnit.to_json
+    BurnUnit.difference

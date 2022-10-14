@@ -12,6 +12,13 @@ from folium import plugins
 
 
 class Map:
+    """Convinience class for plotting spatio-temporal ignition patterns with Folium
+
+    Parameters
+    ----------
+    burn_unit : BurnUnit
+        Burn unit boundary
+   """
 
     def __init__(self, burn_unit: BurnUnit):
         """Constructor
@@ -64,8 +71,10 @@ class Map:
     def add_firing_area(self, firing_area: BurnUnit):
         """Add the interior firing area to the map as a yellow polygon
 
-        Args:
-            firing_area (BurnUnit): Interior firing area
+        Parameters
+        ----------
+        firing_area : BurnUnit
+            Interior firing area
         """
 
         # Write to GeoJSON and style
@@ -87,9 +96,10 @@ class Map:
     def add_blackline_area(self, blackline_area: BurnUnit):
         """Add the blackline area to the map as a black polygon
 
-        Args:
-            blackline_area (BurnUnit): Dlackline area (difference between
-                the burn unit and firing area)
+        Parameters
+        ----------
+        blackline_area : BurnUnit
+            Blackline area (difference between the burn unit and firing area)
         """
 
         # Write to GeoJSON and style
@@ -113,8 +123,10 @@ class Map:
         """Add the pattern to the map as an animated timedstamped
         GeoJSON. Lines, dashes and dots are red.
 
-        Args:
-            pattern (Pattern): Ignition patterns
+        Parameters
+        ----------
+        pattern : Pattern
+            Ignition pattern
         """
 
         # Add the pattern to the map
@@ -128,8 +140,10 @@ class Map:
     def show(self) -> folium.Map:
         """Method to show the map in a notebook
 
-        Returns:
-            folium.Map: Folium map object
+        Returns
+        -------
+        folium.Map
+            Folium map object
         """
 
         # Add the burn unit boundary to the map
@@ -151,11 +165,15 @@ class Map:
     def styling(feature: dict):
         """Helper method for parsing styles from the GeoJSON features
 
-        Args:
-            feature (dict): GeoJSON feature
+        Parameters
+        ----------
+        feature : dict
+            GeoJSON feature
 
-        Returns:
-            dict: Styling properties
+        Returns
+        -------
+        dict
+            Style dictionary
         """
         return {
             'fillColor': feature['properties']['fillColor'],

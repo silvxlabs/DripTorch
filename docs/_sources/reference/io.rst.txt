@@ -1,0 +1,28 @@
+===================
+Projections and I/O
+===================
+.. currentmodule:: driptorch
+
+Spatial projections
+-------------------
+
+.. autosummary::
+   :toctree: generated/
+
+   io.Projector
+   io.Projector.forward
+   io.Projector.backward
+   io.Projector.estimate_utm_epsg
+   io.Projector.to_web_mercator
+   io.Projector.web_mercator_to_utm
+
+Importing and exporting
+-----------------------
+
+.. autosummary::
+   :toctree: generated/
+
+   io.read_geojson_polygon
+   io.write_geojson
+   io.write_quicfire
+

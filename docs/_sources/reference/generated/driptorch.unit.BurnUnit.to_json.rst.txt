@@ -1,0 +1,6 @@
+﻿driptorch.unit.BurnUnit.to\_json
+================================
+
+.. currentmodule:: driptorch.unit
+
+.. automethod:: BurnUnit.to_json

@@ -1,0 +1,20 @@
+## Mapping
+
+Thanks to [Folium](https://python-visualization.github.io/folium/), you can map burn unit boundaries and animated ignition paths. DripTorch has some convenience methods to make creating maps super simple. The mapping class takes the burn unit and you can optionally add the interior firing area and blackline area if you created those. Finally, adding the pattern will animate the ignition paths.
+
+```python
+# Initialize a map with the burn unit
+map = dt.Map(burn_unit)
+
+# Optionally add the firing and blackline areas
+map.add_firing_area(firing_area)
+map.add_blackline_area(blackline_area)
+
+# Add the timed ignition pattern
+map.add_pattern(strip_pattern)
+
+# Show the map interactivly in a notebook
+map.show()
+```
+
+![strip-pattern-map](https://storage.googleapis.com/holtz-driptorch/gh-repo/img/map-strip.png)

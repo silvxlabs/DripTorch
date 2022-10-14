@@ -1,0 +1,10 @@
+******************
+Spatial Boundaries
+******************
+
+.. currentmodule:: driptorch
+
+.. toctree::
+    :maxdepth: 2
+
+    spatial_boundaries.burn_unit

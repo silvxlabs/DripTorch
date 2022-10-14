@@ -14,14 +14,18 @@ from ..warnings import CrewSizeWarning
 
 
 class Head(FiringBase):
+    """A Heading fire is set along the upwind porition of the unit and burns into
+    the firing area.
+
+    Parameters
+    ----------
+    burn_unit : BurnUnit
+        Area bounding the ignition paths
+    ignition_crew : IgnitionCrew
+        Ignition crew assigned to the burn
+    """
 
     def __init__(self, burn_unit: BurnUnit, ignition_crew: IgnitionCrew):
-        """Constructor
-
-        Args:
-            burn_unit (BurnUnit): Area bounding the ignition paths
-            ignition_crew (IgnitionCrew): Ignition crew assigned to the burn
-        """
 
         # Check number of igniters
         if len(ignition_crew) > 1:
@@ -34,11 +38,15 @@ class Head(FiringBase):
     def generate_pattern(self, offset: float) -> Pattern:
         """Generate head fire ignition pattern
 
-        Args:
-            offset (float): Offset distance in meters from the unit boundary
+        Parameters
+        ----------
+        offset : float
+            Offset distance in meters from the unit boundary
 
-        Returns:
-            Pattern: Spatiotemporal ignition pattern
+        Returns
+        -------
+        Pattern
+            Spatiotemporal ignition pattern
         """
 
         return self._generate_pattern(offset=offset, align=False)

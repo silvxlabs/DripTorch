@@ -1,0 +1,6 @@
+﻿driptorch.BurnUnit.get\_bounds
+==============================
+
+.. currentmodule:: driptorch
+
+.. automethod:: BurnUnit.bounds
