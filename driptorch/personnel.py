@@ -6,9 +6,11 @@ Burn operation personnel
 from __future__ import annotations
 import copy
 import json
+import warnings
 
 # Internal imports
 from .errors import *
+from .warnings import IgniterWarning
 
 
 class Igniter:
@@ -51,8 +53,8 @@ class Igniter:
     def __init__(self, velocity: float, gap_length: float = None, dash_length: float = None):
 
         if velocity >= 2.5:
-            raise IgniterError.velocity_warning
-            
+            warnings.warn(IgniterWarning(IgniterWarning.velocity_warning))
+
         self.velocity = velocity
         self.gap_length = gap_length
         self.dash_length = dash_length
