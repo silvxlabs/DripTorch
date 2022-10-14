@@ -66,7 +66,7 @@ def generate_simulations(
     firing_area = burn_unit.buffer_control_line(front_buffer)
     firing_area = firing_area.buffer_downwind(back_buffer)
     blackline_area = burn_unit.difference(firing_area)
-    domain = burn_unit.copy()
+    domain = firing_area.copy()
     simulation_data["epsg"] = domain.utm_epsg
     simulation_data["lower_left"] = domain.get_bounds().min(axis=0).tolist()
     simulation_data["burn_unit"] = burn_unit.to_json()

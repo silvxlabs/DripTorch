@@ -21,7 +21,6 @@ from shapely.errors import ShapelyDeprecationWarning
 from shapely import affinity
 from shapely.geometry import MultiPoint, MultiLineString, LineString, shape
 
-
 # Turn off Pandas copy warning (or figure out how to do it like the Panda wants)
 pd.options.mode.chained_assignment = None
 
@@ -234,6 +233,7 @@ class Pattern:
 
         # Translate pattern geometry to the origin or the CRS according to the burn unit extent
         lower_left = domain.get_bounds().min(axis=0)
+     
         trans_geoms = []
         for geom in geometry:
             trans_geoms.append(affinity.translate(

@@ -144,6 +144,7 @@ def test_write_quickfire() -> None:
             geom, -lower_left[0], -lower_left[1]))
     geometries = trans_geoms
 
+    
     # Generate quicfire output
     quicfire_output = write_quicfire(
         geometry=geometries, times=times, elapsed_time=elapsed_time
