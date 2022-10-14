@@ -24,7 +24,6 @@ from shapely.geometry import MultiPoint, MultiLineString, LineString, shape
 # Turn off Pandas copy warning (or figure out how to do it like the Panda wants)
 pd.options.mode.chained_assignment = None
 
-
 """
 
 Turn off the Shapely deprecation warning about about future removal
