@@ -75,7 +75,7 @@ class Flank(FiringBase):
         side = kwargs['side']
 
         # Extract the bounding extent of the firing area
-        bbox = self._burn_unit.bounds()
+        bbox = self._burn_unit.bounds
         x_min, y_min = bbox[:, 0].min(), bbox[:, 1].min()
         x_max, y_max = bbox[:, 0].max(), bbox[:, 1].max()
 
