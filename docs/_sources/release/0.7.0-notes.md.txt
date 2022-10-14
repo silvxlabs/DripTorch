@@ -1,0 +1,44 @@
+
+# DripTorch 0.7.0 Release Notes
+
+## New Features
+
+### Pattern composition ([PR #83](https://github.com/silvxlabs/DripTorch/pull/83))
+
+The `Pattern` object has a new `merge` method for composing two patterns, e.g.
+`pattern1.merge(pattern2, time_offset=100)`. An example situation would be composing a backing fire with an interior firing technique, such as a strip and flank fire. You can chain multiple `merge` methods together to compose patterns to your heart's desire.
+
+### Irregular dash ignition ([PR #104](https://github.com/silvxlabs/DripTorch/pull/104))
+
+An `Igniter` object is now configured by providing a `velocity`, `gap_length`, and `dash_length`. In previous version, a dash igniter was specified by a negative interval,
+a point igniter by a positive interval, and a line igniter by an interval of zero. Now,
+to configure a line igniter, just provide a velocity; `gap_length` and `dash_length` are
+defaulted to `None`. To instantiate a point igniter set the `gap_length` parameter to the distance between point ignitions and leave the `dash_length` parameter as the default. For a dash igniter, you can set the `dash_length` parameter and leave `gap_length=None` to produce regular spaced dashes (the length of the dash is equal to the length of the gap). For irregular dash ignitions, you can set both the `dash_length` and `gap_length` parameters.
+
+```{warning}
+This is a breaking change! Users will need to update all instances of `Igniter` object
+constructions to include the new parameters.
+```
+
+### Optional start side for strip and flank firing ([PR #94](https://github.com/silvxlabs/DripTorch/pull/95))
+
+We added a new parameter to the strip and flank pattern generators to control from which side of the unit the ignition crew starts the firing, e.g. `flank.generate_pattern(depth=40, side='left')`. The `side` parameter defaults to `'right'` and will accept `'left'`. The `'left'` and `'right'` options are with respect to the wind direction supplied to the `BurnUnit` object.
+
+### Time offset between heats for strip and flank ([PR #103](https://github.com/silvxlabs/DripTorch/pull/103)]
+
+Use the optional `time_offset_heat: float = 0` parameter in the flank and strip pattern generators to delay heats from starting as soon as the previous heat finishes.
+
+### JSON serialization for igniters and crews ([PR #93](https://github.com/silvxlabs/DripTorch/pull/93))
+
+The `Igniter` and `IgntitionCrew` objects now have methods for encoding and decoding JSON
+objects.
+
+### Unit tests ([PR #99](https://github.com/silvxlabs/DripTorch/pull/95))
+
+Rough draft of unit tests has been implemented. Better late than never.
+
+## Bug fixes
+
+### Igniter velocity default ([PR #107](https://github.com/silvxlabs/DripTorch/pull/107))
+
+We mistakenly defaulted the igniter velocity to 1.8 m/s; makes sense in units of miles per hour, but way too fast in meters per seconds. This has been resolved.

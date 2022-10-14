@@ -14,14 +14,18 @@ import numpy as np
 
 
 class Strip(FiringBase):
+    """Strip firing produces ignition paths perpendicular to the wind direction. Igniters are staggered with their heats
+    and each heat alternates on which side of the unit they start.
+
+    Parameters
+    ----------
+    burn_unit : BurnUnit
+        Area bounding the ignition paths
+    ignition_crew : IgnitionCrew
+        Ignition crew assigned to the burn
+    """
 
     def __init__(self, burn_unit: BurnUnit, ignition_crew: IgnitionCrew):
-        """Constructor
-
-        Args:
-            burn_unit (BurnUnit): Area bounding the ignition paths
-            ignition_crew (IgnitionCrew): Ignition crew assigned to the burn
-        """
 
         # Initialize the base class
         super().__init__(burn_unit, ignition_crew)
@@ -29,15 +33,21 @@ class Strip(FiringBase):
     def generate_pattern(self, spacing:float,depth: float = None, heat_depth: float = None, side: str = 'right', time_offset_heat: float = 0) -> Pattern:
         """Generate a flank fire ignition pattern
 
-        Args:
-            spacing (float): Staggering distance in meters between igniters within a heat
-            depth (float, optional): Depth in meters between igniters. Defaults to None.
-            heat_depth (float, optional): Depth in meters between heats. Defaults to None.
-            side (str, optional): Side of the wind vector to start the ignition. Defaults to 'right'. Options are 'left' or 'right'.
-            time_offset_heat (float): Time delay between respective ignition heats. Defaults to 0.
+        Parameters
+        ----------
+        spacing : float
+            Staggering distance in meters between igniters within a heat
+        depth : float
+            Horizontal distance in meters between igniters and heats
+        heat_depth : float
+            Depth in meters between igniter heats. If None, heat_depth is equal to igniter depth. Defaults to None.
+        side : str
+            Side of the wind vector to start the ignition. Defaults to 'right'. Options are 'left' or 'right'.
 
-        Returns:
-            Pattern: Spatiotemporal ignition pattern
+        Returns
+        -------
+        Pattern
+            Spatiotemporal ignition pattern
         """
 
         return self._generate_pattern(spacing=spacing,depth=depth, heat_depth=heat_depth, side=side, return_trip=True,time_offset_heat=time_offset_heat)
@@ -62,7 +72,7 @@ class Strip(FiringBase):
         side = kwargs['side']
 
         # Extract the bounding extent of the firing area
-        bbox = self._burn_unit.get_bounds()
+        bbox = self._burn_unit.bounds
         x_min, y_min = bbox[:, 0].min(), bbox[:, 1].min()
         x_max, y_max = bbox[:, 0].max(), bbox[:, 1].max()
 

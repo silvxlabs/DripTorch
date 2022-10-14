@@ -1,4 +1,6 @@
 """
+BurnUnit
+--------
 Reading and manipulating a burn unit geometry and splitting
 the boundary to wind-centric segments
 """
@@ -17,16 +19,21 @@ from shapely import affinity
 
 
 class BurnUnit:
+    """
+    A burn unit is a polygon that is split into segments based on the wind direction.
+
+    Parameters
+    -----------
+    polygon : shapely.Polygon
+        Shapely polygon geometry object
+    wind_direction :  float
+        Wind direction (degrees)
+    utm : int
+        UTM EPSG code of spatial data. If not provided it is assumed
+        that coordinates are in 4326 and will be converted to UTM. Defaults to None.
+    """
 
     def __init__(self, polygon: Polygon, wind_direction: float, utm_epsg: int = None):
-        """Constructor
-
-        Args:
-            polygon (Polygon): Shapely polygon geometry object
-            wind_direction (float): Wind direction (degrees)
-            utm (int): UTM EPSG code of spatial data. If not provided it is assumed
-                that coordinates are in 4326 and will be converted to UTM. Defaults to None.
-        """
 
         # Set the global EPSG source
         if not utm_epsg:
@@ -54,13 +61,19 @@ class BurnUnit:
         """Alternative constructor used to create a BurnUnit object from
         a GeoJSON dictionary.
 
-        Args:
-            geojson (dict): GeoJSON dictionary
-            wind_direction (float): Wind direction (degrees)
-            epsg (int): EPSG code of the input GeoJSON. Defaults to 4326.
+        Parameters
+        ----------
+        geojson : dict
+            GeoJSON dictionary
+        wind_direction : float
+            Wind direction (degrees)
+        epsg : int
+            EPSG code of the input GeoJSON. Defaults to 4326.
 
-        Returns:
-            BurnUnit: New instance of a BurnUnit
+        Returns
+        -------
+        BurnUnit
+            New instance of a BurnUnit
         """
 
         # Read the GeoJSON as a shapely polygon
@@ -69,10 +82,24 @@ class BurnUnit:
         return cls(polygon, wind_direction)
 
     def to_json(self, **kwargs) -> dict:
-        """Write the BurnUnit boundary to a GeoJSON dictionary
+        """Returns a GeoJSON representation of the ``BurnUnit`` as a string
 
-        Returns:
-            dict: GeoJSON dictionary
+        Parameters
+        ----------
+        **kwargs
+            Keyword arguments passed to ``write_geojson``
+
+        Examples
+        --------
+        >>> from shapely.geometry import Polygon
+        >>> polygon = Polygon([(-114.478, 47.163), (-114.471, 47.163), (-114.471, 47.167), (-114.478, 47.167)])
+
+        >>> burn_unit = driptorch.BurnUnit(polygon, firing_direction=270)
+        >>> burn_unit.to_json()
+        '{'type': 'FeatureCollection', 'features': [{'type': 'Feature', 'properties': {}, \
+'geometry': {'type': 'Polygon', 'coordinates': (((-114.478, 47.163), (-114.471, 47.16299999999998), \
+(-114.471, 47.16699999999999), (-114.478, 47.16699999999999), (-114.478, 47.163)),)}}]}'
+
         """
 
         return write_geojson([self.polygon], src_epsg=self.utm_epsg, **kwargs)
@@ -100,8 +127,10 @@ class BurnUnit:
     def copy(self) -> BurnUnit:
         """Utility method for copying a BurnUnit instance
 
-        Returns:
-            BurnUnit: New instance of a BurnUnit
+        Returns
+        -------
+        BurnUnit
+            New instance of a BurnUnit
         """
 
         return copy.copy(self)
@@ -109,11 +138,15 @@ class BurnUnit:
     def buffer_control_line(self, width: float) -> BurnUnit:
         """Shrink the burn unit to account for the width of the control line
 
-        Args:
-            distance (with): Width of the control line (meters)
+        Parameters
+        ----------
+        distance : width
+            Width of the control line (meters)
 
-        Returns:
-            BurnUnit: New instance of a BurnUnit
+        Returns
+        -------
+        BurnUnit
+            New instance of a BurnUnit
         """
 
         # Use shapely's buffer method on the polygon
@@ -124,11 +157,15 @@ class BurnUnit:
     def buffer_downwind(self, width: float) -> BurnUnit:
         """Create a downwind blackline buffer
 
-        Args:
-            width (float): Width of downwind buffer (meters)
+        Parameters
+        ----------
+        width : float
+            Width of downwind buffer (meters)
 
-        Returns:
-            BurnUnit: New instance of a BurnUnit
+        Returns
+        -------
+        BurnUnit
+            New instance of a BurnUnit
         """
 
         # Buffer the fore line by the blackline width parameter
@@ -146,11 +183,15 @@ class BurnUnit:
         this burn unit and another. Useful for obtaining the blackline
         area for clearing fuels.
 
-        Args:
-            burn_unit (BurnUnit): The BurnUnit instance to difference against
+        Parameters
+        ----------
+        burn_unit : BurnUnit
+            The BurnUnit instance to difference against
 
-        Returns:
-            BurnUnit: A new instance of a BurnUnit
+        Returns
+        -------
+        BurnUnit
+            A new instance of a BurnUnit
         """
 
         # Use shapely's set-theorectic difference method
@@ -158,11 +199,14 @@ class BurnUnit:
 
         return BurnUnit(polygon_difference, self.wind_direction, utm_epsg=self.utm_epsg)
 
-    def get_bounds(self) -> np.ndarray:
-        """Helper method for fetching the bounding box of the unit
+    @property
+    def bounds(self) -> np.ndarray:
+        """Returns the bounding box of the unit
 
-        Returns:
-            np.ndarray: Bounding box of the unit
+        Returns
+        -------
+        numpy.ndarray
+            Bounding box of the unit
         """
 
         return np.array(self.polygon.envelope.exterior.coords[:-1])

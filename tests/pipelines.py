@@ -69,7 +69,7 @@ def generate_simulations(
     blackline_area = burn_unit.difference(firing_area)
     domain = burn_unit.copy()
     simulation_data["epsg"] = domain.utm_epsg
-    simulation_data["lower_left"] = domain.get_bounds().min(axis=0).tolist()
+    simulation_data["lower_left"] = domain.bounds.min(axis=0).tolist()
     simulation_data["burn_unit"] = burn_unit.to_json()
     simulation_data["firing_area"] = firing_area.to_json()
     simulation_data["blackline"] = blackline_area.to_json()

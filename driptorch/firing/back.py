@@ -14,6 +14,16 @@ from ..warnings import CrewSizeWarning
 
 
 class Back(FiringBase):
+    """A Backing fire is a fire set along the downwind portion of the burn unit
+    that backs into the firing area
+
+    Parameters
+    ----------
+    burn_unit : BurnUnit
+        Burn unit
+    ignition_crew : IgnitionCrew
+        Ignition crew
+    """
 
     def __init__(self, burn_unit: BurnUnit, ignition_crew: IgnitionCrew):
 
@@ -28,11 +38,15 @@ class Back(FiringBase):
     def generate_pattern(self, offset: float) -> Pattern:
         """Generate backing fire ignition pattern
 
-        Args:
-            offset (float): Offset distance in meters from the unit boundary
+        Parameters
+        ----------
+        offset : float
+            Offset distance in meters from the unit boundary
 
-        Returns:
-            Pattern: Spatiotemporal ignition pattern
+        Returns
+        -------
+        Pattern
+            Ignition pattern
         """
 
         return self._generate_pattern(offset=offset, align=False)

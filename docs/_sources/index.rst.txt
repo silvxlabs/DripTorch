@@ -1,19 +1,34 @@
-.. DripTorch documentation master file, created by
-   sphinx-quickstart on Tue Jun 14 08:03:53 2022.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+
+DripTorch |version|
+===================
 
 
-Welcome to DripTorch Docs
-=========================
+DripTorch is simulation tool used to generate spatiotemporal ignition patterns
+for prescribed fire planning and analysis. Ignition patterns are simulated within
+a user-provided spatial boundary. The boundary can be manipulated to account
+for control line and blackline operations. DripTorch offers a set of common firing techniques
+that determine the arrangement of igniters and their respective paths and timing. We also
+provide mapping utilities to help visualize the ignition patterns across space and time, and
+export methods to write the ignition patterns to a variety of fire model formats.
+
+Quick links
+-----------
+
+If you are new to DripTorch, check out the :doc:`Getting Started <getting_started/index>` section;
+we will walk you through installation and setting up your first simulation. For experienced users,
+refer to the :doc:`Reference <reference/index>` section for a complete list of available functions, classes and methods.
 
 .. toctree::
-   :maxdepth: 1
-   :caption: Contents:
+   :hidden:
 
-   install.md
-   quickstart.md
-   api/index.rst
+   Home <self>
+   Getting started <getting_started/index>
+   Reference <reference/index>
+   release
+
+.. container:: button
+
+   :doc:`Getting started <getting_started/index>` :doc:`Reference <reference/index>`
 
 Indices and tables
 ------------------

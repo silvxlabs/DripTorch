@@ -15,14 +15,14 @@ class Inferno:
     """This technique is set up differently than the other firing techniques. It doesn't
     inherit from the FiringBase class. Time does not need to be propagated so we
     don't pass to the Temporal Propagator.
+
+    Parameters
+    ----------
+    burn_unit : BurnUnit
+        Area bounding the ignition paths
     """
 
     def __init__(self, burn_unit: BurnUnit):
-        """Constructor
-
-        Args:
-            burn_unit (BurnUnit): Area bounding the ignition paths
-        """
 
         # Store the burn unit. Wind direction doesn't matter for this technique, so
         # no need to align the burn unit to the wind.
@@ -31,15 +31,17 @@ class Inferno:
     def generate_pattern(self) -> Pattern:
         """Generate an inferno ignition pattern
 
-        Returns:
-            Pattern: Spatiotemporal ignition pattern
+        Returns
+        -------
+        Pattern
+            Spatiotemporal ignition pattern
         """
 
         paths = Pattern.empty_path_dict()
         paths['times'] = []
 
         # Extract the bounding extent of the firing area
-        bbox = self._burn_unit.get_bounds()
+        bbox = self._burn_unit.bounds
         x_min, y_min = bbox[:, 0].min(), bbox[:, 1].min()
         x_max, y_max = bbox[:, 0].max(), bbox[:, 1].max()
 
