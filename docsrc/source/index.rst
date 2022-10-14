@@ -24,6 +24,7 @@ refer to the :doc:`Reference <reference/index>` section for a complete list of a
    Home <self>
    Getting started <getting_started/index>
    Reference <reference/index>
+   release
 
 .. container:: button
 

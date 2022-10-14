@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>DripTorch 0.6.3 &#8212; DripTorch 0.6.3 documentation</title>
+    <title>Release notes &#8212; DripTorch 0.6.3 documentation</title>
 <script>
   document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
   document.documentElement.dataset.theme = localStorage.getItem("theme") || "light"
@@ -37,7 +37,8 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Getting Started" href="getting_started/index.html" />
+    <link rel="next" title="DripTorch 0.7.0 Release Notes" href="release/0.7.0-notes.html" />
+    <link rel="prev" title="driptorch.Map.styling" href="reference/generate/driptorch.Map.styling.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="docsearch:language" content="None">
   </head>
@@ -58,7 +59,7 @@
   
 
 
-<a class="navbar-brand logo" href="#">
+<a class="navbar-brand logo" href="index.html">
   
   
   
@@ -81,8 +82,8 @@
       
       <div class="navbar-center-item">
         <ul id="navbar-main-elements" class="navbar-nav">
-    <li class="toctree-l1 current active nav-item">
- <a class="current reference internal nav-link" href="#">
+    <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="index.html">
   Home
  </a>
 </li>
@@ -99,8 +100,8 @@
  </a>
 </li>
 
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="release.html">
+<li class="toctree-l1 current active nav-item">
+ <a class="current reference internal nav-link" href="#">
   Release notes
  </a>
 </li>
@@ -147,7 +148,14 @@
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
-    
+    <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="release/0.7.0-notes.html">
+   v0.7.0
+  </a>
+ </li>
+</ul>
+
   </div>
 </nav>
   </div>
@@ -164,24 +172,9 @@
     
     <div class="toc-item">
       
-<div class="tocsection onthispage mt-5 pt-1 pb-3">
-    <i class="fas fa-list"></i> On this page
-</div>
 
 <nav id="bd-toc-nav">
-    <ul class="visible nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#quick-links">
-   Quick links
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#indices-and-tables">
-   Indices and tables
-  </a>
- </li>
-</ul>
-
+    
 </nav>
     </div>
     
@@ -199,34 +192,28 @@
               
               <article class="bd-article" role="main">
                 
-  <section id="driptorch-version">
-<h1>DripTorch 0.6.3<a class="headerlink" href="#driptorch-version" title="Permalink to this headline">#</a></h1>
-<p>DripTorch is simulation tool used to generate spatiotemporal ignition patterns
-for prescribed fire planning and analysis. Ignition patterns are simulated within
-a user-provided spatial boundary. The spatial boundary can be manipulated to account
-for control line and black line placement. DripTorch offers a set of common firing techniques
-that determine the arrangement of igniters and their respective paths and timing. We also
-provide mapping utilities to help visualize the ignition patterns across space and time, and
-export methods to write the ignition patterns to a variety of fire model formats.</p>
-<section id="quick-links">
-<h2>Quick links<a class="headerlink" href="#quick-links" title="Permalink to this headline">#</a></h2>
-<p>If you are new to DripTorch, check out the <a class="reference internal" href="getting_started/index.html"><span class="doc">Getting Started</span></a> section;
-we will walk you through installation and setting up your first simulation. For experienced users,
-refer to the <a class="reference internal" href="reference/index.html"><span class="doc">Reference</span></a> section for a complete list of available functions, classes and methods.</p>
+  <section id="release-notes">
+<h1>Release notes<a class="headerlink" href="#release-notes" title="Permalink to this headline">#</a></h1>
 <div class="toctree-wrapper compound">
-</div>
-<div class="button docutils container">
-<p><a class="reference internal" href="getting_started/index.html"><span class="doc">Getting started</span></a> <a class="reference internal" href="reference/index.html"><span class="doc">Reference</span></a></p>
-</div>
-</section>
-<section id="indices-and-tables">
-<h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">#</a></h2>
-<ul class="simple">
-<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
-<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
-<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="release/0.7.0-notes.html"> v0.7.0</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="release/0.7.0-notes.html#new-features">New Features</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="release/0.7.0-notes.html#pattern-composition-pr-83">Pattern composition (PR #83)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="release/0.7.0-notes.html#irregular-dash-ignition-pr-104">Irregular dash ignition (PR #104)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="release/0.7.0-notes.html#optional-start-side-for-strip-and-flank-firing-pr-94">Optional start side for strip and flank firing (PR #94)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="release/0.7.0-notes.html#time-offset-between-heats-for-strip-and-flank-pr-103">Time offset between heats for strip and flank (PR #103]</a></li>
+<li class="toctree-l3"><a class="reference internal" href="release/0.7.0-notes.html#json-serialization-for-igniters-and-crews-pr-93">JSON serialization for igniters and crews (PR #93)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="release/0.7.0-notes.html#unit-tests-pr-99">Unit tests (PR #99)</a></li>
 </ul>
-</section>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="release/0.7.0-notes.html#bug-fixes">Bug fixes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="release/0.7.0-notes.html#igniter-velocity-default-pr-107">Igniter velocity default (PR #107)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
 </section>
 
 
@@ -237,10 +224,17 @@ refer to the <a class="reference internal" href="reference/index.html"><span cla
               <footer class="bd-footer-article">
                   <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-  <a class='right-next' id="next-link" href="getting_started/index.html" title="next page">
+  <a class='left-prev' id="prev-link" href="reference/generate/driptorch.Map.styling.html" title="previous page">
+      <i class="fas fa-angle-left"></i>
+      <div class="prev-next-info">
+          <p class="prev-next-subtitle">previous</p>
+          <p class="prev-next-title">driptorch.Map.styling</p>
+      </div>
+  </a>
+  <a class='right-next' id="next-link" href="release/0.7.0-notes.html" title="next page">
   <div class="prev-next-info">
       <p class="prev-next-subtitle">next</p>
-      <p class="prev-next-title">Getting Started</p>
+      <p class="prev-next-title">DripTorch 0.7.0 Release Notes</p>
   </div>
   <i class="fas fa-angle-right"></i>
   </a>
