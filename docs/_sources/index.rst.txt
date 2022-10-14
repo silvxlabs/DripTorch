@@ -5,8 +5,8 @@ DripTorch |version|
 
 DripTorch is simulation tool used to generate spatiotemporal ignition patterns
 for prescribed fire planning and analysis. Ignition patterns are simulated within
-a user-provided spatial boundary. The spatial boundary can be manipulated to account
-for control line and black line placement. DripTorch offers a set of common firing techniques
+a user-provided spatial boundary. The boundary can be manipulated to account
+for control line and blackline operations. DripTorch offers a set of common firing techniques
 that determine the arrangement of igniters and their respective paths and timing. We also
 provide mapping utilities to help visualize the ignition patterns across space and time, and
 export methods to write the ignition patterns to a variety of fire model formats.
