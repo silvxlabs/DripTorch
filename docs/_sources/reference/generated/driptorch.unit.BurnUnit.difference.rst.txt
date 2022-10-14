@@ -1,6 +1,0 @@
-﻿driptorch.unit.BurnUnit.difference
-==================================
-
-.. currentmodule:: driptorch.unit
-
-.. automethod:: BurnUnit.difference

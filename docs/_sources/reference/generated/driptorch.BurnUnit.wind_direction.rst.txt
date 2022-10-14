@@ -1,6 +1,0 @@
-﻿driptorch.BurnUnit.wind\_direction
-==================================
-
-.. currentmodule:: driptorch
-
-.. autoproperty:: BurnUnit.wind_direction

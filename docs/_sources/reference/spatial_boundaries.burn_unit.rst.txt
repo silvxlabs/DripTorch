@@ -1,7 +1,0 @@
-**********
-Burn Units
-**********
-
-.. autosummary::
-    :toctree:
-    driptorch.unit
