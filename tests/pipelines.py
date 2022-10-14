@@ -7,6 +7,7 @@ import os.path as path
 # Internal Imports
 import driptorch as dt
 from driptorch.io import *
+from driptorch._version import __version__
 from resources import simulations
 
 
@@ -47,7 +48,7 @@ def generate_simulations(
     """
 
     simulation_date = datetime.now().isoformat()
-    simulation_version = dt.__version__
+    simulation_version = __version__
     simulation_data = {
         "version": simulation_version,
         "date": simulation_date,
@@ -117,10 +118,57 @@ def generate_simulations(
     return simulation_data
 
 
+
+def patch_simulation(simulation_path:str, input_data:dict) -> None:
+    """Patch a given simulation data set with input data. Marks the time, current Drip Torch Verion
+       and updated fields
+
+    Args:
+        simulation_path (str): Path to the simulation data
+        input_data (dict): Data to be patched into the simulation formated as {Field:Data}
+    """
+
+    simulation_data_path = path.join(path.dirname(__file__), simulation_path)
+    with open(simulation_data_path, "r") as file:
+        simulation_data = json.load(file)
+
+    fields = list(input_data.keys())
+    patch_data = {
+        "date": datetime.now().isoformat(),
+        "version": dt._version.__version__,
+        "fields":fields
+    }
+    try:
+        simulation_data["patch_history"].append(patch_data)
+    except KeyError:
+        simulation_data["patch_history"] = [patch_data]
+
+    for k,v in input_data.items():
+        try:
+            simulation_data[k] = json.dumps(v)
+        except Error as e:
+            print(f"\n Error: {e} \n Patching to {simulation_path} failed for {k}\n")
+
+    with open(simulation_data_path, "w") as file:
+        json.dump(simulation_data, file)
+    
+
 if __name__ == "__main__":
     simargs = simulations.simulation_args
     simulation_data = generate_simulations(**simargs)
-    write_path = path.join(path.dirname(__file__),
+    input_data_fields = ["igniter","firing_crew"]
+
+    input_data = {
+        k : simulation_data[k] for k in input_data_fields
+    }
+
+    simulation_path = path.join(path.dirname(__file__),
                            "resources/simulation_0.json")
+
+    patch_simulation(simulation_path, input_data)
+    
+    
+    '''
     with open(write_path, "w") as file:
         json.dump(simulation_data, file)
+    '''
