@@ -489,13 +489,15 @@ class TemporalPropagator:
             else:
                 path.start_time = 0
             
-            # Apply heat interval time offset
-            if i > 0:
-                path.start_time += time_offset_heat
-
             # Calculate path end time (seconds along path plus start time)
             # path.end_time = path.start_time + path.meters / velocity
             path.end_time = path.start_time + path.geometry.length / velocity
+
+            # Add time offset between heats
+            if i > 0:
+                path.start_time += time_offset_heat
+                path.end_time += time_offset_heat
+
 
             # Insert row back into paths dataframe
             self.paths.loc[index] = path
