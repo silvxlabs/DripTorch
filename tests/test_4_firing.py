@@ -1,8 +1,10 @@
 # Core Imports
 import json
 import os.path as path
+import sys
 
 # Internal Imports
+sys.path.append("../driptorch")
 import driptorch as dt
 
 # External Imports

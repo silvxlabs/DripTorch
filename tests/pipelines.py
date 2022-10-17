@@ -3,9 +3,11 @@
 from datetime import datetime
 import json
 import os.path as path
+import sys
 
 # Internal Imports
-import driptorch as dt
+sys.path.append("../driptorch")
+import driptorch
 from driptorch.io import *
 from driptorch._version import __version__
 from resources import simulations

@@ -7,8 +7,10 @@ import os
 import os.path as path
 import itertools
 import tempfile
+import sys
 
 # Internal Imports
+sys.path.append("../driptorch")
 import driptorch as dt
 
 """

@@ -4,8 +4,10 @@ from shapely.geometry.polygon import Polygon
 import numpy as np
 from numpy.testing import assert_array_almost_equal
 import os.path as path
+import sys
 
 # Internal Imports
+sys.path.append("../driptorch")
 import driptorch as dt
 from driptorch.io import *
 from resources import testgeoms
