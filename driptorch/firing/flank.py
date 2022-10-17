@@ -119,7 +119,7 @@ class Flank(FiringBase):
             line = line.intersection(self._burn_unit.polygon)
 
             # Edge case: In rare cases, the line along the top of the envelope becomes a point following
-            # the intersection (pretty sure this is a numerica precision issue). In this case, we need to
+            # the intersection (pretty sure this is a numerical precision issue). In this case, we need to
             # just skip this path.
             if isinstance(line, (Point, MultiPoint)):
                 continue
