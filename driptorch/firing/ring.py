@@ -14,14 +14,18 @@ from ..warnings import CrewSizeWarning
 
 
 class Ring(FiringBase):
+    """Ring firing involves two igniters walking along the boundary of the firing area from the
+    downwind to the upwind side of the unit
+
+    Parameters
+    ----------
+    burn_unit : BurnUnit
+        Area bounding the ignition paths
+    ignition_crew : IgnitionCrew
+        Ignition crew assigned to the burn
+    """
 
     def __init__(self, burn_unit: BurnUnit, ignition_crew: IgnitionCrew):
-        """Constructor
-
-        Args:
-            burn_unit (BurnUnit): Area bounding the ignition paths
-            ignition_crew (IgnitionCrew): Ignition crew assigned to the burn
-        """
 
         # Check the number of igniters in the ignition crew; should be two
         if len(ignition_crew) < 2:
@@ -39,11 +43,15 @@ class Ring(FiringBase):
     def generate_pattern(self, offset: float) -> Pattern:
         """Generate a ring fire ignition patter
 
-        Args:
-            offset (float): Offset in meters from the boundary that the igniter will walk
+        Parameters
+        ----------
+        offset : float
+            Offset in meters from the boundary that the igniter will walk
 
-        Returns:
-            Pattern: Spatiotemporal ignition pattern
+        Returns
+        -------
+        Pattern
+            Spatiotemporal ignition pattern
         """
 
         return self._generate_pattern(offset=offset, sync_end_time=True, align=False)

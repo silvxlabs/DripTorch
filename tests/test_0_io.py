@@ -8,7 +8,7 @@ import os.path as path
 # Internal Imports
 import driptorch as dt
 from driptorch.io import *
-from tests.resources import testgeoms
+from resources import testgeoms
 
 # Core imports
 import json

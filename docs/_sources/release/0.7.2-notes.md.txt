@@ -1,0 +1,7 @@
+# DripTorch 0.7.2 Release Notes
+
+## Bug fixes
+
+### Incorrect bounds property call in flank ([PR #117](https://github.com/silvxlabs/DripTorch/pull/117))
+
+In release 0.7.0 we changed the `BurnUnit.get_bounds()` method to a property named `bounds`. The pattern generator for flank firing was still calling the bounds function from 0.6.3. We also fixed a small bug in the `Igniter` class where we warn users if the igniter velocity is unreasonably fast. A class that didn't inherit the exception base was being use with `raise`. The warning is now correctly presented for velocities greater than 2.5 m/s.

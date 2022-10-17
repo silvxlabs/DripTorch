@@ -1,0 +1,351 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>DripTorch 0.7.0 Release Notes &#8212; DripTorch 0.7.2 documentation</title>
+<script>
+  document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+  document.documentElement.dataset.theme = localStorage.getItem("theme") || "light"
+</script>
+
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=92025949c220c2e29695" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=92025949c220c2e29695" rel="stylesheet">
+
+
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=92025949c220c2e29695">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="DripTorch 0.7.1 Release Notes" href="0.7.1-notes.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="docsearch:language" content="None">
+  </head>
+  
+  
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="180" data-default-mode="">
+    <div class="bd-header-announcement container-fluid" id="banner">
+      
+
+    </div>
+
+    
+    <nav class="bd-header navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="bd-header__inner container-xl">
+
+  <div id="navbar-start">
+    
+    
+  
+
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+    <img src="../_static/logo.svg" class="logo__image only-light" alt="Logo image">
+    <img src="../_static/logo.svg" class="logo__image only-dark" alt="Logo image">
+  
+  
+</a>
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="fas fa-bars"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../index.html">
+  Home
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../getting_started/index.html">
+  Getting started
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../reference/index.html">
+  Reference
+ </a>
+</li>
+
+<li class="toctree-l1 current active nav-item">
+ <a class="reference internal nav-link" href="../release.html">
+  Release notes
+ </a>
+</li>
+
+    
+</ul>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <span id="theme-switch" class="btn btn-sm btn-outline-primary navbar-btn rounded-circle">
+    <a class="theme-switch" data-mode="light"><i class="fas fa-sun"></i></a>
+    <a class="theme-switch" data-mode="dark"><i class="far fa-moon"></i></a>
+    <a class="theme-switch" data-mode="auto"><i class="fas fa-adjust"></i></a>
+</span>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/silvxlabs/driptorch" rel="noopener" target="_blank" title="GitHub"><span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="bd-container container-xl">
+      <div class="bd-container__inner row">
+          
+
+<!-- Only show if we have sidebars configured, else just a small margin  -->
+<div class="bd-sidebar-primary col-12 col-md-3 bd-sidebar">
+  <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="0.7.2-notes.html">
+   v0.7.2
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="0.7.1-notes.html">
+   v0.7.1
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   v0.7.0
+  </a>
+ </li>
+</ul>
+
+  </div>
+</nav>
+  </div>
+  <div class="sidebar-end-items">
+  </div>
+</div>
+
+
+          
+
+
+<div class="bd-sidebar-secondary d-none d-xl-block col-xl-2 bd-toc">
+  
+    
+    <div class="toc-item">
+      
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#new-features">
+   New Features
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#pattern-composition-pr-83">
+     Pattern composition (PR #83)
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#irregular-dash-ignition-pr-104">
+     Irregular dash ignition (PR #104)
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#optional-start-side-for-strip-and-flank-firing-pr-94">
+     Optional start side for strip and flank firing (PR #94)
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#time-offset-between-heats-for-strip-and-flank-pr-103">
+     Time offset between heats for strip and flank (PR #103]
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#json-serialization-for-igniters-and-crews-pr-93">
+     JSON serialization for igniters and crews (PR #93)
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#unit-tests-pr-99">
+     Unit tests (PR #99)
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#bug-fixes">
+   Bug fixes
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#igniter-velocity-default-pr-107">
+     Igniter velocity default (PR #107)
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+</nav>
+    </div>
+    
+    <div class="toc-item">
+      
+    </div>
+    
+  
+</div>
+
+
+          
+          
+          <div class="bd-content col-12 col-md-9 col-xl-7">
+              
+              <article class="bd-article" role="main">
+                
+  <section id="driptorch-0-7-0-release-notes">
+<h1>DripTorch 0.7.0 Release Notes<a class="headerlink" href="#driptorch-0-7-0-release-notes" title="Permalink to this headline">#</a></h1>
+<section id="new-features">
+<h2>New Features<a class="headerlink" href="#new-features" title="Permalink to this headline">#</a></h2>
+<section id="pattern-composition-pr-83">
+<h3>Pattern composition (<a class="reference external" href="https://github.com/silvxlabs/DripTorch/pull/83">PR #83</a>)<a class="headerlink" href="#pattern-composition-pr-83" title="Permalink to this headline">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">Pattern</span></code> object has a new <code class="docutils literal notranslate"><span class="pre">merge</span></code> method for composing two patterns, e.g.
+<code class="docutils literal notranslate"><span class="pre">pattern1.merge(pattern2,</span> <span class="pre">time_offset=100)</span></code>. An example situation would be composing a backing fire with an interior firing technique, such as a strip and flank fire. You can chain multiple <code class="docutils literal notranslate"><span class="pre">merge</span></code> methods together to compose patterns to your heart’s desire.</p>
+</section>
+<section id="irregular-dash-ignition-pr-104">
+<h3>Irregular dash ignition (<a class="reference external" href="https://github.com/silvxlabs/DripTorch/pull/104">PR #104</a>)<a class="headerlink" href="#irregular-dash-ignition-pr-104" title="Permalink to this headline">#</a></h3>
+<p>An <code class="docutils literal notranslate"><span class="pre">Igniter</span></code> object is now configured by providing a <code class="docutils literal notranslate"><span class="pre">velocity</span></code>, <code class="docutils literal notranslate"><span class="pre">gap_length</span></code>, and <code class="docutils literal notranslate"><span class="pre">dash_length</span></code>. In previous version, a dash igniter was specified by a negative interval,
+a point igniter by a positive interval, and a line igniter by an interval of zero. Now,
+to configure a line igniter, just provide a velocity; <code class="docutils literal notranslate"><span class="pre">gap_length</span></code> and <code class="docutils literal notranslate"><span class="pre">dash_length</span></code> are
+defaulted to <code class="docutils literal notranslate"><span class="pre">None</span></code>. To instantiate a point igniter set the <code class="docutils literal notranslate"><span class="pre">gap_length</span></code> parameter to the distance between point ignitions and leave the <code class="docutils literal notranslate"><span class="pre">dash_length</span></code> parameter as the default. For a dash igniter, you can set the <code class="docutils literal notranslate"><span class="pre">dash_length</span></code> parameter and leave <code class="docutils literal notranslate"><span class="pre">gap_length=None</span></code> to produce regular spaced dashes (the length of the dash is equal to the length of the gap). For irregular dash ignitions, you can set both the <code class="docutils literal notranslate"><span class="pre">dash_length</span></code> and <code class="docutils literal notranslate"><span class="pre">gap_length</span></code> parameters.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This is a breaking change! Users will need to update all instances of <code class="docutils literal notranslate"><span class="pre">Igniter</span></code> object
+constructions to include the new parameters.</p>
+</div>
+</section>
+<section id="optional-start-side-for-strip-and-flank-firing-pr-94">
+<h3>Optional start side for strip and flank firing (<a class="reference external" href="https://github.com/silvxlabs/DripTorch/pull/95">PR #94</a>)<a class="headerlink" href="#optional-start-side-for-strip-and-flank-firing-pr-94" title="Permalink to this headline">#</a></h3>
+<p>We added a new parameter to the strip and flank pattern generators to control from which side of the unit the ignition crew starts the firing, e.g. <code class="docutils literal notranslate"><span class="pre">flank.generate_pattern(depth=40,</span> <span class="pre">side='left')</span></code>. The <code class="docutils literal notranslate"><span class="pre">side</span></code> parameter defaults to <code class="docutils literal notranslate"><span class="pre">'right'</span></code> and will accept <code class="docutils literal notranslate"><span class="pre">'left'</span></code>. The <code class="docutils literal notranslate"><span class="pre">'left'</span></code> and <code class="docutils literal notranslate"><span class="pre">'right'</span></code> options are with respect to the wind direction supplied to the <code class="docutils literal notranslate"><span class="pre">BurnUnit</span></code> object.</p>
+</section>
+<section id="time-offset-between-heats-for-strip-and-flank-pr-103">
+<h3>Time offset between heats for strip and flank (<a class="reference external" href="https://github.com/silvxlabs/DripTorch/pull/103">PR #103</a>]<a class="headerlink" href="#time-offset-between-heats-for-strip-and-flank-pr-103" title="Permalink to this headline">#</a></h3>
+<p>Use the optional <code class="docutils literal notranslate"><span class="pre">time_offset_heat:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0</span></code> parameter in the flank and strip pattern generators to delay heats from starting as soon as the previous heat finishes.</p>
+</section>
+<section id="json-serialization-for-igniters-and-crews-pr-93">
+<h3>JSON serialization for igniters and crews (<a class="reference external" href="https://github.com/silvxlabs/DripTorch/pull/93">PR #93</a>)<a class="headerlink" href="#json-serialization-for-igniters-and-crews-pr-93" title="Permalink to this headline">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">Igniter</span></code> and <code class="docutils literal notranslate"><span class="pre">IgntitionCrew</span></code> objects now have methods for encoding and decoding JSON
+objects.</p>
+</section>
+<section id="unit-tests-pr-99">
+<h3>Unit tests (<a class="reference external" href="https://github.com/silvxlabs/DripTorch/pull/95">PR #99</a>)<a class="headerlink" href="#unit-tests-pr-99" title="Permalink to this headline">#</a></h3>
+<p>Rough draft of unit tests has been implemented. Better late than never.</p>
+</section>
+</section>
+<section id="bug-fixes">
+<h2>Bug fixes<a class="headerlink" href="#bug-fixes" title="Permalink to this headline">#</a></h2>
+<section id="igniter-velocity-default-pr-107">
+<h3>Igniter velocity default (<a class="reference external" href="https://github.com/silvxlabs/DripTorch/pull/107">PR #107</a>)<a class="headerlink" href="#igniter-velocity-default-pr-107" title="Permalink to this headline">#</a></h3>
+<p>We mistakenly defaulted the igniter velocity to 1.8 m/s; makes sense in units of miles per hour, but way too fast in meters per seconds. This has been resolved.</p>
+</section>
+</section>
+</section>
+
+
+              </article>
+              
+
+              
+              <footer class="bd-footer-article">
+                  <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+  <a class='left-prev' id="prev-link" href="0.7.1-notes.html" title="previous page">
+      <i class="fas fa-angle-left"></i>
+      <div class="prev-next-info">
+          <p class="prev-next-subtitle">previous</p>
+          <p class="prev-next-title">DripTorch 0.7.1 Release Notes</p>
+      </div>
+  </a>
+</div>
+              </footer>
+              
+          </div>
+          
+      </div>
+    </div>
+
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=92025949c220c2e29695"></script>
+
+<footer class="bd-footer"><div class="bd-footer__inner container">
+  
+  <div class="footer-item">
+    <p class="copyright">
+    &copy; Copyright 2022, Silvx Labs LLC.<br>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
+</p>
+  </div>
+  
+</div>
+</footer>
+  </body>
+</html>

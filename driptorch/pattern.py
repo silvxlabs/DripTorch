@@ -37,25 +37,28 @@ warnings.filterwarnings("ignore", category=ShapelyDeprecationWarning)
 
 
 class Pattern:
-    def __init__(
-        self,
-        heat: list[int],
-        igniter: list[int],
-        leg: list[int],
-        times: list[list[float]],
-        geometry: list[LineString],
-        epsg: int,
-    ):
-        """Constructor
+    """Patterns are objects that store the spatial and temporal components of a
+    firing technique.
 
-        Args:
-            heat (list[int]): Heat of the path
-            igniter (list[int]): Igniter id assigned to the path
-            leg (list[int]): Leg for the path
-            times (list[list[float]]): Coordinate arrival times for the path
-            geometry (list[LineString]): Path geometry
-            epsg (int): EPSG code for path geometry
-        """
+    Parameters
+    ----------
+    heat : list[int]
+        Heat of the path
+    igniter : list[int]
+        Igniter id assigned to the path
+    leg : list[int])
+        Leg for the path
+    times : list[list[float]]
+        Coordinate arrival times for the path
+    geometry : list[LineString]
+        Path geometry
+    epsg : int
+        EPSG code for path geometry
+    """
+
+    def __init__(self, heat: list[int], igniter: list[int], leg: list[int], times: list[list[float]],
+                 geometry: list[LineString], epsg: int,
+                 ):
 
         self.heat = heat
         self.igniter = igniter
@@ -75,12 +78,17 @@ class Pattern:
         """Alternative constructor for initializing a Pattern object with a dictionary
         of path parameters
 
-        Args:
-            paths_dict (dict): Dictionary of path parameters
-            epsg (Int): EPSG code of path geometries
+        Parameters
+        ----------
+        paths_dict : dict
+            Dictionary of path parameters
+        epsg : Int
+            EPSG code of path geometries
 
-        Returns:
-            Pattern: A new instance of Pattern
+        Returns
+        -------
+        Pattern
+            A new instance of Pattern
         """
 
         paths_dict["geometry"] = [shape(x) for x in paths_dict["geometry"]]
@@ -96,8 +104,10 @@ class Pattern:
     def to_dict(self) -> dict:
         """Returns the Pattern path parameters as a dictionary
 
-        Returns:
-            dict: Pattern path parameters
+        Returns
+        -------
+        dict
+            Pattern path parameters
         """
 
         return {
@@ -113,8 +123,10 @@ class Pattern:
     def empty_path_dict() -> dict:
         """Helper method for initializing a path parameter dictionary
 
-        Returns:
-            dict: Empty path dictionary
+        Returns
+        -------
+        dict
+            Empty path dictionary
         """
 
         return {"heat": [], "igniter": [], "leg": [], "geometry": []}
@@ -122,8 +134,10 @@ class Pattern:
     def to_json(self) -> dict:
         """Write the Pattern to a GeoJSON dictionary
 
-        Returns:
-            dict: Timestamped GeoJSON representation of the firing pattern
+        Returns
+        -------
+        dict
+            Timestamped GeoJSON representation of the firing pattern
         """
 
         # Copy the times array
@@ -165,12 +179,17 @@ class Pattern:
         """Translate pattern geometry along the x and y axis by the supplied
         x and y offset amounts.
 
-        Args:
-            x_off (float): Offset along the x axis
-            y_off (float): Offset along the y axis
+        Parameters
+        ----------
+        x_off : float
+            Offset along the x axis
+        y_off : float
+            Offset along the y axis
 
-        Returns:
-            Pattern: New Pattern object with translated geometries
+        Returns
+        -------
+        Pattern
+            New Pattern object with translated geometries
         """
 
         # Translate the path geometries
@@ -187,26 +206,27 @@ class Pattern:
         # Return the new Pattern object
         return obj_copy
 
-    def to_quicfire(
-        self,
-        burn_unit: BurnUnit,
-        filename: str = None,
-        time_offset=0,
-        resolution: int = 1,
-        dst_epsg: int = None,
-    ) -> None | str:
+    def to_quicfire(self, burn_unit: BurnUnit, filename: str = None, time_offset=0,
+                    resolution: int = 1, dst_epsg: int = None) -> None | str:
         """Write paths dictionary to QUIC-fire ignition file format.
 
-        Args:
-            burn_unit (BurnUnit): Burn unit that defines the extent of the QF simulation
-            filename (str, optional): If provided, write the ignition file to the
-                filename. Defaults to None.
-            time_offset (float, optional): Time offset to add to the ignition times. Defaults to 0.
-            resolution (int, optional): Horizontal resolution of QUIC-fire domain (meters). Defaults to 1.
-            dst_epsg (int, optional): EPSG code for the destination projection. Defaults to None.
+        Parameters
+        ----------
+        burn_unit : BurnUnit
+            Burn unit that defines the extent of the QF simulation
+        filename : str, optional
+            If provided, write the ignition file to the filename. Defaults to None.
+        time_offset : float, optional
+            Time offset to add to the ignition times. Defaults to 0.
+        resolution : int, optional
+            Horizontal resolution of QUIC-fire domain (meters). Defaults to 1.
+        dst_epsg : int, optional
+            EPSG code for the destination projection. Defaults to None.
 
-        Returns:
-            None | str: None if filename provided, string containing the ignition file if not.
+        Returns
+        -------
+        None | str
+            None if filename provided, string containing the ignition file if not.
         """
 
         times = self.times.copy()
@@ -231,8 +251,7 @@ class Pattern:
             geometry = reproj_geoms
 
         # Translate pattern geometry to the origin or the CRS according to the burn unit extent
-        lower_left = domain.get_bounds().min(axis=0)
-     
+        lower_left = domain.bounds.min(axis=0)
         trans_geoms = []
         for geom in geometry:
             trans_geoms.append(affinity.translate(
@@ -253,21 +272,26 @@ class Pattern:
                 geometry, times, self.elapsed_time, resolution=resolution
             )
 
-    def merge(
-        self, pattern: Pattern, time_offset: float = 0, inplace: bool = False
-    ) -> Pattern:
+    def merge(self, pattern: Pattern, time_offset: float = 0, inplace: bool = False) -> Pattern:
         """Merge an input pattern with self
 
-        Args:
-            pattern (Pattern): Input pattern to be merged into self
-            time_offset (float): Time offset between patterns (seconds)
-            inplace (bool, optional): Overwrites Pattern object if true, otherwise return new Pattern object. Defaults to True.
+        Parameters
+        ----------
+        pattern : Pattern
+            Input pattern to be merged into self
+        time_offset : float
+            Time offset between patterns (seconds)
+        inplace : bool, optional
+            Overwrites Pattern object if true, otherwise return new Pattern object. Defaults to True.
 
-        Raises:
-            EPSGError.non_equivalent: EPSG code for input pattern does not match self.epsg
+        Raises
+        ------
+        EPSGError.non_equivalent: EPSG code for input pattern does not match self.epsg
 
-        Returns:
-            Pattern: Merged pattern object
+        Returns
+        -------
+        Pattern
+            Merged pattern object
         """
 
         # Check that the EPSG codes are the same
