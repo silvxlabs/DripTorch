@@ -5,6 +5,7 @@ Spatiotemporal patterns and the infamous temporal propagator
 # Core imports
 from __future__ import annotations
 import copy
+from locale import currency
 from time import time as unix_time
 import warnings
 
@@ -21,6 +22,7 @@ from shapely.errors import ShapelyDeprecationWarning
 from shapely import affinity
 from shapely.geometry import MultiPoint, MultiLineString, LineString, shape
 
+import pdb
 # Turn off Pandas copy warning (or figure out how to do it like the Panda wants)
 pd.options.mode.chained_assignment = None
 
@@ -384,7 +386,7 @@ class TemporalPropagator:
         )
 
         # Run the initial forward pass through the paths
-        self._init_path_time(self.spacing,time_offset_heat)
+        self._init_path_time(self.spacing)
 
         # Synchronize within heat end times if specified (e.g. ring ignition)
         if self.sync_end_time:
@@ -392,13 +394,17 @@ class TemporalPropagator:
 
         # Compute the arrival time for each coordinate in each path
         self._compute_arrival_times()
+        
+        # Offset time between heats
+        if time_offset_heat > 0:
+            self._offset_times_heat(time_offset_heat)
 
         # Drop the intermidary columns
         self.paths.drop(["start_time", "end_time"], axis=1, inplace=True)
 
         return self.paths.to_dict(orient="list")
 
-    def _init_path_time(self, spacing: float,time_offset_heat:float):
+    def _init_path_time(self, spacing: float):
         """Helper method to run the initial time propagation.
 
         Args:
@@ -492,12 +498,6 @@ class TemporalPropagator:
             # Calculate path end time (seconds along path plus start time)
             # path.end_time = path.start_time + path.meters / velocity
             path.end_time = path.start_time + path.geometry.length / velocity
-
-            # Add time offset between heats
-            if i > 0:
-                path.start_time += time_offset_heat
-                path.end_time += time_offset_heat
-
 
             # Insert row back into paths dataframe
             self.paths.loc[index] = path
@@ -728,3 +728,35 @@ class TemporalPropagator:
         # add the multipar point geometry to the new geometries array
         self.paths.at[index, "times"] = path_times
         self.paths.at[index, "geometry"] = points
+
+    def _offset_times_heat(self,time_offset_heat:float) -> None:
+        """Offset the time between respective heats
+
+        Args:
+            time_offset_heat (float): Time offset between heats
+        """
+
+        # Get the unique heat indecies
+        heats = np.sort(self.paths.heat.unique())
+
+        # For each heat find the maximum end time and adjust the start time accordingly
+        for i in heats:
+            if i > 0:
+                # Grab the dataframe rows for the current heat
+                cur_heat = self.paths[self.paths.heat == i]
+                time_diff = i*time_offset_heat
+
+                for idx,row in cur_heat.iterrows():
+
+                    self.paths.loc[idx,"start_time"] += time_diff
+                    self.paths.loc[idx,"end_time"] += time_diff
+                  
+                    for i,time in enumerate(row.times):
+
+                        updated = time + time_diff
+                        self.paths.loc[idx,"times"][i] = updated.tolist()
+                
+
+
+
+            
