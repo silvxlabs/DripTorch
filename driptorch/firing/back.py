@@ -13,8 +13,7 @@ from ..pattern import Pattern
 from ..warnings import CrewSizeWarning
 
 # External imports
-from shapely.geometry import MultiLineString
-
+from shapely.ops import substring
 
 class Back(FiringBase):
     """A Backing fire is a fire set along the downwind portion of the burn unit
@@ -54,14 +53,9 @@ class Back(FiringBase):
             Ignition pattern
         """
 
-        if clockwise:
-            return self._generate_pattern(offset=offset, align=False)
-        else:
-            pattern = self._generate_pattern(offset=offset, align=False)
-            path = [x for x in pattern.geometry[0].geoms]
-            reversed_path = path[::-1]
-            pattern.geometry[0] = MultiLineString(reversed_path)
-            return pattern
+      
+        return self._generate_pattern(offset=offset,clockwise=clockwise, align=False)
+        
 
 
     def _init_paths(self, paths: dict, **kwargs) -> dict:
@@ -83,6 +77,9 @@ class Back(FiringBase):
 
         # Extract the fore line from the boundary segments object
         fore_line = firing_area.polygon_segments.fore
+
+        if kwargs.get('clockwise',False):
+            fore_line = substring(fore_line,fore_line.length,0)
 
         # Only one heat and one igniter
         paths['heat'] = [0]

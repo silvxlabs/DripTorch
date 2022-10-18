@@ -15,7 +15,7 @@ from ..pattern import Pattern
 from ..warnings import CrewSizeWarning
 
 # External imports
-from shapely.geometry import MultiLineString
+from shapely.ops import substring
 
 
 class Head(FiringBase):
@@ -57,15 +57,9 @@ class Head(FiringBase):
             Spatiotemporal ignition pattern
         """
        
-        if clockwise:
-            return self._generate_pattern(offset=offset, align=False)
-        else:
-            pattern = self._generate_pattern(offset=offset, align=False)
-            path = [x for x in pattern.geometry[0].geoms]
-            reversed_path = path[::-1]
-            pattern.geometry[0] = MultiLineString(reversed_path)
-            return pattern
-
+        
+        return self._generate_pattern(offset=offset, align=False)
+      
 
     def _init_paths(self, paths: dict, **kwargs) -> dict:
         """Initialize spatial part of the ignition paths.
@@ -87,6 +81,8 @@ class Head(FiringBase):
         # Extract the aft line from the boundary segments object
         aft_line = firing_area.polygon_segments.aft
 
+        if kwargs.get('clockwise',False):
+            aft_line = substring(aft_line,fore_line.length,0)
         # Only one heat and one igniter
         paths['heat'] = [0]
         paths['igniter'] = [0]
