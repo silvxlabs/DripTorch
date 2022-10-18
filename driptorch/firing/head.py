@@ -58,7 +58,7 @@ class Head(FiringBase):
         """
        
         
-        return self._generate_pattern(offset=offset, align=False)
+        return self._generate_pattern(offset=offset, clockwise=clockwise, align=False)
       
 
     def _init_paths(self, paths: dict, **kwargs) -> dict:
@@ -78,11 +78,12 @@ class Head(FiringBase):
         firing_area = self._burn_unit.buffer_control_line(
             kwargs.get('offset', 0))
 
+
         # Extract the aft line from the boundary segments object
         aft_line = firing_area.polygon_segments.aft
+        if not kwargs.get('clockwise', False):
+            aft_line = substring(aft_line, aft_line.length, 0)
 
-        if kwargs.get('clockwise',False):
-            aft_line = substring(aft_line,fore_line.length,0)
         # Only one heat and one igniter
         paths['heat'] = [0]
         paths['igniter'] = [0]
