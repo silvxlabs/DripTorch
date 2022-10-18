@@ -30,7 +30,7 @@ class Strip(FiringBase):
         # Initialize the base class
         super().__init__(burn_unit, ignition_crew)
 
-    def generate_pattern(self, spacing:float,depth: float = None, heat_depth: float = None, side: str = 'right', time_offset_heat: float = 0) -> Pattern:
+    def generate_pattern(self, spacing: float, depth: float | None = None, heat_depth: float | None = None, side: str = 'right', heat_delay: float = 0) -> Pattern:
         """Generate a flank fire ignition pattern
 
         Parameters
@@ -50,7 +50,7 @@ class Strip(FiringBase):
             Spatiotemporal ignition pattern
         """
 
-        return self._generate_pattern(spacing=spacing,depth=depth, heat_depth=heat_depth, side=side, return_trip=True,time_offset_heat=time_offset_heat)
+        return self._generate_pattern(spacing=spacing, depth=depth, heat_depth=heat_depth, side=side, heat_delay=heat_delay)
 
     def _init_paths(self, paths: dict, **kwargs) -> dict:
         """Initialize spatial part of the ignition paths.
@@ -113,12 +113,17 @@ class Strip(FiringBase):
 
             # Get lines or multipart lines in the same structure for looping below
             if isinstance(line, LineString):
-                line = [line]
+                line_list = [line]
             elif isinstance(line, MultiLineString):
-                line = list(line.geoms)
+                line_list = list(line.geoms)
+            # Edge case: In rare cases, the line along the top of the envelope becomes a point following
+            # the intersection (pretty sure this is a numerical precision issue). In this case, we need to
+            # just skip this path.
+            else:
+                continue
 
             # Assign the path to a heat, igniter and leg
-            for j, part in enumerate(line):
+            for j, part in enumerate(line_list):
                 paths['heat'].append(cur_heat)
                 paths['igniter'].append(cur_igniter)
                 paths['leg'].append(j)
