@@ -12,6 +12,9 @@ from ..personnel import IgnitionCrew
 from ..pattern import Pattern
 from ..warnings import CrewSizeWarning
 
+# External imports
+from shapely.geometry import MultiLineString
+
 
 class Back(FiringBase):
     """A Backing fire is a fire set along the downwind portion of the burn unit
@@ -35,13 +38,15 @@ class Back(FiringBase):
         # Initialize the base class
         super().__init__(burn_unit, ignition_crew)
 
-    def generate_pattern(self, offset: float) -> Pattern:
+    def generate_pattern(self, offset: float,clockwise: bool = True) -> Pattern:
         """Generate backing fire ignition pattern
 
         Parameters
         ----------
         offset : float
             Offset distance in meters from the unit boundary
+        clockwise: bool
+            Toggle path travel direction either clockwise or counterclockwise relative to the unit bounds. Defaults to True
 
         Returns
         -------
@@ -49,7 +54,15 @@ class Back(FiringBase):
             Ignition pattern
         """
 
-        return self._generate_pattern(offset=offset, align=False)
+        if clockwise:
+            return self._generate_pattern(offset=offset, align=False)
+        else:
+            pattern = self._generate_pattern(offset=offset, align=False)
+            path = [x for x in pattern.geometry[0].geoms]
+            reversed_path = path[::-1]
+            pattern.geometry[0] = MultiLineString(reversed_path)
+            return pattern
+
 
     def _init_paths(self, paths: dict, **kwargs) -> dict:
         """Initialize spatial part of the ignition paths.

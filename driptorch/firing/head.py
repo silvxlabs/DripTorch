@@ -5,12 +5,17 @@ Pattern generator for head firing
 # Core imports
 import warnings
 
+from stack_data import Line
+
 # Internal imports
 from ._base import FiringBase
 from ..unit import BurnUnit
 from ..personnel import IgnitionCrew
 from ..pattern import Pattern
 from ..warnings import CrewSizeWarning
+
+# External imports
+from shapely.geometry import MultiLineString
 
 
 class Head(FiringBase):
@@ -35,21 +40,32 @@ class Head(FiringBase):
         # Initialize the base class
         super().__init__(burn_unit, ignition_crew)
 
-    def generate_pattern(self, offset: float) -> Pattern:
+    def generate_pattern(self, offset: float,clockwise: bool = True) -> Pattern:
         """Generate head fire ignition pattern
 
         Parameters
         ----------
         offset : float
             Offset distance in meters from the unit boundary
+        
+        clockwise: bool
+            Toggle path travel direction either clockwise or counterclockwise relative to the unit bounds. Defaults to True
 
         Returns
         -------
         Pattern
             Spatiotemporal ignition pattern
         """
+       
+        if clockwise:
+            return self._generate_pattern(offset=offset, align=False)
+        else:
+            pattern = self._generate_pattern(offset=offset, align=False)
+            path = [x for x in pattern.geometry[0].geoms]
+            reversed_path = path[::-1]
+            pattern.geometry[0] = MultiLineString(reversed_path)
+            return pattern
 
-        return self._generate_pattern(offset=offset, align=False)
 
     def _init_paths(self, paths: dict, **kwargs) -> dict:
         """Initialize spatial part of the ignition paths.
@@ -78,3 +94,5 @@ class Head(FiringBase):
         paths['geometry'] = [aft_line]
 
         return paths
+
+ 
