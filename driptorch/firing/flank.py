@@ -35,11 +35,13 @@ class Flank(FiringBase):
         # Initialize the base class
         super().__init__(burn_unit, ignition_crew)
 
-    def generate_pattern(self, depth: float | None = None, heat_depth: float | None = None, side: str = 'right', heat_delay: float = 0) -> Pattern:
+    def generate_pattern(self, spacing: float, depth: float | None = None, heat_depth: float | None = None, side: str = 'right', heat_delay: float = 0) -> Pattern:
         """Generate a flank fire ignition pattern
 
         Parameters
         ----------
+        spacing : float
+            Staggering distance in meters between igniters within a heat
         depth : float, optional
             Depth in meters between igniters. Defaults to None.
         heat_depth : float, optional
@@ -53,7 +55,7 @@ class Flank(FiringBase):
             Spatiotemporal ignition pattern
         """
 
-        return self._generate_pattern(depth=depth, heat_depth=heat_depth, side=side, return_trip=True, heat_delay=heat_delay)
+        return self._generate_pattern(spacing=spacing,depth=depth, heat_depth=heat_depth, side=side, return_trip=True, heat_delay=heat_delay)
 
     def _init_paths(self, paths: dict, **kwargs) -> dict:
         """Initialize spatial part of the ignition paths.
