@@ -7,7 +7,7 @@ Constructor
 -----------
 
 .. autosummary::
-   :toctree: generated/
+   :toctree: api/
 
    Map
 
@@ -15,7 +15,7 @@ Methods
 -------
 
 .. autosummary::
-    :toctree: generate/
+    :toctree: api/
 
     Map.add_firing_area
     Map.add_blackline_area

@@ -2,8 +2,8 @@
 
 Once your burn unit has been specified and you've allocated your ignition resources, you can simulate various firing techniques using DripTorch pattern generators. Currently, DripTorch supports the following firing techniques:
 
-- Strip-heading fire - `strip(spacing, depth)`
-- Flanking fire - `flank()`
+- Strip-heading fire - `strip(spacing, depth, heat_depth, side, time_offset_heat)`
+- Flanking fire - `flank(depth, heat_depth, side, time_offset_heat)`
 - Ring fire - `ring(offset)`
 - Head fire - `head(offset)`
 - Backing fire - `back(offset)`

@@ -7,7 +7,7 @@ Spatial projections
 -------------------
 
 .. autosummary::
-   :toctree: generated/
+   :toctree: api/
 
    io.Projector
    io.Projector.forward
@@ -20,7 +20,7 @@ Importing and exporting
 -----------------------
 
 .. autosummary::
-   :toctree: generated/
+   :toctree: api/
 
    io.read_geojson_polygon
    io.write_geojson
