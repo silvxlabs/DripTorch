@@ -10,7 +10,7 @@ from ..pattern import Pattern
 
 # External imports
 import numpy as np
-from shapely.geometry import Point, MultiPoint, LineString, MultiLineString
+from shapely.geometry import LineString, MultiLineString
 
 
 class Flank(FiringBase):
@@ -55,7 +55,7 @@ class Flank(FiringBase):
             Spatiotemporal ignition pattern
         """
 
-        return self._generate_pattern(spacing=spacing,depth=depth, heat_depth=heat_depth, side=side, return_trip=True, heat_delay=heat_delay)
+        return self._generate_pattern(spacing=spacing, depth=depth, heat_depth=heat_depth, side=side, return_trip=True, heat_delay=heat_delay)
 
     def _init_paths(self, paths: dict, **kwargs) -> dict:
         """Initialize spatial part of the ignition paths.
