@@ -35,7 +35,7 @@ class Flank(FiringBase):
         # Initialize the base class
         super().__init__(burn_unit, ignition_crew)
 
-    def generate_pattern(self, spacing: float, depth: float | None = None, heat_depth: float | None = None, side: str = 'right', heat_delay: float = 0) -> Pattern:
+    def generate_pattern(self, spacing: float = 0, depth: float = 0, heat_depth: float = 0, side: str = 'right', heat_delay: float = 0) -> Pattern:
         """Generate a flank fire ignition pattern
 
         Parameters

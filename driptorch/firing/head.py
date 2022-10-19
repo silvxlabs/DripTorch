@@ -5,8 +5,6 @@ Pattern generator for head firing
 # Core imports
 import warnings
 
-from stack_data import Line
-
 # Internal imports
 from ._base import FiringBase
 from ..unit import BurnUnit

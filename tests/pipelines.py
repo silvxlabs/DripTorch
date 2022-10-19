@@ -7,7 +7,7 @@ import sys
 
 # Internal Imports
 sys.path.append("../driptorch")
-import driptorch
+import driptorch as dt
 from driptorch.io import *
 from driptorch._version import __version__
 from resources import simulations
@@ -70,7 +70,7 @@ def generate_simulations(
     blackline_area = burn_unit.difference(firing_area)
     domain = firing_area.copy()
     simulation_data["epsg"] = domain.utm_epsg
-    simulation_data["lower_left"] = domain.get_bounds().min(axis=0).tolist()
+    simulation_data["lower_left"] = domain.bounds.min(axis=0).tolist()
     simulation_data["burn_unit"] = burn_unit.to_json()
     simulation_data["firing_area"] = firing_area.to_json()
     simulation_data["blackline"] = blackline_area.to_json()
@@ -115,17 +115,33 @@ def generate_simulations(
         # Strip Technique
         strip_technique = dt.firing.Strip(firing_area, point_crew)
         strip_pattern = strip_technique.generate_pattern(
-            igniter_spacing, igniter_depth, heat_depth
+            spacing=igniter_spacing, depth=igniter_depth, heat_depth=heat_depth
         )
         simulation_data["strip_pattern"] = strip_pattern.to_dict()
 
     return simulation_data
 
+def patch_simulation_data(read_path: str, patch_data: dict) -> None:
+    """Patch a given simulation dataset with updated values
+
+    Args:
+        read_path (str): relative path to simulation data
+        patch_data (dict): dictionary of data and its respective value
+    """
+    with open(read_path, "r") as file:
+        sim_data = json.load(file)
+
+    for k,v in patch_data.items():
+        sim_data[k] = v
+
+    with open(read_path, "w") as file:
+        json.dump(sim_data, file)
 
 if __name__ == "__main__":
     simargs = simulations.simulation_args
     simulation_data = generate_simulations(**simargs)
     write_path = path.join(path.dirname(__file__),
                            "resources/simulation_0.json")
-    with open(write_path, "w") as file:
-        json.dump(simulation_data, file)
+    patch_data = {"strip_pattern":simulation_data["strip_pattern"]}
+
+    patch_simulation_data(write_path,patch_data=patch_data)
