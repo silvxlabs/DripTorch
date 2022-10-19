@@ -52,7 +52,8 @@ class FiringBase:
         )
 
         # Compute arrival times for each coordinate in each path
-        timed_paths = propagator.forward(init_paths, self._ignition_crew,kwargs.get('time_offset_heat',0))
+        timed_paths = propagator.forward(
+            init_paths, self._ignition_crew, kwargs.get('heat_delay', 0))
 
         # Hand the timed paths over to the Pattern class and return an instance
         return Pattern.from_dict(timed_paths, self._burn_unit.utm_epsg)

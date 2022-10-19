@@ -10,7 +10,7 @@ from ..pattern import Pattern
 
 # External imports
 import numpy as np
-from shapely.geometry import Point, MultiPoint, LineString, MultiLineString
+from shapely.geometry import LineString, MultiLineString
 
 
 class Flank(FiringBase):
@@ -35,11 +35,13 @@ class Flank(FiringBase):
         # Initialize the base class
         super().__init__(burn_unit, ignition_crew)
 
-    def generate_pattern(self, depth: float = None, heat_depth: float = None, side: str = 'right', time_offset_heat: float = 0) -> Pattern:
+    def generate_pattern(self, spacing: float, depth: float | None = None, heat_depth: float | None = None, side: str = 'right', heat_delay: float = 0) -> Pattern:
         """Generate a flank fire ignition pattern
 
         Parameters
         ----------
+        spacing : float
+            Staggering distance in meters between igniters within a heat
         depth : float, optional
             Depth in meters between igniters. Defaults to None.
         heat_depth : float, optional
@@ -53,7 +55,7 @@ class Flank(FiringBase):
             Spatiotemporal ignition pattern
         """
 
-        return self._generate_pattern(depth=depth, heat_depth=heat_depth, side=side, return_trip=True, time_offset_heat=time_offset_heat)
+        return self._generate_pattern(spacing=spacing, depth=depth, heat_depth=heat_depth, side=side, return_trip=True, heat_delay=heat_delay)
 
     def _init_paths(self, paths: dict, **kwargs) -> dict:
         """Initialize spatial part of the ignition paths.
@@ -118,20 +120,19 @@ class Flank(FiringBase):
             line = LineString(((x_min, y), (x_max, y)))
             line = line.intersection(self._burn_unit.polygon)
 
+            # Get lines or multipart lines in the same list structure for looping below
+            if isinstance(line, LineString):
+                line_list = [line]
+            elif isinstance(line, MultiLineString):
+                line_list = list(line.geoms)
             # Edge case: In rare cases, the line along the top of the envelope becomes a point following
-            # the intersection (pretty sure this is a numerica precision issue). In this case, we need to
+            # the intersection (pretty sure this is a numerical precision issue). In this case, we need to
             # just skip this path.
-            if isinstance(line, (Point, MultiPoint)):
+            else:
                 continue
 
-            # Get lines or multipart lines in the same structure for looping below
-            if isinstance(line, LineString):
-                line = [line]
-            elif isinstance(line, MultiLineString):
-                line = list(line.geoms)
-
             # Assign the path to a heat, igniter and leg
-            for j, part in enumerate(line):
+            for j, part in enumerate(line_list):
                 paths['heat'].append(cur_heat)
                 paths['igniter'].append(cur_igniter)
                 paths['leg'].append(j)

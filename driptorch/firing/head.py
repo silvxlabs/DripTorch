@@ -5,12 +5,17 @@ Pattern generator for head firing
 # Core imports
 import warnings
 
+from stack_data import Line
+
 # Internal imports
 from ._base import FiringBase
 from ..unit import BurnUnit
 from ..personnel import IgnitionCrew
 from ..pattern import Pattern
 from ..warnings import CrewSizeWarning
+
+# External imports
+from shapely.ops import substring
 
 
 class Head(FiringBase):
@@ -35,21 +40,26 @@ class Head(FiringBase):
         # Initialize the base class
         super().__init__(burn_unit, ignition_crew)
 
-    def generate_pattern(self, offset: float) -> Pattern:
+    def generate_pattern(self, offset: float,clockwise: bool = True) -> Pattern:
         """Generate head fire ignition pattern
 
         Parameters
         ----------
         offset : float
             Offset distance in meters from the unit boundary
+        
+        clockwise: bool
+            Toggle path travel direction either clockwise or counterclockwise relative to the unit bounds. Defaults to True
 
         Returns
         -------
         Pattern
             Spatiotemporal ignition pattern
         """
-
-        return self._generate_pattern(offset=offset, align=False)
+       
+        
+        return self._generate_pattern(offset=offset, clockwise=clockwise, align=False)
+      
 
     def _init_paths(self, paths: dict, **kwargs) -> dict:
         """Initialize spatial part of the ignition paths.
@@ -68,8 +78,11 @@ class Head(FiringBase):
         firing_area = self._burn_unit.buffer_control_line(
             kwargs.get('offset', 0))
 
+
         # Extract the aft line from the boundary segments object
         aft_line = firing_area.polygon_segments.aft
+        if not kwargs.get('clockwise', False):
+            aft_line = substring(aft_line, aft_line.length, 0)
 
         # Only one heat and one igniter
         paths['heat'] = [0]
@@ -78,3 +91,5 @@ class Head(FiringBase):
         paths['geometry'] = [aft_line]
 
         return paths
+
+ 

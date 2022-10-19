@@ -12,6 +12,9 @@ from ..personnel import IgnitionCrew
 from ..pattern import Pattern
 from ..warnings import CrewSizeWarning
 
+# External imports
+from shapely.ops import substring
+
 
 class Back(FiringBase):
     """A Backing fire is a fire set along the downwind portion of the burn unit
@@ -35,13 +38,15 @@ class Back(FiringBase):
         # Initialize the base class
         super().__init__(burn_unit, ignition_crew)
 
-    def generate_pattern(self, offset: float) -> Pattern:
+    def generate_pattern(self, offset: float, clockwise: bool = True) -> Pattern:
         """Generate backing fire ignition pattern
 
         Parameters
         ----------
         offset : float
             Offset distance in meters from the unit boundary
+        clockwise: bool
+            Toggle path travel direction either clockwise or counterclockwise relative to the unit bounds. Defaults to True
 
         Returns
         -------
@@ -49,7 +54,7 @@ class Back(FiringBase):
             Ignition pattern
         """
 
-        return self._generate_pattern(offset=offset, align=False)
+        return self._generate_pattern(offset=offset, clockwise=clockwise, align=False)
 
     def _init_paths(self, paths: dict, **kwargs) -> dict:
         """Initialize spatial part of the ignition paths.
@@ -70,6 +75,9 @@ class Back(FiringBase):
 
         # Extract the fore line from the boundary segments object
         fore_line = firing_area.polygon_segments.fore
+
+        if not kwargs.get('clockwise', False):
+            fore_line = substring(fore_line, fore_line.length, 0)
 
         # Only one heat and one igniter
         paths['heat'] = [0]
