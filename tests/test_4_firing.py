@@ -118,7 +118,7 @@ def test_flank_technique() -> None:
     )
 
     technique = dt.firing.Flank(burn_unit, ignition_crew)
-    test_pattern = technique.generate_pattern(sim_args["igniter_depth"],sim_args["heat_depth"])
+    test_pattern = technique.generate_pattern(depth=sim_args["igniter_depth"],heat_depth=sim_args["heat_depth"])
 
     validation_pattern = validation_data["flank_pattern"]
 
@@ -154,7 +154,8 @@ def test_strip_technique() -> None:
     )
 
     technique = dt.firing.Strip(burn_unit, ignition_crew)
-    test_pattern = technique.generate_pattern(sim_args["igniter_spacing"],sim_args["igniter_depth"],sim_args["heat_depth"])
+ 
+    test_pattern = technique.generate_pattern(spacing=sim_args["igniter_spacing"], depth=sim_args["igniter_depth"], heat_depth=sim_args["heat_depth"])
 
     validation_pattern = validation_data["strip_pattern"]
 
