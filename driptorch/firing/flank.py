@@ -46,6 +46,8 @@ class Flank(FiringBase):
             Depth in meters between igniters. Defaults to None.
         heat_depth : float, optional
             Depth in meters between heats. Defaults to None.
+        heat_delay : float, optional
+            Delay in seconds between heats. Defaults to 0.
         side : str, optional
             Side of the wind vector to start the ignition. Defaults to 'right'. Options are 'left' or 'right'.
 

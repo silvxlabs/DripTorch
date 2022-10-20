@@ -35,13 +35,15 @@ class Strip(FiringBase):
 
         Parameters
         ----------
-        spacing : float
+        spacing : float, optional
             Staggering distance in meters between igniters within a heat
-        depth : float
+        depth : float, optional
             Horizontal distance in meters between igniters and heats
-        heat_depth : float
+        heat_depth : float, optional
             Depth in meters between igniter heats. If None, heat_depth is equal to igniter depth. Defaults to None.
-        side : str
+        heat_delay : float, optional
+            Delay in seconds between igniter heats. Defaults to 0.
+        side : str, optional
             Side of the wind vector to start the ignition. Defaults to 'right'. Options are 'left' or 'right'.
 
         Returns
