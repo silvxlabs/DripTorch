@@ -1,0 +1,33 @@
+
+# DripTorch 0.8.0 Release Notes
+
+## Highlights
+
+- Use the optional `clockwise` parameter in the `head` and `back` pattern generators to control the direction of the igniter.
+- The flank pattern generator now has an optional `spacing` argument for staggering igniters within a heat.
+- The `heat_delay` bug for strip and flank ignition has been fixed.
+
+## New features and improvements
+
+### Directional arguments for backing and head fire ([PR #123](https://github.com/silvxlabs/DripTorch/pull/123))
+
+We've added an optional `clockwise: bool` parameter to backing and head fire pattern generators. By default, the igniter will follow the boundary in the clockwise direction. Setting `clockwise = False` will send the igniter in the counter-clockwise direction.
+
+### Igniter stagger for flank ignition ([PR #124](https://github.com/silvxlabs/DripTorch/pull/124))
+
+The request for within-heat flank igniter spacing has been fulfilled. This feature was implemented in the same way as the strip ignition pattern generator; you can pass `spacing: float` parameter to the generator - spacing is the stagger distance in meters.
+
+### Tests for firing techniques ([PR #113](https://github.com/silvxlabs/DripTorch/pull/113))
+
+The new testing suite now includes validation tests for all implemented firing techniques.
+
+### Minor doc fixes ([PR #125](https://github.com/silvxlabs/DripTorch/pull/125))
+
+Fixed a few typos in the docs and updated the quickstart guide
+
+## Bug fixes
+
+### Heat delay error ([PR #121](https://github.com/silvxlabs/DripTorch/pull/121))
+
+The between-heat time delay feature introduced in 0.7.0 was producing incorrect timings between heats and igniters. These issues have been resolved.
+
