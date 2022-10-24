@@ -93,7 +93,7 @@ def test_buffer_functions() -> None:
         firing_direction=validation_data["args"]["firing_direction"],
     )
     firing_area = burn_unit.buffer_control_line(args["front_buffer"])
-    firing_area = firing_area.buffer_downfiring(args["back_buffer"])
+    firing_area = firing_area.buffer_downwind(args["back_buffer"])
     blackline_area = burn_unit.difference(firing_area)
     validation_firing_area = dt.unit.BurnUnit.from_json(
         validation_data["firing_area"],

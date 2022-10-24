@@ -66,7 +66,7 @@ def generate_simulations(
     simulation_data["burn_unit_starboard"] = polygonsplitter.starboard.__geo_interface__
 
     firing_area = burn_unit.buffer_control_line(front_buffer)
-    firing_area = firing_area.buffer_downfiring(back_buffer)
+    firing_area = firing_area.buffer_downwind(back_buffer)
     blackline_area = burn_unit.difference(firing_area)
     domain = firing_area.copy()
     simulation_data["epsg"] = domain.utm_epsg
