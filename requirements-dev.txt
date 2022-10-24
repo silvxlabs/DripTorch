@@ -28,7 +28,6 @@ click-plugins==1.1.1
 cligj==0.7.2
 cloudpickle==0.4.0
 cmake==3.22.4
-CppHeaderParser @ https://github.com/davidcaron/CppHeaderParser/archive/master.zip
 crcmod==1.7
 cryptography==37.0.2
 cycler==0.11.0
@@ -36,7 +35,6 @@ debugpy==1.5.1
 decorator==5.1.0
 defusedxml==0.7.1
 docutils==0.17.1
-driptorch @ file:///Users/franklyndunbar/Project/Silvx/DripTorch
 entrypoints==0.3
 ExifRead==2.1.2
 fastapi==0.74.1
