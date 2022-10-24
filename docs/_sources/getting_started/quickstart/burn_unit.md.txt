@@ -1,6 +1,6 @@
 # Burn unit
 
-A burn unit is the spatial boundary of a firing operation while the wind direction determines the arrangement and timing of the ignition pattern. Everything that happens downstream in DripTorch depends on the unit boundary and the wind direction.
+A burn unit is the spatial boundary of a firing operation while the firing direction determines the arrangement and timing of the ignition pattern. Everything that happens downstream in DripTorch depends on the unit boundary and the firing direction.
 
 You can create a burn unit in DripTorch by providing a Shapely `Polygon` object to the `BurnUnit` constructor. DripTorch expects the polygon CRS to be Web Mercator (EPSG: 4326). You can use the following function to convert any Shapely geometry or GeoJSON dictionary from a specific EPSG code to 4326.
 
@@ -22,7 +22,7 @@ from shapely.geometry import Polygon
 # Create a shapely Polygon object
 polygon = Polygon([(-114.44869995117188, 47.088504171925706), (-114.44470882415771, 47.08745225315146), (-114.44342136383057, 47.09066638416644), (-114.44496631622313, 47.09236102969754), (-114.44633960723877, 47.0924194647886), (-114.45281982421875, 47.089205439567344), (-114.45153236389159, 47.08815353464254), (-114.44869995117188, 47.088504171925706)])
 
-# Create a burn unit with a wind direction of 90 degrees
+# Create a burn unit with a firing direction of 90 degrees
 burn_unit = dt.BurnUnit(polygon, 90)
 
 # If your polygon is already in UTM, then you'll need to specifiy the UTM EPSG code in the contructor
@@ -36,7 +36,7 @@ If your spatial data is formatted in GeoJSON then use the `from_json()` alternat
 geojson = {"type":"FeatureCollection","features":[{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-114.44869995117188,47.088504171925706],[-114.44470882415771,47.08745225315146],[-114.44342136383057,47.09066638416644],[-114.44496631622313,47.09236102969754],[-114.44633960723877,47.0924194647886],[-114.45281982421875,47.089205439567344],[-114.45153236389159,47.08815353464254],[-114.44869995117188,47.088504171925706]]]}}]}
 
 
-# Create a burn unit from a GeoJSON feature collection with a wind direction of 217 degrees
+# Create a burn unit from a GeoJSON feature collection with a firing direction of 217 degrees
 burn_unit = dt.BurnUnit.from_json(geojson, 217)
 ```
 
@@ -49,7 +49,7 @@ You can emmulate a plowline or handline operation by buffering the burn unit.
 firing_area = burn_unit.buffer_control_line(2)
 ```
 
-You can also simulate the blackline operation which only buffers the downwind side of the unit.
+You can also simulate the blackline operation which only buffers the downfiring side of the unit.
 
 ```python
 # Create an additional 10 meter buffer in the firing_area object on the downwind side of the unit
