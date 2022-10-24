@@ -51,7 +51,7 @@ def test_pattern_io() -> None:
     )
     test_burn_unit = dt.BurnUnit.from_json(
         validation_data["burn_unit"],
-        wind_direction=validation_data["args"]["wind_direction"],
+        firing_direction=validation_data["args"]["firing_direction"],
     )
 
     # Test Pattern.to_dict()
@@ -181,7 +181,7 @@ def test_temporal_propgation() -> None:
 
     firing_area = dt.BurnUnit.from_json(
         validation_data["firing_area"],
-        wind_direction=validation_data["args"]["wind_direction"],
+        firing_direction=validation_data["args"]["firing_direction"],
     )
 
     ring_technique = dt.firing.Ring(firing_area, point_crew)

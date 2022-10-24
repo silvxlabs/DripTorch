@@ -10,7 +10,7 @@ simulation_args = {
     "unit_bounds": test_polygon,
     "front_buffer": 5,
     "back_buffer": 20,
-    "wind_direction": 0,
+    "firing_direction": 0,
     "igniter_speed": 0.804,
     "igniter_depth": 10,
     "igniter_spacing": 10,

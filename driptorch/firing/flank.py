@@ -49,7 +49,7 @@ class Flank(FiringBase):
         heat_delay : float, optional
             Delay in seconds between heats. Defaults to 0.
         side : str, optional
-            Side of the wind vector to start the ignition. Defaults to 'right'. Options are 'left' or 'right'.
+            Side of the firing direction vector to start the ignition. Defaults to 'right'. Options are 'left' or 'right'.
 
         Returns
         -------

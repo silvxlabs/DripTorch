@@ -42,7 +42,7 @@ def test_back_technique() -> None:
 
     burn_unit = dt.unit.BurnUnit.from_json(
         validation_data["firing_area"],
-        wind_direction=sim_args["wind_direction"]
+        firing_direction=sim_args["firing_direction"]
     )
 
     technique = dt.firing.Back(burn_unit, ignition_crew)
@@ -78,7 +78,7 @@ def test_head_technique() -> None:
 
     burn_unit = dt.unit.BurnUnit.from_json(
         validation_data["firing_area"],
-        wind_direction=sim_args["wind_direction"]
+        firing_direction=sim_args["firing_direction"]
     )
 
     technique = dt.firing.Head(burn_unit, ignition_crew)
@@ -114,7 +114,7 @@ def test_flank_technique() -> None:
 
     burn_unit = dt.unit.BurnUnit.from_json(
         validation_data["firing_area"],
-        wind_direction=sim_args["wind_direction"]
+        firing_direction=sim_args["firing_direction"]
     )
 
     technique = dt.firing.Flank(burn_unit, ignition_crew)
@@ -150,7 +150,7 @@ def test_strip_technique() -> None:
 
     burn_unit = dt.unit.BurnUnit.from_json(
         validation_data["firing_area"],
-        wind_direction=sim_args["wind_direction"]
+        firing_direction=sim_args["firing_direction"]
     )
 
     technique = dt.firing.Strip(burn_unit, ignition_crew)
@@ -182,7 +182,7 @@ def test_inferno_technique() -> None:
 
     burn_unit = dt.unit.BurnUnit.from_json(
         validation_data["firing_area"],
-        wind_direction=sim_args["wind_direction"]
+        firing_direction=sim_args["firing_direction"]
     )
 
     technique = dt.firing.Inferno(burn_unit)
@@ -218,7 +218,7 @@ def test_ring_technique() -> None:
 
     burn_unit = dt.unit.BurnUnit.from_json(
         validation_data["firing_area"],
-        wind_direction=sim_args["wind_direction"]
+        firing_direction=sim_args["firing_direction"]
     )
 
     technique = dt.firing.Ring(burn_unit, ignition_crew)
