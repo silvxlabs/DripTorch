@@ -154,13 +154,13 @@ class BurnUnit:
 
         return BurnUnit(buffered_polygon, self.firing_direction, utm_epsg=self.utm_epsg)
 
-    def buffer_downfiring(self, width: float) -> BurnUnit:
-        """Create a downfiring blackline buffer
+    def buffer_downwind(self, width: float) -> BurnUnit:
+        """Create a downwind blackline buffer
 
         Parameters
         ----------
         width : float
-            Width of downfiring buffer (meters)
+            Width of downwind buffer (meters)
 
         Returns
         -------
