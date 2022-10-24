@@ -36,13 +36,13 @@ def test_json_from_to() -> None:
     # Generate test data
     burn_unit = dt.unit.BurnUnit.from_json(
         validation_data["burn_unit"],
-        wind_direction=validation_data["args"]["wind_direction"],
+        firing_direction=validation_data["args"]["firing_direction"],
     )
     new_json = burn_unit.to_json()
 
     test_a = burn_unit.polygon.bounds
     test_b = dt.unit.BurnUnit.from_json(
-        new_json, wind_direction=validation_data["args"]["wind_direction"]
+        new_json, firing_direction=validation_data["args"]["firing_direction"]
     ).polygon.bounds
     assert test_a == test_b
 
@@ -60,7 +60,7 @@ def test_align_unalign() -> None:
 
     burn_unit = dt.unit.BurnUnit.from_json(
         validation_data["burn_unit"],
-        wind_direction=validation_data["args"]["wind_direction"],
+        firing_direction=validation_data["args"]["firing_direction"],
     )
 
     # Align the burn unit, then unalign and compare to the original
@@ -90,18 +90,18 @@ def test_buffer_functions() -> None:
     args = validation_data["args"]
     burn_unit = dt.unit.BurnUnit.from_json(
         validation_data["burn_unit"],
-        wind_direction=validation_data["args"]["wind_direction"],
+        firing_direction=validation_data["args"]["firing_direction"],
     )
     firing_area = burn_unit.buffer_control_line(args["front_buffer"])
     firing_area = firing_area.buffer_downwind(args["back_buffer"])
     blackline_area = burn_unit.difference(firing_area)
     validation_firing_area = dt.unit.BurnUnit.from_json(
         validation_data["firing_area"],
-        wind_direction=validation_data["args"]["wind_direction"],
+        firing_direction=validation_data["args"]["firing_direction"],
     )
     validation_blackline_area = dt.unit.BurnUnit.from_json(
         validation_data["blackline"],
-        wind_direction=validation_data["args"]["wind_direction"],
+        firing_direction=validation_data["args"]["firing_direction"],
     )
 
     # Build new firing area and test against the validation data
@@ -135,7 +135,7 @@ def test_polygon_splitter() -> None:
     # Generate validation and test data
     burn_unit_validation = dt.unit.BurnUnit.from_json(
         validation_data["burn_unit"],
-        wind_direction=validation_data["args"]["wind_direction"],
+        firing_direction=validation_data["args"]["firing_direction"],
     )
     fore_validation = shape(validation_data["burn_unit_fore"])
     aft_validation = shape(validation_data["burn_unit_aft"])

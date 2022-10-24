@@ -2,7 +2,7 @@
 
 If you want to use your ignition pattern to set something on fire (at least in a simulator) then use one of the export methods in the pattern instance to write the ignition paths in a model-specific format. Currently, DripTorch only supports QUIC-fire, but other formats are on our roadmap.
 
-The origin of the simulation domain in QUIC-fire is the lower lefthand corner. You can specify the extent of the domain using a `BurnUnit` object. In most cases, you'll simply provide the first burn unit you created in the pipeline, prior to any control line or downwind buffering. The extent of the burn unit object will be extracted and the ignition patterns will be translated to the origin of the CRS internally. Optionally, you can specify a destination EPSG code if you want to reproject the ignition pattern before exporting to QUIC-fire.
+The origin of the simulation domain in QUIC-fire is the lower lefthand corner. You can specify the extent of the domain using a `BurnUnit` object. In most cases, you'll simply provide the first burn unit you created in the pipeline, prior to any control line or downfiring buffering. The extent of the burn unit object will be extracted and the ignition patterns will be translated to the origin of the CRS internally. Optionally, you can specify a destination EPSG code if you want to reproject the ignition pattern before exporting to QUIC-fire.
 
 ```python
 # Write the pattern to a QUIC-Fire ignition file

@@ -17,7 +17,7 @@ def generate_simulations(
     unit_bounds: dict,
     front_buffer: int,
     back_buffer: int,
-    wind_direction: float,
+    firing_direction: float,
     igniter_speed: float,
     number_igniters: float,
     offset: float,
@@ -32,7 +32,7 @@ def generate_simulations(
         unit_bounds (dict): geoJSON of the unit bondary
         front_buffer (int): Width (meters) of the front buffer
         back_buffer (int): Width (meters) of the back buffer
-        wind_direction (float): Wind direction azimuth
+        firing_direction (float): firing direction azimuth
         igniter_speed (float): Speed of the igniter (meters/second)
         igniter_rate (float): Ignition rate in ipm (ignitions per meter) or ips (ignitions per second).
                 Use the `rate_units` parameter to specifiy meters or seconds. An interval of 0 specifies
@@ -57,7 +57,7 @@ def generate_simulations(
     }
 
     burn_unit = dt.BurnUnit.from_json(
-        unit_bounds, wind_direction=wind_direction)
+        unit_bounds, firing_direction=firing_direction)
     polygonsplitter = dt.unit.PolygonSplitter()
     polygonsplitter.split(burn_unit.polygon)
     simulation_data["burn_unit_fore"] = polygonsplitter.fore.__geo_interface__

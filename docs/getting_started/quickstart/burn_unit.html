@@ -241,7 +241,7 @@
                 
   <section id="burn-unit">
 <h1>Burn unit<a class="headerlink" href="#burn-unit" title="Permalink to this headline">#</a></h1>
-<p>A burn unit is the spatial boundary of a firing operation while the wind direction determines the arrangement and timing of the ignition pattern. Everything that happens downstream in DripTorch depends on the unit boundary and the wind direction.</p>
+<p>A burn unit is the spatial boundary of a firing operation while the firing direction determines the arrangement and timing of the ignition pattern. Everything that happens downstream in DripTorch depends on the unit boundary and the firing direction.</p>
 <p>You can create a burn unit in DripTorch by providing a Shapely <code class="docutils literal notranslate"><span class="pre">Polygon</span></code> object to the <code class="docutils literal notranslate"><span class="pre">BurnUnit</span></code> constructor. DripTorch expects the polygon CRS to be Web Mercator (EPSG: 4326). You can use the following function to convert any Shapely geometry or GeoJSON dictionary from a specific EPSG code to 4326.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">driptorch</span> <span class="k">as</span> <span class="nn">dt</span>
 
@@ -258,7 +258,7 @@
 <span class="c1"># Create a shapely Polygon object</span>
 <span class="n">polygon</span> <span class="o">=</span> <span class="n">Polygon</span><span class="p">([(</span><span class="o">-</span><span class="mf">114.44869995117188</span><span class="p">,</span> <span class="mf">47.088504171925706</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">114.44470882415771</span><span class="p">,</span> <span class="mf">47.08745225315146</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">114.44342136383057</span><span class="p">,</span> <span class="mf">47.09066638416644</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">114.44496631622313</span><span class="p">,</span> <span class="mf">47.09236102969754</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">114.44633960723877</span><span class="p">,</span> <span class="mf">47.0924194647886</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">114.45281982421875</span><span class="p">,</span> <span class="mf">47.089205439567344</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">114.45153236389159</span><span class="p">,</span> <span class="mf">47.08815353464254</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">114.44869995117188</span><span class="p">,</span> <span class="mf">47.088504171925706</span><span class="p">)])</span>
 
-<span class="c1"># Create a burn unit with a wind direction of 90 degrees</span>
+<span class="c1"># Create a burn unit with a firing direction of 90 degrees</span>
 <span class="n">burn_unit</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">BurnUnit</span><span class="p">(</span><span class="n">polygon</span><span class="p">,</span> <span class="mi">90</span><span class="p">)</span>
 
 <span class="c1"># If your polygon is already in UTM, then you&#39;ll need to specifiy the UTM EPSG code in the contructor</span>
@@ -270,7 +270,7 @@
 <span class="n">geojson</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;FeatureCollection&quot;</span><span class="p">,</span><span class="s2">&quot;features&quot;</span><span class="p">:[{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;Feature&quot;</span><span class="p">,</span><span class="s2">&quot;properties&quot;</span><span class="p">:{},</span><span class="s2">&quot;geometry&quot;</span><span class="p">:{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;Polygon&quot;</span><span class="p">,</span><span class="s2">&quot;coordinates&quot;</span><span class="p">:[[[</span><span class="o">-</span><span class="mf">114.44869995117188</span><span class="p">,</span><span class="mf">47.088504171925706</span><span class="p">],[</span><span class="o">-</span><span class="mf">114.44470882415771</span><span class="p">,</span><span class="mf">47.08745225315146</span><span class="p">],[</span><span class="o">-</span><span class="mf">114.44342136383057</span><span class="p">,</span><span class="mf">47.09066638416644</span><span class="p">],[</span><span class="o">-</span><span class="mf">114.44496631622313</span><span class="p">,</span><span class="mf">47.09236102969754</span><span class="p">],[</span><span class="o">-</span><span class="mf">114.44633960723877</span><span class="p">,</span><span class="mf">47.0924194647886</span><span class="p">],[</span><span class="o">-</span><span class="mf">114.45281982421875</span><span class="p">,</span><span class="mf">47.089205439567344</span><span class="p">],[</span><span class="o">-</span><span class="mf">114.45153236389159</span><span class="p">,</span><span class="mf">47.08815353464254</span><span class="p">],[</span><span class="o">-</span><span class="mf">114.44869995117188</span><span class="p">,</span><span class="mf">47.088504171925706</span><span class="p">]]]}}]}</span>
 
 
-<span class="c1"># Create a burn unit from a GeoJSON feature collection with a wind direction of 217 degrees</span>
+<span class="c1"># Create a burn unit from a GeoJSON feature collection with a firing direction of 217 degrees</span>
 <span class="n">burn_unit</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">BurnUnit</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">geojson</span><span class="p">,</span> <span class="mi">217</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -281,7 +281,7 @@
 <span class="n">firing_area</span> <span class="o">=</span> <span class="n">burn_unit</span><span class="o">.</span><span class="n">buffer_control_line</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>You can also simulate the blackline operation which only buffers the downwind side of the unit.</p>
+<p>You can also simulate the blackline operation which only buffers the downfiring side of the unit.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create an additional 10 meter buffer in the firing_area object on the downwind side of the unit</span>
 <span class="n">firing_area</span> <span class="o">=</span> <span class="n">firing_area</span><span class="o">.</span><span class="n">buffer_downwind</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>

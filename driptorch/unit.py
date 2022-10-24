@@ -2,7 +2,7 @@
 BurnUnit
 --------
 Reading and manipulating a burn unit geometry and splitting
-the boundary to wind-centric segments
+the boundary to firing-centric segments
 """
 
 # Core imports
@@ -20,20 +20,20 @@ from shapely import affinity
 
 class BurnUnit:
     """
-    A burn unit is a polygon that is split into segments based on the wind direction.
+    A burn unit is a polygon that is split into segments based on the firing direction.
 
     Parameters
     -----------
     polygon : shapely.Polygon
         Shapely polygon geometry object
-    wind_direction :  float
-        Wind direction (degrees)
+    firing_direction :  float
+        firing direction (degrees)
     utm : int
         UTM EPSG code of spatial data. If not provided it is assumed
         that coordinates are in 4326 and will be converted to UTM. Defaults to None.
     """
 
-    def __init__(self, polygon: Polygon, wind_direction: float, utm_epsg: int = None):
+    def __init__(self, polygon: Polygon, firing_direction: float, utm_epsg: int = None):
 
         # Set the global EPSG source
         if not utm_epsg:
@@ -42,13 +42,13 @@ class BurnUnit:
         # Store instance attributes
         self.utm_epsg = utm_epsg
         self.polygon = polygon
-        self.wind_direction = wind_direction
+        self.firing_direction = firing_direction
         self.centroid = polygon.centroid
         self.polygon_segments = PolygonSplitter()
 
-        # Compute the angle used to rotate the unit s.t. the wind direction
+        # Compute the angle used to rotate the unit s.t. the firing direction
         # is congruent with the positive x-axis
-        self.wind_alignment_angle = (self.wind_direction - 90) % 360
+        self.firing_alignment_angle = (self.firing_direction - 90) % 360
 
         # Align the unit, run the boundary splitting algorithm for
         # anchors and segs, and then unalign
@@ -57,7 +57,7 @@ class BurnUnit:
         self._unalign()
 
     @classmethod
-    def from_json(cls, geojson: dict, wind_direction: float) -> BurnUnit:
+    def from_json(cls, geojson: dict, firing_direction: float) -> BurnUnit:
         """Alternative constructor used to create a BurnUnit object from
         a GeoJSON dictionary.
 
@@ -65,8 +65,8 @@ class BurnUnit:
         ----------
         geojson : dict
             GeoJSON dictionary
-        wind_direction : float
-            Wind direction (degrees)
+        firing_direction : float
+            firing direction (degrees)
         epsg : int
             EPSG code of the input GeoJSON. Defaults to 4326.
 
@@ -79,7 +79,7 @@ class BurnUnit:
         # Read the GeoJSON as a shapely polygon
         polygon = read_geojson_polygon(geojson)
 
-        return cls(polygon, wind_direction)
+        return cls(polygon, firing_direction)
 
     def to_json(self, **kwargs) -> dict:
         """Returns a GeoJSON representation of the ``BurnUnit`` as a string
@@ -105,24 +105,24 @@ class BurnUnit:
         return write_geojson([self.polygon], src_epsg=self.utm_epsg, **kwargs)
 
     def _align(self):
-        """Align the unit and boundary segs to the wind
+        """Align the unit and boundary segs to the firing
         """
 
-        if self.wind_alignment_angle:
+        if self.firing_alignment_angle:
             self.polygon = affinity.rotate(
-                self.polygon, self.wind_alignment_angle, self.centroid)
+                self.polygon, self.firing_alignment_angle, self.centroid)
             self.polygon_segments.rotate(
-                self.wind_alignment_angle, self.centroid)
+                self.firing_alignment_angle, self.centroid)
 
     def _unalign(self):
         """Revert the unit and boundary seg to their origional orientation
         """
 
-        if self.wind_alignment_angle:
+        if self.firing_alignment_angle:
             self.polygon = affinity.rotate(
-                self.polygon, -self.wind_alignment_angle, self.centroid)
+                self.polygon, -self.firing_alignment_angle, self.centroid)
             self.polygon_segments.rotate(
-                -self.wind_alignment_angle, self.centroid)
+                -self.firing_alignment_angle, self.centroid)
 
     def copy(self) -> BurnUnit:
         """Utility method for copying a BurnUnit instance
@@ -152,7 +152,7 @@ class BurnUnit:
         # Use shapely's buffer method on the polygon
         buffered_polygon = self.polygon.buffer(-width)
 
-        return BurnUnit(buffered_polygon, self.wind_direction, utm_epsg=self.utm_epsg)
+        return BurnUnit(buffered_polygon, self.firing_direction, utm_epsg=self.utm_epsg)
 
     def buffer_downwind(self, width: float) -> BurnUnit:
         """Create a downwind blackline buffer
@@ -173,10 +173,10 @@ class BurnUnit:
             width, cap_style=3)
 
         # Now take the difference between the current firing area and the fore line
-        # buffer to cut out the downwind blackline area
+        # buffer to cut out the downfiring blackline area
         buffered_polygon = self.polygon.difference(fore_line_buffer)
 
-        return BurnUnit(buffered_polygon, self.wind_direction, utm_epsg=self.utm_epsg)
+        return BurnUnit(buffered_polygon, self.firing_direction, utm_epsg=self.utm_epsg)
 
     def difference(self, burn_unit: BurnUnit) -> BurnUnit:
         """Return a burn unit instance that is the difference between
@@ -197,7 +197,7 @@ class BurnUnit:
         # Use shapely's set-theorectic difference method
         polygon_difference = self.polygon.difference(burn_unit.polygon)
 
-        return BurnUnit(polygon_difference, self.wind_direction, utm_epsg=self.utm_epsg)
+        return BurnUnit(polygon_difference, self.firing_direction, utm_epsg=self.utm_epsg)
 
     @property
     def bounds(self) -> np.ndarray:
@@ -219,7 +219,7 @@ class PolygonSplitter:
         """
 
         # We're just setting these to None to start with so they can be pumped
-        # through wind alignment before we compute them
+        # through firing alignment before we compute them
         self.fore: LineString = None
         self.aft: LineString = None
         self.port: LineString = None
@@ -243,7 +243,7 @@ class PolygonSplitter:
             self.starboard, angle, origin) if self.starboard else self.starboard
 
     def split(self, polygon: Polygon):
-        """Split the polygon to four wind-centric segments
+        """Split the polygon to four firing-centric segments
 
         Args:
             polygon (Polygon): Polygon to split
@@ -265,14 +265,14 @@ class PolygonSplitter:
 
     def _get_segment(self, start_idx: int, end_idx: int) -> LineString:
         """Compute burn unit exterior line strings (subsequence of polygon coordinates)
-        that make up the four wind-centric parts of the burn unit: fore, aft, port and starboard.
+        that make up the four firing-centric parts of the burn unit: fore, aft, port and starboard.
 
         Args:
             start_idx (int): Starting index in coordinate sequence for line
             end_idx (int): Ending index in coordinate sequence for line
 
         Returns:
-            LineString: wind-centric subsequence of the polygon
+            LineString: firing-centric subsequence of the polygon
         """
 
         # If the start index is greater than the end index, then we need to roll
@@ -309,7 +309,7 @@ class PolygonSplitter:
             idx = np.where(self.coords[:, dimension] ==
                            self.coords[:, dimension].max())[0]
 
-        # If more than one anchor, select the most upwind anchor
+        # If more than one anchor, select the most upfiring anchor
         if len(idx) > 1:
             idx = idx[np.argmax(self.coords[idx, 0])]
         else:
