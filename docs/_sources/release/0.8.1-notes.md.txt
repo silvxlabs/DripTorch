@@ -1,0 +1,9 @@
+# DripTorch 0.8.1 Release Notes
+
+## Changes
+
+### Changed wind direction to firing direction ([PR #130](https://github.com/silvxlabs/DripTorch/pull/130))
+
+We changed all instances of `wind_direction` in the source code and docs to
+`firing_direction` to disambiguate wind and slope driven fire progression.
+

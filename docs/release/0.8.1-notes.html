@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Getting Started &#8212; DripTorch 0.8.1 documentation</title>
+    <title>DripTorch 0.8.1 Release Notes &#8212; DripTorch 0.8.1 documentation</title>
 <script>
   document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
   document.documentElement.dataset.theme = localStorage.getItem("theme") || "light"
@@ -37,8 +37,8 @@
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Installation" href="installation.html" />
-    <link rel="prev" title="DripTorch 0.8.1" href="../index.html" />
+    <link rel="next" title="DripTorch 0.8.0 Release Notes" href="0.8.0-notes.html" />
+    <link rel="prev" title="Release notes" href="../release.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="docsearch:language" content="None">
   </head>
@@ -88,8 +88,8 @@
  </a>
 </li>
 
-<li class="toctree-l1 current active nav-item">
- <a class="current reference internal nav-link" href="#">
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../getting_started/index.html">
   Getting started
  </a>
 </li>
@@ -100,7 +100,7 @@
  </a>
 </li>
 
-<li class="toctree-l1 nav-item">
+<li class="toctree-l1 current active nav-item">
  <a class="reference internal nav-link" href="../release.html">
   Release notes
  </a>
@@ -148,48 +148,31 @@
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
-    <ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="installation.html">
-   Installation
+    <ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   v0.8.1
   </a>
  </li>
- <li class="toctree-l1 has-children">
-  <a class="reference internal" href="quickstart/index.html">
-   Quickstart
+ <li class="toctree-l1">
+  <a class="reference internal" href="0.8.0-notes.html">
+   v0.8.0
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
-  <label for="toctree-checkbox-1">
-   <i class="fas fa-chevron-down">
-   </i>
-  </label>
-  <ul>
-   <li class="toctree-l2">
-    <a class="reference internal" href="quickstart/burn_unit.html">
-     Burn unit
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="quickstart/personnel.html">
-     Personnel
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="quickstart/firing.html">
-     Firing techniques
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="quickstart/mapping.html">
-     Mapping
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="quickstart/exporting.html">
-     Exports
-    </a>
-   </li>
-  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="0.7.2-notes.html">
+   v0.7.2
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="0.7.1-notes.html">
+   v0.7.1
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="0.7.0-notes.html">
+   v0.7.0
+  </a>
  </li>
 </ul>
 
@@ -216,9 +199,16 @@
 <nav id="bd-toc-nav">
     <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#easy-installation">
-   Easy installation
+  <a class="reference internal nav-link" href="#changes">
+   Changes
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#changed-wind-direction-to-firing-direction-pr-130">
+     Changed wind direction to firing direction (PR #130)
+    </a>
+   </li>
+  </ul>
  </li>
 </ul>
 
@@ -239,21 +229,15 @@
               
               <article class="bd-article" role="main">
                 
-  <section id="getting-started">
-<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">#</a></h1>
-<section id="easy-installation">
-<h2>Easy installation<a class="headerlink" href="#easy-installation" title="Permalink to this headline">#</a></h2>
-<p>You can install DripTorch from the silvxlabs conda channel with the following command:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">c</span> <span class="n">silvxlabs</span> <span class="o">-</span><span class="n">c</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span> <span class="n">driptorch</span>
-</pre></div>
-</div>
-<div class="toctree-wrapper compound">
-</div>
-<p>If you’re having trouble with installation or what to install from the Python Package Index, see our <a class="reference internal" href="installation.html"><span class="doc">Installation Guide</span></a>. Once you’re up and running, check our our <a class="reference internal" href="quickstart/index.html"><span class="doc">Quickstart Guide</span></a> and the <a class="reference internal" href="../reference/index.html"><span class="doc">API Reference</span></a>.</p>
-<div class="button docutils container">
-<p><a class="reference internal" href="installation.html"><span class="doc">Installation Guide</span></a> <a class="reference internal" href="quickstart/index.html"><span class="doc">Quickstart</span></a>
-<a class="reference internal" href="../reference/index.html"><span class="doc">API Reference</span></a></p>
-</div>
+  <section id="driptorch-0-8-1-release-notes">
+<h1>DripTorch 0.8.1 Release Notes<a class="headerlink" href="#driptorch-0-8-1-release-notes" title="Permalink to this headline">#</a></h1>
+<section id="changes">
+<h2>Changes<a class="headerlink" href="#changes" title="Permalink to this headline">#</a></h2>
+<section id="changed-wind-direction-to-firing-direction-pr-130">
+<h3>Changed wind direction to firing direction (<a class="reference external" href="https://github.com/silvxlabs/DripTorch/pull/130">PR #130</a>)<a class="headerlink" href="#changed-wind-direction-to-firing-direction-pr-130" title="Permalink to this headline">#</a></h3>
+<p>We changed all instances of <code class="docutils literal notranslate"><span class="pre">wind_direction</span></code> in the source code and docs to
+<code class="docutils literal notranslate"><span class="pre">firing_direction</span></code> to disambiguate wind and slope driven fire progression.</p>
+</section>
 </section>
 </section>
 
@@ -265,17 +249,17 @@
               <footer class="bd-footer-article">
                   <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-  <a class='left-prev' id="prev-link" href="../index.html" title="previous page">
+  <a class='left-prev' id="prev-link" href="../release.html" title="previous page">
       <i class="fas fa-angle-left"></i>
       <div class="prev-next-info">
           <p class="prev-next-subtitle">previous</p>
-          <p class="prev-next-title">DripTorch 0.8.1</p>
+          <p class="prev-next-title">Release notes</p>
       </div>
   </a>
-  <a class='right-next' id="next-link" href="installation.html" title="next page">
+  <a class='right-next' id="next-link" href="0.8.0-notes.html" title="next page">
   <div class="prev-next-info">
       <p class="prev-next-subtitle">next</p>
-      <p class="prev-next-title">Installation</p>
+      <p class="prev-next-title">DripTorch 0.8.0 Release Notes</p>
   </div>
   <i class="fas fa-angle-right"></i>
   </a>
