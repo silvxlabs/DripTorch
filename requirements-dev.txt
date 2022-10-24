@@ -1,7 +1,0 @@
-awkward==1.8.0
-folium==0.12.1.post1
-numpy==1.22.4
-pandas==1.4.2
-pyproj==3.3.1
-setuptools==62.3.2
-Shapely==1.8.2
