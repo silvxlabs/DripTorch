@@ -24,8 +24,8 @@ class Inferno:
 
     def __init__(self, burn_unit: BurnUnit):
 
-        # Store the burn unit. Wind direction doesn't matter for this technique, so
-        # no need to align the burn unit to the wind.
+        # Store the burn unit. Firing direction doesn't matter for this technique, so
+        # no need to align the burn unit to the firing direction.
         self._burn_unit = burn_unit
 
     def generate_pattern(self) -> Pattern:

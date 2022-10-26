@@ -1,0 +1,12 @@
+# DripTorch 0.8.2 Release Notes
+
+## Bug fixes
+
+### No attribute `_wind_alignment_angle` for BurnUnit object ([PR #135](https://github.com/silvxlabs/DripTorch/pull/135))
+
+Fixed a residual bug from the wind->firing direction change in 0.8.1.
+
+## Changes
+
+### Cleaned conda development environment ([PR #132](https://github.com/silvxlabs/DripTorch/pull/132))
+The conda environment YAML has been reduced to the minimum required dependencies for development. We are no longer versioning `pip` requirements.
