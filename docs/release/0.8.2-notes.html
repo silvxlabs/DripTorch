@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Installation &#8212; DripTorch 0.8.2 documentation</title>
+    <title>DripTorch 0.8.2 Release Notes &#8212; DripTorch 0.8.2 documentation</title>
 <script>
   document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
   document.documentElement.dataset.theme = localStorage.getItem("theme") || "light"
@@ -37,8 +37,8 @@
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Quickstart Guide" href="quickstart/index.html" />
-    <link rel="prev" title="Getting Started" href="index.html" />
+    <link rel="next" title="DripTorch 0.8.1 Release Notes" href="0.8.1-notes.html" />
+    <link rel="prev" title="DripTorch Unreleased Notes" href="unreleased-notes.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="docsearch:language" content="None">
   </head>
@@ -88,8 +88,8 @@
  </a>
 </li>
 
-<li class="toctree-l1 current active nav-item">
- <a class="reference internal nav-link" href="index.html">
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../getting_started/index.html">
   Getting started
  </a>
 </li>
@@ -100,7 +100,7 @@
  </a>
 </li>
 
-<li class="toctree-l1 nav-item">
+<li class="toctree-l1 current active nav-item">
  <a class="reference internal nav-link" href="../release.html">
   Release notes
  </a>
@@ -149,47 +149,40 @@
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
     <ul class="current nav bd-sidenav">
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
-   Installation
+ <li class="toctree-l1">
+  <a class="reference internal" href="unreleased-notes.html">
+   unreleased
   </a>
  </li>
- <li class="toctree-l1 has-children">
-  <a class="reference internal" href="quickstart/index.html">
-   Quickstart
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   v0.8.2
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
-  <label for="toctree-checkbox-1">
-   <i class="fas fa-chevron-down">
-   </i>
-  </label>
-  <ul>
-   <li class="toctree-l2">
-    <a class="reference internal" href="quickstart/burn_unit.html">
-     Burn unit
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="quickstart/personnel.html">
-     Personnel
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="quickstart/firing.html">
-     Firing techniques
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="quickstart/mapping.html">
-     Mapping
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="quickstart/exporting.html">
-     Exports
-    </a>
-   </li>
-  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="0.8.1-notes.html">
+   v0.8.1
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="0.8.0-notes.html">
+   v0.8.0
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="0.7.2-notes.html">
+   v0.7.2
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="0.7.1-notes.html">
+   v0.7.1
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="0.7.0-notes.html">
+   v0.7.0
+  </a>
  </li>
 </ul>
 
@@ -209,9 +202,44 @@
     
     <div class="toc-item">
       
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
 
 <nav id="bd-toc-nav">
-    
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#bug-fixes">
+   Bug fixes
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#no-attribute-wind-alignment-angle-for-burnunit-object-pr-135">
+     No attribute
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       _wind_alignment_angle
+      </span>
+     </code>
+     for BurnUnit object (PR #135)
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#changes">
+   Changes
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#cleaned-conda-development-environment-pr-132">
+     Cleaned conda development environment (PR #132)
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
 </nav>
     </div>
     
@@ -229,18 +257,22 @@
               
               <article class="bd-article" role="main">
                 
-  <section id="installation">
-<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">#</a></h1>
-<p>If you use <a class="reference external" href="https://anaconda.org/silvxlabs/driptorch">Conda</a>, create a new Python 3.10 enviornment and install DripTorch</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="n">myenv</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.10</span>
-<span class="n">conda</span> <span class="n">activate</span> <span class="n">myenv</span>
-<span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">c</span> <span class="n">silvxlabs</span> <span class="o">-</span><span class="n">c</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span> <span class="n">driptorch</span>
-</pre></div>
-</div>
-<p>You can also install from <a class="reference external" href="https://pypi.org/project/driptorch/">PyPI</a>, however you might need to manually setup <a class="reference external" href="https://pyproj4.github.io/pyproj/stable/installation.html">pyproj</a>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">driptorch</span>
-</pre></div>
-</div>
+  <section id="driptorch-0-8-2-release-notes">
+<h1>DripTorch 0.8.2 Release Notes<a class="headerlink" href="#driptorch-0-8-2-release-notes" title="Permalink to this headline">#</a></h1>
+<section id="bug-fixes">
+<h2>Bug fixes<a class="headerlink" href="#bug-fixes" title="Permalink to this headline">#</a></h2>
+<section id="no-attribute-wind-alignment-angle-for-burnunit-object-pr-135">
+<h3>No attribute <code class="docutils literal notranslate"><span class="pre">_wind_alignment_angle</span></code> for BurnUnit object (<a class="reference external" href="https://github.com/silvxlabs/DripTorch/pull/135">PR #135</a>)<a class="headerlink" href="#no-attribute-wind-alignment-angle-for-burnunit-object-pr-135" title="Permalink to this headline">#</a></h3>
+<p>Fixed a residual bug from the wind-&gt;firing direction change in 0.8.1.</p>
+</section>
+</section>
+<section id="changes">
+<h2>Changes<a class="headerlink" href="#changes" title="Permalink to this headline">#</a></h2>
+<section id="cleaned-conda-development-environment-pr-132">
+<h3>Cleaned conda development environment (<a class="reference external" href="https://github.com/silvxlabs/DripTorch/pull/132">PR #132</a>)<a class="headerlink" href="#cleaned-conda-development-environment-pr-132" title="Permalink to this headline">#</a></h3>
+<p>The conda environment YAML has been reduced to the minimum required dependencies for development. We are no longer versioning <code class="docutils literal notranslate"><span class="pre">pip</span></code> requirements.</p>
+</section>
+</section>
 </section>
 
 
@@ -251,17 +283,17 @@
               <footer class="bd-footer-article">
                   <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-  <a class='left-prev' id="prev-link" href="index.html" title="previous page">
+  <a class='left-prev' id="prev-link" href="unreleased-notes.html" title="previous page">
       <i class="fas fa-angle-left"></i>
       <div class="prev-next-info">
           <p class="prev-next-subtitle">previous</p>
-          <p class="prev-next-title">Getting Started</p>
+          <p class="prev-next-title">DripTorch Unreleased Notes</p>
       </div>
   </a>
-  <a class='right-next' id="next-link" href="quickstart/index.html" title="next page">
+  <a class='right-next' id="next-link" href="0.8.1-notes.html" title="next page">
   <div class="prev-next-info">
       <p class="prev-next-subtitle">next</p>
-      <p class="prev-next-title">Quickstart Guide</p>
+      <p class="prev-next-title">DripTorch 0.8.1 Release Notes</p>
   </div>
   <i class="fas fa-angle-right"></i>
   </a>
