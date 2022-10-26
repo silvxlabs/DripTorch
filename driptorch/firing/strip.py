@@ -14,7 +14,7 @@ import numpy as np
 
 
 class Strip(FiringBase):
-    """Strip firing produces ignition paths perpendicular to the wind direction. Igniters are staggered with their heats
+    """Strip firing produces ignition paths perpendicular to the firing direction. Igniters are staggered with their heats
     and each heat alternates on which side of the unit they start.
 
     Parameters
@@ -44,7 +44,7 @@ class Strip(FiringBase):
         heat_delay : float, optional
             Delay in seconds between igniter heats. Defaults to 0.
         side : str, optional
-            Side of the wind vector to start the ignition. Defaults to 'right'. Options are 'left' or 'right'.
+            Side of the firing vector to start the ignition. Defaults to 'right'. Options are 'left' or 'right'.
 
         Returns
         -------

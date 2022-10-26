@@ -33,7 +33,7 @@ class FiringBase:
         # Get a template dictionary for the paths object
         empty_paths = Pattern.empty_path_dict()
 
-        # Need to wind-align the burn unit for laying out paths
+        # Need to align the burn unit to the firing direction for laying out paths
         if kwargs.get('align', True):
             self._burn_unit._align()
 
@@ -86,7 +86,7 @@ class FiringBase:
         for line in lines:
             unaligned_lines.append(
                 affinity.rotate(
-                    line, -self._burn_unit.wind_alignment_angle,
+                    line, -self._burn_unit.firing_alignment_angle,
                     self._burn_unit.centroid
                 )
             )

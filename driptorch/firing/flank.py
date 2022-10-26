@@ -14,7 +14,7 @@ from shapely.geometry import LineString, MultiLineString
 
 
 class Flank(FiringBase):
-    """Flank fire sets ignition paths in the direction of the wind.
+    """Flank fire generates ignition paths parallel to the firing direction.
 
     Parameters
     ----------
