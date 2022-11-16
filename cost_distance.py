@@ -20,19 +20,27 @@ _MOVES = np.array(
         # 7
         [1, -1],
     ],
-    dtype=np.int8,
+    dtype= np.int8,
 )
+TRACEBACK_NOT_REACHED = -2
+
 
 HEAP_SPEC = [
-    ("max_value", np.int64),
-    ("levels", np.int8),
-    ("min_levels", np.int8),
-    ("count", np.int64),
+    ("max_value",  np.int64),
+    ("levels",  np.int8),
+    ("min_levels",  np.int8),
+    ("count",  np.int64),
 ]
 HEAP_DT = np.dtype(HEAP_SPEC)
 
+def _mult_accumulate(x):
+    out = np.empty(len(x), dtype=np.int64)
+    c = 1
+    for i in range(len(x)):
+        out[i] = c * x[i]
+    return out
 
-def init_heap_data(capacity: np.int64, max_value: np.int64):
+def init_heap_data(capacity:  np.int64, max_value:  np.int64):
     if capacity < 1:
         raise ValueError("Capacity must be greater than 0")
     if max_value < 1:
@@ -40,7 +48,7 @@ def init_heap_data(capacity: np.int64, max_value: np.int64):
     # Have to use single element array. Numba throws an error if you try to
     # return a record dtype. Using the array as a wrapper allows the record to
     # be passed around in these functions.
-    heap = np.zeros(1, dtype=HEAP_DT)
+    heap = np.zeros(1, dtype=np.int64)
     heap[0].max_value = max_value
     heap[0].levels = 0
     while 2 ** heap[0].levels < capacity:
@@ -49,9 +57,9 @@ def init_heap_data(capacity: np.int64, max_value: np.int64):
     heap[0].count = 0
 
     n = 2 ** heap[0].levels
-    keys = np.full(2 * n, np.inf, dtype=F64)
-    values = np.full(n, -1, dtype=I64)
-    crossrefs = np.full(heap[0].max_value + 1, -1, dtype=I64)
+    keys = np.full(2 * n, np.inf, dtype= np.float64)
+    values = np.full(n, -1, dtype=  np.int64)
+    crossrefs = np.full(heap[0].max_value + 1, -1, dtype=  np.int64)
     return keys, values, crossrefs, heap
 
 
@@ -82,8 +90,8 @@ def _resize_levels(keys, values, heap, inc_dec):
     new_levels = heap[0].levels + inc_dec
     n = 1 << new_levels
     # We don't need to resize the crossrefs array
-    new_keys = np.full(2 * n, np.inf, dtype=F64)
-    new_values = np.full(n, -1, dtype=I64)
+    new_keys = np.full(2 * n, np.inf, dtype= np.float64)
+    new_values = np.full(n, -1, dtype=  np.int64)
     if heap[0].count:
         inew = (1 << new_levels) - 1
         iold = (1 << heap[0].levels) - 1
@@ -97,10 +105,7 @@ def _resize_levels(keys, values, heap, inc_dec):
     return keys, values
 
 
-@nb.jit(
-    Tuple((KEYS_TYPE_SIG, VALUES_TYPE_SIG))(*HEAP_STATE_SIG, nb.int64),
-    **JIT_KWARGS,
-)
+
 def _remove(keys, values, crossrefs, heap, i):
     lvl_start = (1 << heap[0].levels) - 1
     ilast = lvl_start + heap[0].count - 1
@@ -133,10 +138,6 @@ def _remove(keys, values, crossrefs, heap, i):
     return keys, values
 
 
-@nb.jit(
-    HEAP_STATE_SIG(*HEAP_STATE_SIG, nb.float64, nb.int64),
-    **JIT_KWARGS,
-)
 def _simple_push(keys, values, crossrefs, heap, key, value):
     lvl_size = 1 << heap[0].levels
 
@@ -152,12 +153,7 @@ def _simple_push(keys, values, crossrefs, heap, key, value):
     return keys, values, crossrefs, heap
 
 
-@nb.jit(
-    nb.types.Tuple((*HEAP_STATE_SIG, nb.int8))(
-        *HEAP_STATE_SIG, nb.float64, nb.int64
-    ),
-    **JIT_KWARGS,
-)
+
 def push(keys, values, crossrefs, heap, key, value):
     if not (0 <= value <= heap[0].max_value):
         return keys, values, crossrefs, heap, -1
@@ -220,19 +216,19 @@ def _get_strides(shape):
     # Get strides for given nd array shape. Assumes c style strides
     # NOTE: output must have a standardized type because windows has different
     # default int types from linux.
-    values = np.empty(len(shape), dtype=I64)
+    values = np.empty(len(shape), dtype=  np.int64)
     values[0] = 1
     values[1:] = shape[::-1][:-1]
     strides = _mult_accumulate(values)[::-1]
-    return 
+    return strides
 
 def _ravel_indices(indices, shape):
     # Convert nd c-strided indices to flat indices
     strides = _get_strides(shape)
     flat_indices = [np.sum(strides * idx) for idx in indices]
-    return np.array(flat_indices, dtype= np.int64)
+    return np.array(flat_indices, dtype=  np.int64)
 
-
+import pdb
 def _cost_distance_analysis_core(
     flat_costs,
     flat_sources,
@@ -245,18 +241,18 @@ def _cost_distance_analysis_core(
     elevation_null_value,
     use_elevation,
 ):
-    size: np.int64 = flat_costs.size
+    size:  np.int64 = flat_costs.size
     # The cumulative cost distance to every pixel from the sources
-    flat_cost_distance = np.full(size, np.inf, dtype=np.int64)
+    flat_cost_distance = np.full(size, np.inf, dtype= np.int64)
     # traceback values:
     #    -1: source
     #    -2: not reached, barrier
     #    0-7: index into moves array
-    flat_traceback = np.full(size, TRACEBACK_NOT_REACHED, dtype=np.int8)
+    flat_traceback = np.full(size, TRACEBACK_NOT_REACHED, dtype= np.int8)
     # allocation values:
     #    sources_null_value: not reached, barrier
     #    other: value from sources array
-    flat_allocation = np.full(size, sources_null_value, dtype=np.int64)
+    flat_allocation = np.full(size, sources_null_value, dtype= np.int64)
     
 
     cost: np.float64
@@ -267,13 +263,13 @@ def _cost_distance_analysis_core(
     dz: np.float64
     ev: np.float64
     new_ev: np.float64
-    index: np.int64
-    index: np.int64
-    new_index: np.int64
-    src: np.int64
-    index2d = np.zeros(2, dtype= np.int64)
-    i: np.int64
-    it: np.int64
+    index:  np.int64
+    index:  np.int64
+    new_index:  np.int64
+    src:  np.int64
+    index2d = np.zeros(2, dtype=  np.int64)
+    i:  np.int64
+    it:  np.int64
     move: int8[:]
     is_at_edge: bool
     bad_move: bool
@@ -281,16 +277,17 @@ def _cost_distance_analysis_core(
     right: bool
     top: bool
     bottom: bool
-    costs_shape_m1 = np.zeros(2, dtype= np.int64)
-    strides: np.int64[:] = _get_strides(shape)
+    costs_shape_m1 = np.zeros(2, dtype=  np.int64)
+    strides:  np.int64[:] = _get_strides(shape)
     # 1.5 * size
-    maxiter: np.int64 = size + (size // 2)
+    maxiter:  np.int64 = size + (size // 2)
 
     # A heap for storing pixels and their accumulated cost as the algorithm
     # explores the cost landscape.
     heap_keys, heap_values, heap_xrefs, heap_state = init_heap_data(
         128, size - 1
     )
+    pdb.set_trace()
 
     costs_shape_m1[0] = shape[0] - 1
     costs_shape_m1[1] = shape[1] - 1
@@ -435,7 +432,7 @@ def cost_distance_analysis_numpy(
     ----------
     costs : 2D ndarray
         A 2D array representing a cost surface.
-    sources : 2D np.int64 ndarray
+    sources : 2D  np.int64 ndarray
         An array of sources. The values at each valid location, as determined
         using `sources_null_value`, are used for the allocation output.
     sources_null_value: int
@@ -462,7 +459,7 @@ def cost_distance_analysis_numpy(
     """
     costs = np.asarray(costs)
     
-    sources = np.asarray(sources).astype(np.int64)
+    sources = np.asarray(sources).astype( np.int64)
     shape = costs.shape
     if sources.shape != shape:
         raise ValueError("Costs and sources array shapes must match")
@@ -479,10 +476,10 @@ def cost_distance_analysis_numpy(
             )
         use_elevation = True
 
-    if is_scalar(scaling):
-        scaling = np.array([scaling for _ in shape], dtype=F64)
+    if scaling:
+        scaling = np.array([scaling for _ in shape], dtype= np.float64)
     elif isinstance(scaling, (np.ndarray, list, tuple)):
-        scaling = np.asarray(scaling).astype(F64)
+        scaling = np.asarray(scaling).astype( np.float64)
         if scaling.size != len(shape) or len(scaling.shape) != 1:
             raise ValueError(f"Invalid scaling shape: {scaling.shape}")
     if any(scaling <= 0):
@@ -493,7 +490,7 @@ def cost_distance_analysis_numpy(
     flat_sources = sources.ravel()
     flat_moves = _ravel_indices(_MOVES, shape)
     # Compute squared move lengths
-    move_lengths = np.sum((scaling * _MOVES) ** 2, axis=1).astype(F64)
+    move_lengths = np.sum((scaling * _MOVES) ** 2, axis=1).astype( np.float64)
     if not use_elevation:
         # No elevation data provided so convert to actual euclidean lengths
         for i in range(move_lengths.size):
