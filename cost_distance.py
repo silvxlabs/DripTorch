@@ -135,7 +135,9 @@ class CostDistance:
                 computed_costs.append((cost,stop))
         return computed_costs
     
-    def iterate(self) -> np.ndarray:
+    def iterate(self,num_igniters,igniter_depth,heat_depth) -> np.ndarray:
+
+        # Generate cost surface
         while len(self.PQ.list) > 0:
             cost,loc = self.PQ.pop()
             if cost > self.cost_raster[loc]:
@@ -146,8 +148,35 @@ class CostDistance:
                 neighbor_costs = self._compute_costs(neighbors)
                 for c in neighbor_costs:
                     self.PQ.push(c)
-        return self.cost_raster.raster.reshape((self.cost_raster.rows,self.cost_raster.cols))
-       
+        cost_surface = self.cost_raster.raster.reshape((self.cost_raster.rows,self.cost_raster.cols))
+
+        levels = [igniter_depth]
+        while levels[-1] < np.max(cost_surface):
+            for i in range(num_igniters - 1):
+                levels.append(levels[-1] + igniter_depth)
+            levels.append(levels[-1] + heat_depth)
+
+        contours = plt.contour(cost_surface, colors='w', lw='0.25', levels=levels)
+        
+        paths = []
+        for i,p in enumerate(contours.collections[0].get_paths()):
+            if i == 0:
+                current_heat = i//num_igniters
+                heat_set = []
+        
+            heat = i//num_igniters
+            if heat > current_heat:
+                current_heat = heat
+                paths.append(heat_set)
+                heat_set = []
+            
+            else:
+                heat_set.append(
+                    p.vertices
+                )
+                
+        return paths,cost_surface
+            
         
 
 if __name__ == "__main__":
@@ -158,17 +187,22 @@ if __name__ == "__main__":
     cost_raster = np.ones_like(elevs)
     cost_raster *= np.inf
     source_slice = np.s_[0,:]
+
     source_raster[source_slice] = True
-    cost_raster[source_slice] = 0
+    cost_raster[source_raster==True] =  0
 
     elev_raster = Raster(elevs)
     cost_raster = Raster(cost_raster)
     source_raster = SourceRaster(source_raster)
 
     CD = CostDistance(source_raster,cost_raster,elev_raster)
-    test = CD.iterate()
+    paths,test = CD.iterate(3,5,12)
+    np.save("cost_surface",test)
     plt.rcParams["figure.figsize"] = (160/8,90/8)
     plt.imshow(test.reshape(cost_raster.rows,cost_raster.cols))
-    plt.plot()
+    for heat in paths:
+        for igniter in heat:
+            plt.plot(heat[:,0],heat[:,1])
+    
     plt.colorbar()
     plt.show()
