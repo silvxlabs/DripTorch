@@ -159,6 +159,8 @@ class Strip(FiringBase):
         heat_depth = kwargs['heat_depth']
         side = kwargs['side']
 
+        paths["side"] = side
+
         # Extract the bounding extent of the firing area
         bbox = self._burn_unit.bounds
         x_min, y_min = bbox[:, 0].min(), bbox[:, 1].min()
@@ -208,7 +210,7 @@ class Strip(FiringBase):
 
 
             # Assign the path to a heat, igniter and leg
-          
+            
             paths['heat'].append(cur_heat)
             paths['igniter'].append(cur_igniter)
             paths['geometry'].append(line)
@@ -220,3 +222,44 @@ class Strip(FiringBase):
                 cur_heat += 1
 
         return paths
+
+    # def from_raw_paths(self,raw_paths:dict) ->dict:
+
+
+   
+
+    #     # Each heat alternates direction
+    #     if direction_toggle:
+    #         line = LineString(((x, y_min), (x, y_max)))
+    #     else:
+    #         line = LineString(((x, y_max), (x, y_min)))
+
+    #     # Clip the line to the firing area
+    #     line = line.intersection(self._burn_unit.polygon)
+
+    #     # Get lines or multipart lines in the same structure for looping below
+    #     if isinstance(line, LineString):
+    #         line_list = [line]
+    #     elif isinstance(line, MultiLineString):
+    #         line_list = list(line.geoms)
+    #     # Edge case: In rare cases, the line along the top of the envelope becomes a point following
+    #     # the intersection (pretty sure this is a numerical precision issue). In this case, we need to
+    #     # just skip this path.
+    #     else:
+    #         continue
+
+    #     # Assign the path to a heat, igniter and leg
+    #     for j, part in enumerate(line_list):
+    #         paths['heat'].append(cur_heat)
+    #         paths['igniter'].append(cur_igniter)
+    #         paths['leg'].append(j)
+    #         paths['geometry'].append(part)
+
+    #     # Update loop control parameters
+    #     cur_igniter += 1
+    #     if (i+1) % len(self._ignition_crew) == 0:
+    #         cur_igniter = 0
+    #         cur_heat += 1
+    #         direction_toggle ^= True
+
+    #     return paths

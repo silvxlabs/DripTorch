@@ -2,6 +2,7 @@ import numpy as np
 import heapq
 import matplotlib.pyplot as plt
 from shapely.geometry import LineString
+import itertools
 import pdb
 # ref: https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-analyst/understanding-cost-distance-analysis.htm  # noqa: E501
 # ref: https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-analyst/how-the-cost-distance-tools-work.htm  # noqa: E501
@@ -204,19 +205,18 @@ class CostDistance:
         # path_vertices = [x[0].vertices for x in path_vertices if len(x)>1]
         # pdb.set_trace()
         for (i,contour) in enumerate(contours.allsegs):
-            if len(contour) > 0:
-                path = contour[0]
+            path = list(itertools.chain.from_iterable(contour))
+        
             
-            
-                if i//num_igniters > current_heat:
-                    
-                    current_heat = i//num_igniters
-                    heats.append(heat_set)
-                    heat_set = []
+            if i//num_igniters > current_heat:
                 
-                heat_set.append(
-                    path.tolist()
-                )
+                current_heat = i//num_igniters
+                heats.append(heat_set)
+                heat_set = []
+            
+            heat_set.append(
+                path
+            )
 
         
         # Convert 
@@ -277,7 +277,7 @@ if __name__ == "__main__":
     firing_area = burn_unit.buffer_control_line(5)
     firing_area = firing_area.buffer_downwind(20)
     blackline_area = burn_unit.difference(firing_area)
-    dash_igniter = dt.Igniter(5,dash_length=.5)
+    dash_igniter = dt.Igniter(1,dash_length=.5)
 
     num_igniters = 5
     igniter_spacing = 5
@@ -292,7 +292,7 @@ if __name__ == "__main__":
     CD = CostDistance(raw_paths=raw_paths,elevation_raster=elev_raster)
     raw_paths,test = CD.iterate(num_igniters,igniter_depth,heat_spacing)
 
-  
+    pdb.set_trace()
     # np.save("cost_surface",test)
     # plt.rcParams["figure.figsize"] = (160/8,90/8)
     # plt.imshow(test.reshape(elev_raster.rows,elev_raster.cols))
