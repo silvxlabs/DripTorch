@@ -34,7 +34,10 @@ setup(
         'numpy==1.22.4',
         'pandas==1.4.2',
         'pyproj==3.3.1',
-        'folium==0.12.1.post1'
+        'folium==0.12.1.post1',
+        'gcsfs==2022.1.0',
+        'zarr==2.13.3',
+        'scipy==1.9.3'
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
