@@ -104,6 +104,41 @@ class Raster:
             return world[:-1]
         else:
             return None
+
+
+class ElevationRaster(Raster):
+    def __init__(self,raster:np.ndarray):
+        super().__init__(raster=raster)
+
+    def generate_source_cost(self,path:list) -> np.ndarray:
+        """Generate a source array given a starting path, where the 
+        source cells are the edge row closest to the start path
+
+        Args:
+            path (list): _description_
+
+        Returns:
+            np.ndarray: _description_
+        """
+
+        start,stop = path[:2],path[2:]
+        start_mat,stop_mat = self.world2ind(start),self.world2ind(stop)
+        if self.rows - start_mat[0] > self.rows//2:
+            source_slice = np.s_[-1,:]
+        else:
+            source_slice = np.s_[0,:]
+        source_array = np.zeros_like(self.raster).astype(bool)
+        source_array[source_slice] = True
+
+        cost_raster = np.ones_like(self.raster)
+        cost_raster *= np.inf
+        cost_raster[source_slice] = 0
+
+        cost_raster = Raster(cost_raster)
+        source_raster = SourceRaster(raster)
+
+        return cost_raster,source_raster
+
     
 class SourceRaster(Raster):
     def __init__(self,raster:np.ndarray):
@@ -115,10 +150,12 @@ class SourceRaster(Raster):
 
 
 class CostDistance:
-    def __init__(self,source_raster,cost_raster,elevation_raster):
-        self.source_raster = source_raster
-        self.cost_raster = cost_raster
-        self.elevation_raster = elev_raster
+    def __init__(self,raw_paths:dict,elevation_raster:np.ndarray):
+
+        self.elevation_raster = ElevationRaster(elev_raster)
+        self.raw_paths = raw_paths
+        self.cost_raster,self.source_raster = self.elevation_raster.generate_source_cost(self.raw_paths["geometry"][0])
+       
      
         source_neighbors = [self.source_raster.get_Neighbors(index) for index in  self.source_raster.locations]
         init_costs = self._compute_costs(source_neighbors)
