@@ -1,6 +1,7 @@
 import numpy as np
 import heapq
 import matplotlib.pyplot as plt
+from shapely.geometry import LineString
 import pdb
 # ref: https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-analyst/understanding-cost-distance-analysis.htm  # noqa: E501
 # ref: https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-analyst/how-the-cost-distance-tools-work.htm  # noqa: E501
@@ -154,13 +155,14 @@ class SourceRaster(Raster):
 
 
 class CostDistance:
-    def __init__(self,raw_paths:dict,elevation_raster:ElevationRaster):
+    def __init__(self,raw_paths:dict,elevation_raster:ElevationRaster,raster_offset = (7690,7764)):
         self.elevation_raster = elev_raster
         self.raw_paths = raw_paths
         self.cost_raster,self.source_raster = self.elevation_raster.generate_source_cost(self.raw_paths["geometry"][0].bounds)
         source_neighbors = [self.source_raster.get_Neighbors(index) for index in  self.source_raster.locations]
         init_costs = self._compute_costs(source_neighbors)
         self.PQ = Heap(init_costs)
+        self.raster_offset = np.array(raster_offset)
     
     def _compute_costs(self,edge_set:list) -> list:
         computed_costs = []
@@ -192,21 +194,41 @@ class CostDistance:
                 levels.append(levels[-1] + igniter_depth)
             levels.append(levels[-1] + heat_depth)
         contours = plt.contour(cost_surface,levels=levels)
-        paths = []
-        for i,p in enumerate(contours.collections[0].get_paths()):
-            if i == 0:
-                current_heat = i//num_igniters
-                heat_set = []
-            heat = i//num_igniters
-            if heat > current_heat:
-                current_heat = heat
-                paths.append(heat_set)
-                heat_set = []
-            else:
+       
+        heats = []
+        heat_set = []
+        current_heat = 0
+
+        # path_vertices = [x.get_paths() for x in contours.collections]
+        # pdb.set_trace()
+        # path_vertices = [x[0].vertices for x in path_vertices if len(x)>1]
+        # pdb.set_trace()
+        for (i,contour) in enumerate(contours.allsegs):
+            if len(contour) > 0:
+                path = contour[0]
+            
+            
+                if i//num_igniters > current_heat:
+                    
+                    current_heat = i//num_igniters
+                    heats.append(heat_set)
+                    heat_set = []
+                
                 heat_set.append(
-                    p.vertices
+                    path.tolist()
                 )
-        return paths,cost_surface
+
+        
+        # Convert 
+        
+        for i, heat in enumerate(heats):
+            for j,path in enumerate(heat):
+                path = np.array(path) + self.raster_offset
+                path_world = LineString([self.elevation_raster.ind2world(p) for p in path.tolist()])
+                index = i*len(heat) + j 
+                raw_paths["geometry"][index] = path_world
+                
+        return raw_paths,cost_surface
             
         
 
@@ -268,16 +290,16 @@ if __name__ == "__main__":
     elev_raster = ElevationRaster(raster=elevs,transform=transform)
 
     CD = CostDistance(raw_paths=raw_paths,elevation_raster=elev_raster)
-    paths,test = CD.iterate(num_igniters,igniter_depth,heat_spacing)
+    raw_paths,test = CD.iterate(num_igniters,igniter_depth,heat_spacing)
 
   
-    np.save("cost_surface",test)
-    plt.rcParams["figure.figsize"] = (160/8,90/8)
-    plt.imshow(test.reshape(elev_raster.rows,elev_raster.cols))
-    for heat in paths:
-        for igniter in heat:
-            plt.plot(heat[:,0],heat[:,1])
+    # np.save("cost_surface",test)
+    # plt.rcParams["figure.figsize"] = (160/8,90/8)
+    # plt.imshow(test.reshape(elev_raster.rows,elev_raster.cols))
+    # for heat in raw_paths:
+    #     for igniter in heat:
+    #         plt.plot(heat[:,0],heat[:,1])
     
-    plt.colorbar()
-    plt.show()
+    # plt.colorbar()
+    # plt.show()
  
