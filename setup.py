@@ -37,7 +37,8 @@ setup(
         'folium==0.12.1.post1',
         'gcsfs==2022.1.0',
         'zarr==2.13.3',
-        'scipy==1.9.3'
+        'scipy==1.9.3',
+        'scikit-image==0.19.3'
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',

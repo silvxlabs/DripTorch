@@ -19,4 +19,5 @@ dependencies:
   - gcsfs==2022.11.0
   - zarr==2.13.3
   - scipy==1.9.3
+  - scikit-image==0.19.3
 prefix: /opt/miniconda3/envs/silvx-driptorch
