@@ -239,17 +239,20 @@ class Grid:
 
         projector = Projector(self.epsg, dst_epsg)
 
-        # Reproject the points
+        # Construct cartesian coordinates for grid and project them to the destination projection
         points = self.to_cartesian()
         points = projector.forward(MultiPoint(points))
         points = np.array([[p.x, p.y] for p in points])
 
+        # Create a new grid space for the interpolated reprojected grid ata
         x = np.arange(dst_bounds.west, dst_bounds.east + dst_res, dst_res)
         y = np.arange(dst_bounds.north, dst_bounds.south + dst_res, -dst_res)
         xx, yy = np.meshgrid(x, y)
 
+        # Interpolated the reprojected points to the new grid space
         data = griddata(points, self.data.flatten(), (xx, yy), method='linear')
 
+        # Build the new grid transform
         new_transform = Transform(
             dst_bounds.west, dst_bounds.south, dst_res, -dst_res)
 
