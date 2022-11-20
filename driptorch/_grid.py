@@ -216,9 +216,6 @@ class Grid:
         points[:, 0] += self.transform.res_x / 2
         points[:, 1] += self.transform.res_y / 2
 
-        # Need to flip the y axis to get the correct orientation
-        #points[:, 1] = points[:, 1][::-1]
-
         return points
 
     def reproject(self, dst_epsg: int, dst_bounds: Bounds, dst_res: int = 30) -> Grid:
@@ -347,24 +344,3 @@ def fetch_dem(polygon: Polygon, epsg: int, res: int = 1) -> Grid:
 
     # Return the reprojected DEM in the desired projection system
     return albers_sub_dem.reproject(epsg, src_bounds, dst_res=res)
-
-    # Verification
-    # ------------
-    # import matplotlib.pyplot as plt
-
-    # plt.imshow(utm_dem_unit.data, extent=(utm_dem_unit.bounds.west,
-    #            utm_dem_unit.bounds.east, utm_dem_unit.bounds.south, utm_dem_unit.bounds.north))
-    # plt.plot(*polygon.exterior.xy)
-    # plt.plot(*utm_bounds_polygon.exterior.xy)
-    # plt.show()
-
-    # plt.imshow(utm_dem_unit.data)
-    # plt.show()
-
-    # contours = utm_dem_unit.get_contours([1000, 1200, 1250, 1550])
-
-    # for p in contours:
-    #     for l in p:
-    #         plt.plot(*l.xy)
-    # plt.plot(*polygon.exterior.xy)
-    # plt.show()
