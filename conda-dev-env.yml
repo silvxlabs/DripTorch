@@ -15,7 +15,6 @@ dependencies:
   - numpydoc=1.5.0
   - pydata-sphinx-theme==0.9.0
   - jupyterlab==3.5.0
-  - autopep8
   - gcsfs==2022.11.0
   - zarr==2.13.3
   - scipy==1.9.3
