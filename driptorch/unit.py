@@ -11,6 +11,7 @@ import copy
 
 # Internal imports
 from .io import Projector, write_geojson, read_geojson_polygon
+from ._grid import fetch_dem
 
 # External imports
 import numpy as np
@@ -33,11 +34,14 @@ class BurnUnit:
         that coordinates are in 4326 and will be converted to UTM. Defaults to None.
     """
 
-    def __init__(self, polygon: Polygon, firing_direction: float, utm_epsg: int = None):
+    def __init__(self, polygon: Polygon, firing_direction: float, utm_epsg: int = None, use_topo: bool = False):
 
         # Set the global EPSG source
         if not utm_epsg:
             utm_epsg, polygon = Projector.web_mercator_to_utm(polygon)
+
+        if use_topo:
+            self.topo = fetch_dem(polygon, utm_epsg)
 
         # Store instance attributes
         self.utm_epsg = utm_epsg
@@ -57,7 +61,7 @@ class BurnUnit:
         self._unalign()
 
     @classmethod
-    def from_json(cls, geojson: dict, firing_direction: float) -> BurnUnit:
+    def from_json(cls, geojson: dict, firing_direction: float, **kwargs) -> BurnUnit:
         """Alternative constructor used to create a BurnUnit object from
         a GeoJSON dictionary.
 
@@ -79,7 +83,7 @@ class BurnUnit:
         # Read the GeoJSON as a shapely polygon
         polygon = read_geojson_polygon(geojson)
 
-        return cls(polygon, firing_direction)
+        return cls(polygon, firing_direction, **kwargs)
 
     def to_json(self, **kwargs) -> dict:
         """Returns a GeoJSON representation of the ``BurnUnit`` as a string
