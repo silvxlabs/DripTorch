@@ -37,6 +37,49 @@ class Transform:
         self.res_x = res_x
         self.res_y = res_y
 
+        # Generate coordinate mapping matrices
+        self.ind2worldmatrix = np.reshape(
+            [self.upper_left_x,self.upper_left_y,self.res_x,self.res_y]
+            (3,3)
+            )
+        self.world2indmatrix = np.linalg.inv(self.ind2worldmatrix)
+
+    def world2ind(self,location:np.ndarray,round: bool=True) -> np.ndarray:
+        """Map from an array of real world locations to matrix coordinates
+
+        Args:
+            location (np.ndarray): Locations array
+            round (bool, optional): Whether or not to round indicies down to absolute location. Defaults to True.
+
+        Returns:
+            np.ndarray: Matrix indicies array
+        """
+        ones = np.ones_like(location[:,1])
+        points = np.hstack((location,ones)).T 
+        indicies = self.world2indmatrix@points 
+        if round:
+            indicies = indicies.astype(int)
+        indicies = indicies[:,:-1]
+        return indicies
+
+    def ind2world(self,index:np.ndarray) -> np.ndarray:
+        """Map from matrix coordinates to real world coordinates
+
+        Args:
+            index (np.ndarray): Array of index locations
+
+        Returns:
+            np.ndarray: Array of world locations
+        """
+        if not isinstance(index,np.ndarray):
+            index = np.asarray(index)
+        ones = np.ones_like(index[:,0])
+        points = np.hstack((index,ones)).T 
+        locations = self.ind2worldmatrix@points
+        return locations[:,:-1] 
+
+
+
     @classmethod
     def from_geo_transform(cls, geo_transform: list) -> Transform:
         """Initialize a Transform object from a GDAL-style GeoTransform
@@ -305,6 +348,78 @@ class AlbersConusDEM(Grid):
 
         # Call the parent constructor
         super().__init__(data, transform, 5070)
+
+
+
+class CostDistanceDEM(Grid):
+    def __init__(self, data: np.ndarray | zarr.Array, transform: Transform, epsg: int):
+        super().__init__(self, data: np.ndarray | zarr.Array, transform: Transform, epsg: int)
+        self.rows,self.cols = self.data.shape 
+        self.data = self.data.flatten()
+        self.inds = np.arange(self.data.shape[0])
+
+        self.neighbor_kernel = [
+            -self.cols-1, -self.cols, -self.cols+1, -1, 1, self.cols-1, self.cols, self.cols+1
+            ]
+
+        self.neighbor_kernel_dists = [2**.5, 1, 2**.5, 1, 1, 2**.5, 1, 2**.5]
+
+
+    def get_index(self,index:int) -> np.ndarray:
+        
+        return np.array([index//self.cols,index%self.cols]).astype(int)
+
+
+    def get_neighbors(self,index:int) -> list:
+        """
+        Return the 1d neighborhood indicies for the neighborhood of a given pixel and check bounds
+        -------+-------+-----
+        -cols-1| -cols | -cols+1
+        -------+-------+-----
+        -1     | 0     | +1
+        -------+-------+-----
+        cols-1 | cols  | cols+1
+        -------+-------+-----
+        + index
+        """
+
+
+        matcoords = np.array(self.get_Index(index)) # get 2d coords
+        neighborhood = self.neighbor_Kernel + index
+        distances = self.neighbor_kernel_dists.copy()
+
+        # check if we are at the boundary
+        if matcoords[0] <= 0: # If we are at the first row
+            del neighborhood[:3]
+            del distances[:3]
+        if matcoords[0] >= self.rows-1: # If we are at the last row
+            del neighborhood[-3:]
+            del distances[-3:]
+        if matcoords[1] <= self.cols-1: # If we are at the first column
+            remove = [0,3,5]
+            del neighborhood[remove]
+            del distances[remove]
+        if matcoords[1] >= self.cols-1: # If we are at the last column
+            remove = [2,4,7]
+            del neighborhood[remove]
+            del distance[remove]
+        
+        neighbors_distances = list(zip([index]*len(neighborhood),neighborhood,distances))
+
+        return neighbors_distances
+
+    def __getitem__(self,key):
+        return self.data[key]
+    
+    def __setitem__(self,key,item):
+        self.data[key] = item
+
+
+
+
+
+
+
 
 
 def fetch_dem(polygon: Polygon, epsg: int, res: int = 1) -> Grid:
