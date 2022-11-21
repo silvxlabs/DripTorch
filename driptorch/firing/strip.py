@@ -6,10 +6,11 @@ Pattern generator for strip-head firing
 from ._base import FiringBase
 from ..unit import BurnUnit
 from ..personnel import IgnitionCrew
-from ..pattern import Pattern
+from ..pattern import Pattern, TemporalPropagator
 
 # External imports
 from shapely.geometry import LineString, MultiLineString
+from shapely.ops import substring
 import numpy as np
 
 
@@ -30,7 +31,7 @@ class Strip(FiringBase):
         # Initialize the base class
         super().__init__(burn_unit, ignition_crew)
 
-    def generate_pattern(self, spacing: float = 0, depth: float = 0, heat_depth: float = 0, side: str = 'right', heat_delay: float = 0) -> Pattern:
+    def generate_pattern(self, spacing: float = 0, depth: float = 0, heat_depth: float = 0, side: str = 'right', heat_delay: float = 0, paths: dict = None) -> Pattern:
         """Generate a flank fire ignition pattern
 
         Parameters
@@ -52,7 +53,25 @@ class Strip(FiringBase):
             Spatiotemporal ignition pattern
         """
 
-        return self._generate_pattern(spacing=spacing, depth=depth, heat_depth=heat_depth, side=side, heat_delay=heat_delay)
+        if paths is not None:
+            # Configure the propagator for pushing time through the paths
+            propagator = TemporalPropagator(
+                spacing,
+                sync_end_time=False,
+                return_trip=False,
+            )
+
+            # Compute arrival times for each coordinate in each path
+            timed_paths = propagator.forward(
+                paths, self._ignition_crew, heat_delay)
+
+            # Hand the timed paths over to the Pattern class and return an instance
+            return Pattern.from_dict(timed_paths, self._burn_unit.utm_epsg)
+        
+        else:
+            return self._generate_pattern(spacing=spacing, depth=depth, heat_depth=heat_depth, side=side, heat_delay=heat_delay)
+
+
 
     def _init_paths(self, paths: dict, **kwargs) -> dict:
         """Initialize spatial part of the ignition paths.
@@ -223,43 +242,42 @@ class Strip(FiringBase):
 
         return paths
 
-    # def from_raw_paths(self,raw_paths:dict) ->dict:
+    def from_raw_paths(self,raw_paths:dict) ->dict:
+        paths = []
 
+        side = raw_paths["side"]
+        if side == left:
+            direction_toggle = True
+        else:
+            direction_toggle = False
 
-   
+        start_heat = 0
+        for heat,igniter,geom in zip(raw_paths["heat"],raw_paths["igniter"],raw_paths["geometry"]):
+            if heat != start_heat:
+                start_heat = heat
+                direction_toggle = ~direction_toggle
+            if  not direction_toggle:
+                # flip order of points to start from right side going left
+                geom = substring(geom,geom.length,0)
 
-    #     # Each heat alternates direction
-    #     if direction_toggle:
-    #         line = LineString(((x, y_min), (x, y_max)))
-    #     else:
-    #         line = LineString(((x, y_max), (x, y_min)))
+            line = geom.intersection(self._burn_unit.polygon)
 
-    #     # Clip the line to the firing area
-    #     line = line.intersection(self._burn_unit.polygon)
+            # Get lines or multipart lines in the same structure for looping below
+            if isinstance(line, LineString):
+                line_list = [line]
+            elif isinstance(line, MultiLineString):
+                line_list = list(line.geoms)
+            # Edge case: In rare cases, the line along the top of the envelope becomes a point following
+            # the intersection (pretty sure this is a numerical precision issue). In this case, we need to
+            # just skip this path.
+            else:
+                continue
 
-    #     # Get lines or multipart lines in the same structure for looping below
-    #     if isinstance(line, LineString):
-    #         line_list = [line]
-    #     elif isinstance(line, MultiLineString):
-    #         line_list = list(line.geoms)
-    #     # Edge case: In rare cases, the line along the top of the envelope becomes a point following
-    #     # the intersection (pretty sure this is a numerical precision issue). In this case, we need to
-    #     # just skip this path.
-    #     else:
-    #         continue
+            # Assign the path to a heat, igniter and leg
+            for j, part in enumerate(line_list):
+                paths['heat'].append(heat)
+                paths['igniter'].append(igniter)
+                paths['leg'].append(j)
+                paths['geometry'].append(part)
 
-    #     # Assign the path to a heat, igniter and leg
-    #     for j, part in enumerate(line_list):
-    #         paths['heat'].append(cur_heat)
-    #         paths['igniter'].append(cur_igniter)
-    #         paths['leg'].append(j)
-    #         paths['geometry'].append(part)
-
-    #     # Update loop control parameters
-    #     cur_igniter += 1
-    #     if (i+1) % len(self._ignition_crew) == 0:
-    #         cur_igniter = 0
-    #         cur_heat += 1
-    #         direction_toggle ^= True
-
-    #     return paths
+        return paths
