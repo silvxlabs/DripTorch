@@ -15,4 +15,8 @@ dependencies:
   - numpydoc=1.5.0
   - pydata-sphinx-theme==0.9.0
   - jupyterlab==3.5.0
+  - gcsfs==2022.11.0
+  - zarr==2.13.3
+  - scipy==1.9.3
+  - scikit-image==0.19.3
 prefix: /opt/miniconda3/envs/silvx-driptorch
