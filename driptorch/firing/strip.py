@@ -6,11 +6,10 @@ Pattern generator for strip-head firing
 from ._base import FiringBase
 from ..unit import BurnUnit
 from ..personnel import IgnitionCrew
-from ..pattern import Pattern, TemporalPropagator
+from ..pattern import Pattern
 
 # External imports
 from shapely.geometry import LineString, MultiLineString
-from shapely.ops import substring
 import numpy as np
 
 
@@ -31,7 +30,7 @@ class Strip(FiringBase):
         # Initialize the base class
         super().__init__(burn_unit, ignition_crew)
 
-    def generate_pattern(self, spacing: float = 0, depth: float = 0, heat_depth: float = 0, side: str = 'right', heat_delay: float = 0, paths: dict = None) -> Pattern:
+    def generate_pattern(self, spacing: float = 0, depth: float = 0, heat_depth: float = 0, side: str = 'right', heat_delay: float = 0) -> Pattern:
         """Generate a flank fire ignition pattern
 
         Parameters
@@ -52,24 +51,7 @@ class Strip(FiringBase):
         Pattern
             Spatiotemporal ignition pattern
         """
-
-        if paths is not None:
-            # Configure the propagator for pushing time through the paths
-            propagator = TemporalPropagator(
-                spacing,
-                sync_end_time=False,
-                return_trip=False,
-            )
-
-            # Compute arrival times for each coordinate in each path
-            timed_paths = propagator.forward(
-                paths, self._ignition_crew, heat_delay)
-
-            # Hand the timed paths over to the Pattern class and return an instance
-            return Pattern.from_dict(timed_paths, self._burn_unit.utm_epsg)
-        
-        else:
-            return self._generate_pattern(spacing=spacing, depth=depth, heat_depth=heat_depth, side=side, heat_delay=heat_delay)
+        return self._generate_pattern(spacing=spacing, depth=depth, heat_depth=heat_depth, side=side, heat_delay=heat_delay)
 
 
 
