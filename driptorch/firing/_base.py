@@ -38,6 +38,7 @@ class FiringBase:
             self._burn_unit._align()
 
         # Run the path initialization method
+    
         init_paths = self._init_paths(empty_paths, **kwargs)
 
         # Now we can unalign the paths before passing to the propagator
