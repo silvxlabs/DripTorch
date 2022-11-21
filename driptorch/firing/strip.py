@@ -176,7 +176,7 @@ class Strip(FiringBase):
         # `generate_pattern()` method of this class)
         depth = kwargs['depth']
         heat_depth = kwargs['heat_depth']
-        side = kwargs['side']
+        side = "left" #kwargs['side']
 
         paths["side"] = side
 
@@ -243,41 +243,48 @@ class Strip(FiringBase):
         return paths
 
     def from_raw_paths(self,raw_paths:dict) ->dict:
-        paths = []
+        paths = {
+            "heat":[],
+            "igniter":[],
+            "leg":[],
+            "geometry":[]
+        }
 
         side = raw_paths["side"]
-        if side == left:
+        if side == 'left':
             direction_toggle = True
         else:
             direction_toggle = False
 
         start_heat = 0
         for heat,igniter,geom in zip(raw_paths["heat"],raw_paths["igniter"],raw_paths["geometry"]):
+
             if heat != start_heat:
                 start_heat = heat
                 direction_toggle = ~direction_toggle
+
             if  not direction_toggle:
                 # flip order of points to start from right side going left
                 geom = substring(geom,geom.length,0)
 
             line = geom.intersection(self._burn_unit.polygon)
-
-            # Get lines or multipart lines in the same structure for looping below
-            if isinstance(line, LineString):
-                line_list = [line]
-            elif isinstance(line, MultiLineString):
-                line_list = list(line.geoms)
-            # Edge case: In rare cases, the line along the top of the envelope becomes a point following
-            # the intersection (pretty sure this is a numerical precision issue). In this case, we need to
-            # just skip this path.
-            else:
-                continue
-
-            # Assign the path to a heat, igniter and leg
-            for j, part in enumerate(line_list):
-                paths['heat'].append(heat)
-                paths['igniter'].append(igniter)
-                paths['leg'].append(j)
-                paths['geometry'].append(part)
+            if line.length > 0:
+                # Get lines or multipart lines in the same structure for looping below
+                if isinstance(line, LineString):
+                    line_list = [line]
+                elif isinstance(line, MultiLineString):
+                    line_list = list(line.geoms)
+                # Edge case: In rare cases, the line along the top of the envelope becomes a point following
+                # the intersection (pretty sure this is a numerical precision issue). In this case, we need to
+                # just skip this path.
+                else:
+                    continue
+                
+                # Assign the path to a heat, igniter and leg
+                for j, part in enumerate(line_list):
+                    paths['heat'].append(heat)
+                    paths['igniter'].append(igniter)
+                    paths['leg'].append(j)
+                    paths['geometry'].append(part)
 
         return paths

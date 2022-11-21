@@ -291,15 +291,6 @@ if __name__ == "__main__":
 
     CD = CostDistance(raw_paths=raw_paths,elevation_raster=elev_raster)
     raw_paths,test = CD.iterate(num_igniters,igniter_depth,heat_spacing)
-
-    pdb.set_trace()
-    # np.save("cost_surface",test)
-    # plt.rcParams["figure.figsize"] = (160/8,90/8)
-    # plt.imshow(test.reshape(elev_raster.rows,elev_raster.cols))
-    # for heat in raw_paths:
-    #     for igniter in heat:
-    #         plt.plot(heat[:,0],heat[:,1])
     
-    # plt.colorbar()
-    # plt.show()
- 
+    paths = technique.from_raw_paths(raw_paths)
+    pattern = technique.generate_pattern(paths=paths)
