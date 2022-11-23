@@ -54,7 +54,7 @@ class Strip(FiringBase):
 
         return self._generate_pattern(spacing=spacing, depth=depth, heat_depth=heat_depth, side=side, heat_delay=heat_delay)
 
-    def _init_paths(self, paths: dict, **kwargs) -> dict:
+    def _init_paths(self, paths: dict, intersect: bool = True, **kwargs) -> dict:
         """Initialize spatial part of the ignition paths.
 
         Notes:
@@ -111,7 +111,8 @@ class Strip(FiringBase):
                 line = LineString(((x, y_max), (x, y_min)))
 
             # Clip the line to the firing area
-            line = line.intersection(self._burn_unit.polygon)
+            if intersect:
+                line = line.intersection(self._burn_unit.polygon)
 
             # Get lines or multipart lines in the same structure for looping below
             if isinstance(line, LineString):

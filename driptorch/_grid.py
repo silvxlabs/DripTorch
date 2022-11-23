@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 # Internal imports
-from .io import Projector
+# from .io import Projector
 
 # External imports
 from shapely.geometry import Polygon, MultiPoint, MultiLineString
@@ -11,7 +11,7 @@ import gcsfs
 import zarr
 from scipy.interpolate import griddata
 from skimage.measure import find_contours
-
+import pdb
 
 class Transform:
     """Helper class to store transform information for raster data"""
@@ -37,48 +37,55 @@ class Transform:
         self.res_x = res_x
         self.res_y = res_y
 
-        # Generate coordinate mapping matrices
-        self.ind2worldmatrix = np.reshape(
-            [self.upper_left_x,self.upper_left_y,self.res_x,self.res_y]
-            (3,3)
-            )
-        self.world2indmatrix = np.linalg.inv(self.ind2worldmatrix)
+        self.build_map_matrix()
 
-    def world2ind(self,location:np.ndarray,round: bool=True) -> np.ndarray:
-        """Map from an array of real world locations to matrix coordinates
+    def build_map_matrix(self):
+        scale_matrix = np.array([
+            [1/self.res_x,0,0],
+            [0,1/self.res_y,0],
+            [0,0,1]
+        ])
+        translation_matrix = np.array([
+            [1,0,-self.upper_left_x],
+            [0,1,-self.upper_left_y],
+            [0,0,1]
+        ])
+        self.world2indmatrix = scale_matrix@translation_matrix
+        self.ind2worldmatrix = np.linalg.inv(self.world2indmatrix)
 
-        Args:
-            location (np.ndarray): Locations array
-            round (bool, optional): Whether or not to round indicies down to absolute location. Defaults to True.
-
-        Returns:
-            np.ndarray: Matrix indicies array
-        """
-        ones = np.ones_like(location[:,1])
-        points = np.hstack((location,ones)).T 
-        indicies = self.world2indmatrix@points 
-        if round:
-            indicies = indicies.astype(int)
-        indicies = indicies[:,:-1]
+    def world2ind(self,locs:np.ndarray) -> np.ndarray:
+        if len(locs.shape) < 2:
+            locs = locs.reshape(1,-1)
+        locs = np.hstack((locs,np.ones((locs.shape[0],1))))
+        indicies = locs@self.world2indmatrix.T
         return indicies
 
-    def ind2world(self,index:np.ndarray) -> np.ndarray:
-        """Map from matrix coordinates to real world coordinates
+    def ind2world(self,locs:np.ndarray) -> np.ndarray:
+        if len(locs.shape) < 2:
+            locs = locs.reshape(1,-1)
+        locs = np.hstack((locs,np.ones((locs.shape[0],1))))
+        worldpoints = locs@self.ind2worldmatrix.T
+        return worldpoints[:,:-1]
 
-        Args:
-            index (np.ndarray): Array of index locations
+    @classmethod
+    def from_map_matrix(cls,map:np.ndarray):
+        # Take a world to ind mapping matrix and solve for the transform parameters
+        #map = np.linalg.inv(map)
+        res_mat = np.array([
+            [0,0,1],
+            [0,1,1],
+            [1,0,1]]).T
+        locs_world = map[:-1,:]@res_mat
+        locs_world = locs_world.T
+        upper_left_x = locs_world[0,0]
+        upper_left_y = locs_world[0,1]
+        res_x = np.abs(locs_world[0,0] - locs_world[2,0])
+        res_y = np.abs(locs_world[0,1] - locs_world[1,1])
+        geo_transform = [upper_left_x,upper_left_y,res_x,res_y]
+     
+        return Transform(upper_left_x,upper_left_y,res_x,res_y)
 
-        Returns:
-            np.ndarray: Array of world locations
-        """
-        if not isinstance(index,np.ndarray):
-            index = np.asarray(index)
-        ones = np.ones_like(index[:,0])
-        points = np.hstack((index,ones)).T 
-        locations = self.ind2worldmatrix@points
-        return locations[:,:-1] 
-
-
+        
 
     @classmethod
     def from_geo_transform(cls, geo_transform: list) -> Transform:
@@ -183,6 +190,7 @@ class Grid:
         self.data = data
         self.transform = transform
         self.epsg = epsg
+        self.row,self.cols = self.data.shape
 
     @property
     def bounds(self) -> Bounds:
@@ -197,9 +205,9 @@ class Grid:
         return Bounds(
             self.transform.upper_left_x,
             self.transform.upper_left_y -
-            self.data.shape[0] * self.transform.res_y,
+            self.rows * self.transform.res_y,
             self.transform.upper_left_x +
-            self.data.shape[1] * self.transform.res_x,
+            self.cols * self.transform.res_x,
             self.transform.upper_left_y
         )
 
@@ -314,18 +322,29 @@ class Grid:
         """
         bounds = self.bounds
 
+        if len(self.data.shape) < 2:
+            image = self.reshape()
+        else:
+            image = self.data 
         # Loop over the levels and extract contours
         contours = []
         for level in levels:
-            isoline = find_contours(self.data, level)
-
-            # The columns vectors in the 2xn array need to be flipped for (x,y), artifact
-            # from the skimage find_contours function.
-            # Also, we need to reflect along the y axis before translating to geo position.
-            # Also, this is a great example of how NOT to use list comprehensions.
-            contours.append(MultiLineString(
-                [np.array([[1, 0], [0, -1]]).dot(np.fliplr(i).T).T +
-                 [bounds.west, bounds.south] for i in isoline]))
+            
+            # Go from image coords to matrix coords
+            isoline = list(map(
+                np.fliplr, find_contours(image, level)
+            ))
+        
+            # Map into world coordinates
+            isoline_world = list(map(
+                self.transform.ind2world, isoline
+            ))
+         
+            # Cast as MultiLineString 
+            contours.append(
+                MultiLineString([line for line in isoline_world])
+            )
+         
 
         return contours
 
@@ -353,7 +372,7 @@ class AlbersConusDEM(Grid):
 
 class CostDistanceDEM(Grid):
     def __init__(self, data: np.ndarray | zarr.Array, transform: Transform, epsg: int):
-        super().__init__(self, data: np.ndarray | zarr.Array, transform: Transform, epsg: int)
+        super().__init__(data,transform,epsg)
         self.rows,self.cols = self.data.shape 
         self.data = self.data.flatten()
         self.inds = np.arange(self.data.shape[0])
@@ -363,6 +382,21 @@ class CostDistanceDEM(Grid):
             ]
 
         self.neighbor_kernel_dists = [2**.5, 1, 2**.5, 1, 1, 2**.5, 1, 2**.5]
+
+    def build_map(self):
+        translation = np.array([
+            [-1,0,self.transform.upper_left_x],
+            [0,-1,self.transform.upper_left_y]
+        ])
+        scale = np.array([
+            [1/self.transform.res_x,0],
+            [0,1/self.transform.res_y]
+        ])
+        self.world2ind = scale@translation
+
+
+    def reshape(self) -> np.ndarray:
+        return self.data.reshape((self.rows,self.cols))
 
 
     def get_index(self,index:int) -> np.ndarray:
@@ -384,29 +418,58 @@ class CostDistanceDEM(Grid):
         """
 
 
-        matcoords = np.array(self.get_Index(index)) # get 2d coords
-        neighborhood = self.neighbor_Kernel + index
+        matcoords = np.array(self.get_index(index)) # get 2d coords
+        neighborhood = self.neighbor_kernel + index
         distances = self.neighbor_kernel_dists.copy()
 
         # check if we are at the boundary
         if matcoords[0] <= 0: # If we are at the first row
-            del neighborhood[:3]
-            del distances[:3]
+            remove = [0,1,2]
+            np.delete(neighborhood,remove)
+            np.delete(distances,remove)
         if matcoords[0] >= self.rows-1: # If we are at the last row
-            del neighborhood[-3:]
-            del distances[-3:]
+            remove = [0,1,2]
+            np.delete(neighborhood,remove)
+            np.delete(distances,remove)
         if matcoords[1] <= self.cols-1: # If we are at the first column
             remove = [0,3,5]
-            del neighborhood[remove]
-            del distances[remove]
+            np.delete(neighborhood,remove)
+            np.delete(distances,remove)
         if matcoords[1] >= self.cols-1: # If we are at the last column
             remove = [2,4,7]
-            del neighborhood[remove]
-            del distance[remove]
+            np.delete(neighborhood,remove)
+            np.delete(distances,remove)
         
         neighbors_distances = list(zip([index]*len(neighborhood),neighborhood,distances))
 
         return neighbors_distances
+    
+    def generate_source_cost(self,start_line:np.ndarray) -> [CostDistanceDEM,SourceRasterDEM]:
+        """Generate a source array given a starting path, where the 
+        source cells are the edge row closest to the start path
+        Args:
+            path (list): _description_
+        Returns:
+            np.ndarray: _description_
+        """
+        
+        start,stop = start_line[0,:],start_line[1,:]
+        start_mat,stop_mat = self.transform.world2ind(start),self.transform.world2ind(stop)
+        if self.rows - start_mat[0,0] > self.rows//2:
+            source_slice = np.s_[-1,:]
+        else:
+            source_slice = np.s_[0,:]
+        source_array = np.zeros((self.rows,self.cols)).astype(bool)
+        source_array[source_slice] = True
+
+        cost_array = np.ones((self.rows,self.cols))
+        cost_array *= np.inf
+        cost_array[source_slice] = 0
+
+        cost_raster = CostDistanceDEM(data=cost_array,transform=self.transform,epsg=self.epsg)
+        source_raster = SourceRasterDEM(data=source_array,transform=self.transform,epsg=self.epsg)
+        return cost_raster,source_raster
+
 
     def __getitem__(self,key):
         return self.data[key]
@@ -414,6 +477,20 @@ class CostDistanceDEM(Grid):
     def __setitem__(self,key,item):
         self.data[key] = item
 
+
+
+class SourceRasterDEM(CostDistanceDEM):
+    def __init__(self, data: np.ndarray | zarr.Array, transform: Transform, epsg: int):
+        super().__init__(data, transform, epsg)
+
+    @property
+    def locations(self) -> np.ndarray:
+        """Return the 1d indicies of source locations
+
+        Returns:
+            np.ndarray: _description_
+        """
+        return self.inds[self.data]
 
 
 
