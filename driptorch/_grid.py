@@ -428,7 +428,7 @@ class CostDistanceDEM(Grid):
             np.delete(neighborhood,remove)
             np.delete(distances,remove)
         if matcoords[0] >= self.rows-1: # If we are at the last row
-            remove = [0,1,2]
+            remove = [5,6,7]
             np.delete(neighborhood,remove)
             np.delete(distances,remove)
         if matcoords[1] <= self.cols-1: # If we are at the first column
