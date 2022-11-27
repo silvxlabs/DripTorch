@@ -2,16 +2,16 @@
 
 A burn unit is the spatial boundary of a firing operation while the firing direction determines the arrangement and timing of the ignition pattern. Everything that happens downstream in DripTorch depends on the unit boundary and the firing direction.
 
-You can create a burn unit in DripTorch by providing a Shapely `Polygon` object to the `BurnUnit` constructor. DripTorch expects the polygon CRS to be Web Mercator (EPSG: 4326). You can use the following function to convert any Shapely geometry or GeoJSON dictionary from a specific EPSG code to 4326.
+You can create a burn unit in DripTorch by providing a Shapely `Polygon` object to the `BurnUnit` constructor. DripTorch expects the polygon CRS to be in WGS84 (EPSG: 4326). You can use the following function to convert any Shapely geometry or GeoJSON dictionary from a specific EPSG code to 4326.
 
 ```python
 import driptorch as dt
 
 # Reproject a shapely polygon to 4326
-polygon_wm = dt.Projector.to_web_mercator(polygon, 5070)
+polygon_wm = dt.Projector.to_wgs84(polygon, 5070)
 
 # Reproject a GeoJSON feature to 4326 (This won't work on Feature Collections, first you need to extract a feature from the feature list)
-feature_wm = dt.Projector.to_web_mercator(feature, 5070)
+feature_wm = dt.Projector.to_wgs84(feature, 5070)
 ```
 
 Internally, DripTorch will convert the 4326-projected spatial data to the appropriate UTM projection. The UTM EPSG code will be passed down to child objects of the burn unit and used to project the data back to 4326 when exporting.

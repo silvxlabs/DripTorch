@@ -13,8 +13,8 @@ Spatial projections
    io.Projector.forward
    io.Projector.backward
    io.Projector.estimate_utm_epsg
-   io.Projector.to_web_mercator
-   io.Projector.web_mercator_to_utm
+   io.Projector.to_wgs84
+   io.Projector.wgs84_to_utm
 
 Importing and exporting
 -----------------------

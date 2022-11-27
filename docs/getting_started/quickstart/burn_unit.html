@@ -242,14 +242,14 @@
   <section id="burn-unit">
 <h1>Burn unit<a class="headerlink" href="#burn-unit" title="Permalink to this headline">#</a></h1>
 <p>A burn unit is the spatial boundary of a firing operation while the firing direction determines the arrangement and timing of the ignition pattern. Everything that happens downstream in DripTorch depends on the unit boundary and the firing direction.</p>
-<p>You can create a burn unit in DripTorch by providing a Shapely <code class="docutils literal notranslate"><span class="pre">Polygon</span></code> object to the <code class="docutils literal notranslate"><span class="pre">BurnUnit</span></code> constructor. DripTorch expects the polygon CRS to be Web Mercator (EPSG: 4326). You can use the following function to convert any Shapely geometry or GeoJSON dictionary from a specific EPSG code to 4326.</p>
+<p>You can create a burn unit in DripTorch by providing a Shapely <code class="docutils literal notranslate"><span class="pre">Polygon</span></code> object to the <code class="docutils literal notranslate"><span class="pre">BurnUnit</span></code> constructor. DripTorch expects the polygon CRS to be in WGS84 (EPSG: 4326). You can use the following function to convert any Shapely geometry or GeoJSON dictionary from a specific EPSG code to 4326.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">driptorch</span> <span class="k">as</span> <span class="nn">dt</span>
 
 <span class="c1"># Reproject a shapely polygon to 4326</span>
-<span class="n">polygon_wm</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">Projector</span><span class="o">.</span><span class="n">to_web_mercator</span><span class="p">(</span><span class="n">polygon</span><span class="p">,</span> <span class="mi">5070</span><span class="p">)</span>
+<span class="n">polygon_wm</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">Projector</span><span class="o">.</span><span class="n">to_wgs84</span><span class="p">(</span><span class="n">polygon</span><span class="p">,</span> <span class="mi">5070</span><span class="p">)</span>
 
 <span class="c1"># Reproject a GeoJSON feature to 4326 (This won&#39;t work on Feature Collections, first you need to extract a feature from the feature list)</span>
-<span class="n">feature_wm</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">Projector</span><span class="o">.</span><span class="n">to_web_mercator</span><span class="p">(</span><span class="n">feature</span><span class="p">,</span> <span class="mi">5070</span><span class="p">)</span>
+<span class="n">feature_wm</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">Projector</span><span class="o">.</span><span class="n">to_wgs84</span><span class="p">(</span><span class="n">feature</span><span class="p">,</span> <span class="mi">5070</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Internally, DripTorch will convert the 4326-projected spatial data to the appropriate UTM projection. The UTM EPSG code will be passed down to child objects of the burn unit and used to project the data back to 4326 when exporting.</p>
