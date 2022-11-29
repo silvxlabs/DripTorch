@@ -40,18 +40,14 @@ class Transform:
         self.build_map_matrix()
 
     def build_map_matrix(self):
-        scale_matrix = np.array([
-            [1/self.res_x,0,0],
-            [0,1/self.res_y,0],
+        
+        self.ind2worldmatrix = np.array([
+            [self.res_x,0,self.upper_left_x],
+            [0,-self.res_y,self.upper_left_y],
             [0,0,1]
         ])
-        translation_matrix = np.array([
-            [1,0,-self.upper_left_x],
-            [0,1,-self.upper_left_y],
-            [0,0,1]
-        ])
-        self.world2indmatrix = scale_matrix@translation_matrix
-        self.ind2worldmatrix = np.linalg.inv(self.world2indmatrix)
+        
+        self.world2indmatrix = np.linalg.inv(self.ind2worldmatrix)
 
     def world2ind(self,locs:np.ndarray) -> np.ndarray:
         if len(locs.shape) < 2:
@@ -68,22 +64,17 @@ class Transform:
         return worldpoints[:,:-1]
 
     @classmethod
-    def from_map_matrix(cls,map:np.ndarray):
+    def from_map_matrix(cls,map:np.ndarray,raster_offset:np.ndarray = np.ndarray([0,0])):
         # Take a world to ind mapping matrix and solve for the transform parameters
-        #map = np.linalg.inv(map)
-        res_mat = np.array([
-            [0,0,1],
-            [0,1,1],
-            [1,0,1]]).T
-        locs_world = map[:-1,:]@res_mat
-        locs_world = locs_world.T
-        upper_left_x = locs_world[0,0]
-        upper_left_y = locs_world[0,1]
-        res_x = np.abs(locs_world[0,0] - locs_world[2,0])
-        res_y = np.abs(locs_world[0,1] - locs_world[1,1])
-        geo_transform = [upper_left_x,upper_left_y,res_x,res_y]
-     
-        return Transform(upper_left_x,upper_left_y,res_x,res_y)
+        
+        res_x = np.abs(map[0][0])
+        res_y = np.abs(map[1][1])
+
+        ul_x = np.abs(map[0][-1])
+        ul_y = np.abs(map[1][-1])
+        
+        
+        return Transform(ul_x,ul_y,res_x,res_y)
 
         
 
@@ -330,15 +321,17 @@ class Grid:
         contours = []
         for level in levels:
             
-            # Go from image coords to matrix coords
+            #Go from image coords to matrix coords
             isoline = list(map(
                 np.fliplr, find_contours(image, level)
             ))
+            
         
             # Map into world coordinates
             isoline_world = list(map(
                 self.transform.ind2world, isoline
             ))
+            
          
             # Cast as MultiLineString 
             contours.append(
@@ -419,27 +412,31 @@ class CostDistanceDEM(Grid):
 
 
         matcoords = np.array(self.get_index(index)) # get 2d coords
-        neighborhood = self.neighbor_kernel + index
-        distances = self.neighbor_kernel_dists.copy()
-
+        neighborhood = np.array(self.neighbor_kernel.copy()) + index
+        distances = np.array(self.neighbor_kernel_dists.copy())
+        
         # check if we are at the boundary
         if matcoords[0] <= 0: # If we are at the first row
             remove = [0,1,2]
-            np.delete(neighborhood,remove)
-            np.delete(distances,remove)
+            neighborhood[remove] = -999
+            distances[remove] = -999
         if matcoords[0] >= self.rows-1: # If we are at the last row
             remove = [5,6,7]
-            np.delete(neighborhood,remove)
-            np.delete(distances,remove)
+            neighborhood[remove] = -999
+            distances[remove] = -999
         if matcoords[1] <= self.cols-1: # If we are at the first column
             remove = [0,3,5]
-            np.delete(neighborhood,remove)
-            np.delete(distances,remove)
+            neighborhood[remove] = -999
+            distances[remove] = -999
         if matcoords[1] >= self.cols-1: # If we are at the last column
             remove = [2,4,7]
-            np.delete(neighborhood,remove)
-            np.delete(distances,remove)
-        
+            neighborhood[remove] = -999
+            distances[remove] = -999
+
+        to_keep = neighborhood != -999
+        neighborhood = neighborhood[to_keep].tolist()
+        distances = distances[to_keep].tolist()
+       
         neighbors_distances = list(zip([index]*len(neighborhood),neighborhood,distances))
 
         return neighbors_distances

@@ -25,6 +25,7 @@ from shapely.geometry import MultiPoint, MultiLineString, LineString, shape
 # Turn off Pandas copy warning (or figure out how to do it like the Panda wants)
 pd.options.mode.chained_assignment = None
 
+import pdb
 """
 
 Turn off the Shapely deprecation warning about about future removal
@@ -383,7 +384,7 @@ class TemporalPropagator:
         self.paths.sort_values(
             by=["heat", "igniter", "leg"], ascending=[True, True, True], inplace=True
         )
-
+        
         # Run the initial forward pass through the paths
         self._init_path_time(self.spacing)
 
@@ -531,6 +532,7 @@ class TemporalPropagator:
         # We need three coordinates to construct two vectors: the
         # first coordinate from the current igniter and the first
         # and second coordinate from the preivous igniter
+       
         cur_igniter_first_pos = np.array(
             cur_igniter.geometry.iloc[0].coords[0])
         prev_igniter_first_pos = np.array(

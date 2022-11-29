@@ -3,7 +3,9 @@
 import numpy as np
 import heapq
 import matplotlib.pyplot as plt
-from shapely.geometry import LineString
+from shapely.geometry import LineString,MultiLineString
+from shapely.affinity import translate
+from shapely.ops import transform
 import itertools
 import sys
 import pdb
@@ -38,7 +40,7 @@ class Heap:
 
 
 class CostDistance:
-    def __init__(self,start_path:np.ndarray, elevation_raster:CostDistanceDEM, raster_offset = (7690,7764)):
+    def __init__(self,start_path:np.ndarray, elevation_raster:CostDistanceDEM, raster_offset = (0,0)):
         self.elevation_raster = elevation_raster
         self.start_path = start_path
         self.cost_raster,self.source_raster = self.elevation_raster.generate_source_cost(start_path)
@@ -58,7 +60,14 @@ class CostDistance:
                 computed_costs.append((cost,stop))
         return computed_costs
     
-    def iterate(self,num_igniters,igniter_depth,heat_depth) -> np.ndarray:
+    def iterate(self,num_igniters,igniter_depth,heat_depth,burn_unit=None) -> np.ndarray:
+
+        path_dict = {
+            'heat' : [],
+            'igniter' : [],
+            'leg': [],
+            'geometry' : []
+        }
         # Generate cost surface
         while len(self.PQ.list) > 0:
             cost,loc = self.PQ.pop()
@@ -77,8 +86,7 @@ class CostDistance:
                 levels.append(levels[-1] + igniter_depth)
             levels.append(levels[-1] + heat_depth)
 
-        #TODO
-        # Incorporate sub-raster offset into calcs
+   
         contours = self.cost_raster.get_contours(levels)
        
         heats = []
@@ -101,9 +109,26 @@ class CostDistance:
         
         for i, heat in enumerate(heats):
             for j,path in enumerate(heat):
-                path = np.array(path) + self.raster_offset
-                path_world = LineString([self.elevation_raster.ind2world(p) for p in path.tolist()])
-                index = i*len(heat) + j 
-                raw_paths["geometry"][index] = path_world
-                
-        return raw_paths,cost_surface
+                if len(path.bounds) > 0:
+
+                    line = LineString(
+                        [p.coords for p in 
+                        path.geoms
+                        ][0]
+                    )
+                    if burn_unit:
+                        line_intersect = line.intersection(burn_unit.polygon)
+    
+                    # Get lines or multipart lines in the same structure for looping below
+                    if isinstance(line_intersect, LineString):
+                        line_list = [line]
+                    elif isinstance(line_intersect, MultiLineString):
+                        line_list = list(line_intersect.geoms)
+                    
+                    for leg,line_ in enumerate(line_list):
+                        path_dict["heat"].append(i)
+                        path_dict["igniter"].append(j)
+                        path_dict["leg"].append(leg)
+                        path_dict["geometry"].append(line_)
+               
+        return path_dict,self.cost_raster

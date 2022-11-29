@@ -7,6 +7,7 @@ from ._base import FiringBase
 from ..unit import BurnUnit
 from ..personnel import IgnitionCrew
 from ..pattern import Pattern
+from ..pattern import Pattern, TemporalPropagator
 
 # External imports
 from shapely.geometry import LineString, MultiLineString
@@ -53,6 +54,26 @@ class Strip(FiringBase):
         """
 
         return self._generate_pattern(spacing=spacing, depth=depth, heat_depth=heat_depth, side=side, heat_delay=heat_delay)
+
+    def process_paths(self,paths:dict,**kwargs):
+
+            # Now we can unalign the paths before passing to the propagator
+        if kwargs.get('align', True):
+            paths['geometry'] = self._unalign(paths['geometry'])
+
+        # Configure the propagator for pushing time through the paths
+        propagator = TemporalPropagator(
+            kwargs.get('spacing', 0),
+            sync_end_time=kwargs.get('sync_end_time', False),
+            return_trip=kwargs.get('return_trip', False),
+        )
+
+        # Compute arrival times for each coordinate in each path
+        timed_paths = propagator.forward(
+            paths, self._ignition_crew, kwargs.get('heat_delay', 0))
+
+        # Hand the timed paths over to the Pattern class and return an instance
+        return Pattern.from_dict(timed_paths, self._burn_unit.utm_epsg)
 
     def _init_paths(self, paths: dict, intersect: bool = True, **kwargs) -> dict:
         """Initialize spatial part of the ignition paths.
