@@ -73,6 +73,11 @@ raw_paths,cost_surface = CD.iterate(
     igniter_depth,
     heat_spacing,
     burn_unit=firing_area)
+
     
 pattern = technique.process_paths(raw_paths)
+
+
+plt.imshow(cost_surface.data.reshape((cost_surface.rows,cost_surface.cols)))
+plt.show()
 

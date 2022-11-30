@@ -54,7 +54,7 @@ class Transform:
             locs = locs.reshape(1,-1)
         locs = np.hstack((locs,np.ones((locs.shape[0],1))))
         indicies = locs@self.world2indmatrix.T
-        return indicies
+        return indicies.astype(int)
 
     def ind2world(self,locs:np.ndarray) -> np.ndarray:
         if len(locs.shape) < 2:
