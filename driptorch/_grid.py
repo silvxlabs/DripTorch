@@ -64,7 +64,7 @@ class Transform:
         return worldpoints[:,:-1]
 
     @classmethod
-    def from_map_matrix(cls,map:np.ndarray,raster_offset:np.ndarray = np.ndarray([0,0])):
+    def from_map_matrix(cls,map:np.ndarray):
         # Take a world to ind mapping matrix and solve for the transform parameters
         
         res_x = np.abs(map[0][0])
@@ -473,8 +473,17 @@ class CostDistanceDEM(Grid):
     
     def __setitem__(self,key,item):
         self.data[key] = item
+    
+    @classmethod
+    def from_grid(cls,grid:Grid) -> CostDistanceDEM:
+        """Return CostDistanceDEM from Grid Object
 
-
+        Args:
+            grid (Grid): Instantiated Grid Instance
+        Returns:
+            CostDistanceDEM: generated CostDistanceDEM object
+        """
+        return cls(grid.data,grid.transform,grid.epsg)
 
 class SourceRasterDEM(CostDistanceDEM):
     def __init__(self, data: np.ndarray | zarr.Array, transform: Transform, epsg: int):

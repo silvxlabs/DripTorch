@@ -34,14 +34,14 @@ class BurnUnit:
         that coordinates are in 4326 and will be converted to UTM. Defaults to None.
     """
 
-    def __init__(self, polygon: Polygon, firing_direction: float, utm_epsg: int = None, use_topo: bool = False):
+    def __init__(self, polygon: Polygon, firing_direction: float, utm_epsg: int = None, use_dem: bool = False):
 
         # Set the global EPSG source
         if not utm_epsg:
             utm_epsg, polygon = Projector.web_mercator_to_utm(polygon)
 
-        if use_topo:
-            self.topo = fetch_dem(polygon, utm_epsg)
+        if use_dem:
+            self.dem = fetch_dem(polygon, utm_epsg)
 
         # Store instance attributes
         self.utm_epsg = utm_epsg

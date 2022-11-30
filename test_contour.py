@@ -51,6 +51,8 @@ heat_spacing = 10
 
 point_crew = dt.IgnitionCrew.clone_igniter(dash_igniter, num_igniters)
 technique = dt.firing.Strip(firing_area, point_crew)
+
+
 raw_paths = technique._init_paths(
     intersect=False, 
     paths=dt.Pattern.empty_path_dict(), 
