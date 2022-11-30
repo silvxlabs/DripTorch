@@ -57,13 +57,14 @@ args = {
     "depth": igniter_depth,
     "heat_depth": heat_spacing,
     "side": 'right',
-    "cost_raster": True
+    "cost_raster": True,
+    "sigma": 6
 }
 
 point_crew = dt.IgnitionCrew.clone_igniter(dash_igniter, num_igniters)
 technique = dt.firing.StripContour(firing_area, point_crew)
 pattern,cost_surface = technique.generate_pattern(**args)
 
-plt.imshow(cost_surface.data.reshape((cost_surface.rows,cost_surface.cols)))
+plt.imshow(cost_surface.data.reshape((cost_surface.rows,cost_surface.cols)).astype(int))
 plt.show()
 

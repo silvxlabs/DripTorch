@@ -42,6 +42,7 @@ class Heap:
 class CostDistance:
     def __init__(self,start_path:np.ndarray, elevation_raster:CostDistanceDEM):
         self.elevation_raster = elevation_raster
+
         self.start_path = start_path
         self.cost_raster,self.source_raster = self.elevation_raster.generate_source_cost(start_path)
         source_neighbors = [self.source_raster.get_neighbors(index) for index in self.source_raster.locations]
@@ -55,13 +56,14 @@ class CostDistance:
             for edge in edges:
                 start,stop,distance = edge
                 dz = self.elevation_raster[start] - self.elevation_raster[stop]
+                #dz /= 1.5
                 move_length = np.sqrt(distance**2 + dz**2)
                 cost = self.cost_raster[start] + move_length
                 computed_costs.append((cost,stop))
         return computed_costs
     
-    def iterate(self,num_igniters,igniter_depth,heat_depth,side,burn_unit=None) -> np.ndarray:
-
+    def iterate(self,num_igniters,igniter_depth,heat_depth,side,burn_unit=None,sigma=None) -> np.ndarray:
+        print("test")
         path_dict = {
             'heat' : [],
             'igniter' : [],
@@ -69,6 +71,9 @@ class CostDistance:
             'geometry' : []
         }
         # Generate cost surface
+        if sigma:
+            self.elevation_raster.smooth(sigma)
+            
         while len(self.PQ.list) > 0:
             cost,loc = self.PQ.pop()
             if cost > self.cost_raster[loc]:

@@ -78,7 +78,8 @@ class StripContour(FiringBase):
             depth,
             heat_depth,
             side,
-            self._burn_unit
+            self._burn_unit,
+            sigma = kwargs.get("sigma",0)
         )
         # Now we can unalign the paths before passing to the propagator
         if kwargs.get('align', True):

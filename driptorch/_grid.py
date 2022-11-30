@@ -10,6 +10,7 @@ import numpy as np
 import gcsfs
 import zarr
 from scipy.interpolate import griddata
+from scipy.ndimage import gaussian_filter
 from skimage.measure import find_contours
 import pdb
 
@@ -297,7 +298,7 @@ class Grid:
 
         return Grid(data, new_transform, dst_epsg)
 
-    def get_contours(self, levels: list) -> list[MultiLineString]:
+    def get_contours(self, levels: list,sigma=None) -> list[MultiLineString]:
         """Get contours from the grid. The returned contours are in the geographic/projected
         coordinates, not in matrix space.
 
@@ -316,7 +317,8 @@ class Grid:
         if len(self.data.shape) < 2:
             image = self.reshape()
         else:
-            image = self.data 
+            image = self.data
+
         # Loop over the levels and extract contours
         contours = []
         for level in levels:
@@ -341,6 +343,11 @@ class Grid:
 
         return contours
 
+
+    def smooth(self,sigma):
+        self.data = self.reshape()
+        self.data = gaussian_filter(self.data,sigma=sigma)
+        self.data = self.data.flatten()
 
 class AlbersConusDEM(Grid):
     """Child grid class for the Albers CONUS DEM"""
@@ -368,6 +375,7 @@ class CostDistanceDEM(Grid):
         super().__init__(data,transform,epsg)
         self.rows,self.cols = self.data.shape 
         self.data = self.data.flatten()
+        
         self.inds = np.arange(self.data.shape[0])
 
         self.neighbor_kernel = [
@@ -441,7 +449,7 @@ class CostDistanceDEM(Grid):
 
         return neighbors_distances
     
-    def generate_source_cost(self,start_line:np.ndarray) -> [CostDistanceDEM,SourceRasterDEM]:
+    def generate_source_cost(self,start_line:np.ndarray):
         """Generate a source array given a starting path, where the 
         source cells are the edge row closest to the start path
         Args:
@@ -451,11 +459,21 @@ class CostDistanceDEM(Grid):
         """
         
         start,stop = start_line[0,:],start_line[1,:]
-        start_mat,stop_mat = self.transform.world2ind(start),self.transform.world2ind(stop)
-        if self.rows - start_mat[0,0] > self.rows//2:
-            source_slice = np.s_[-1,:]
-        else:
+        start_mat,stop_mat = np.squeeze(self.transform.world2ind(start)),np.squeeze(self.transform.world2ind(stop))
+        dpos = np.squeeze(np.abs(start_mat - stop_mat))[:2]
+        #perp_axis = np.argmin(dpos)
+        travel_axis = np.argmax(dpos)
+        
+       
+        start_row = start_mat[travel_axis]
+        if start_row < self.rows//2:
             source_slice = np.s_[0,:]
+        else:
+            source_slice = np.s_[-1,:]
+
+
+
+        
         source_array = np.zeros((self.rows,self.cols)).astype(bool)
         source_array[source_slice] = True
 
