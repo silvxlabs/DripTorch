@@ -19,6 +19,8 @@ sys.path.append("/driptorch")
 import driptorch as dt
 from driptorch.firing import flank
 from driptorch.contour import *
+from driptorch._grid import Grid
+
 # Define burn unit spatial data in GeoJSON format
 elevs = np.squeeze(np.load("/Users/franklyndunbar/Project/Silvx/bm_dem.npy"))
 transform =  np.load("/Users/franklyndunbar/Project/Silvx/bm_transform.npy")
@@ -33,7 +35,12 @@ coords = np.squeeze(np.array(polygon["coordinates"]))
 
 blue_mountain_polygon = Polygon(coords)
 
-burn_unit = dt.BurnUnit(blue_mountain_polygon,utm_epsg=32611,firing_direction=0)
+elev_raster = Grid(
+    data=elevs,
+    transform=Transform.from_map_matrix(transform),
+    epsg=32611)
+
+burn_unit = dt.BurnUnit(blue_mountain_polygon,utm_epsg=32611,firing_direction=0,dem=elev_raster)
 bounds = burn_unit.bounds
 firing_area = burn_unit.buffer_control_line(5)
 firing_area = firing_area.buffer_downwind(20)
@@ -44,41 +51,18 @@ num_igniters = 5
 igniter_spacing = 5
 igniter_depth = 5
 heat_spacing = 10
-# raster_offset is the origin pixel coordinates of the sub-raster relative to the parent raster 
 
-
-
+args = {
+    "spacing":igniter_spacing,
+    "depth": igniter_depth,
+    "heat_depth": heat_spacing,
+    "side": 'right',
+    "cost_raster": True
+}
 
 point_crew = dt.IgnitionCrew.clone_igniter(dash_igniter, num_igniters)
-technique = dt.firing.Strip(firing_area, point_crew)
-
-
-raw_paths = technique._init_paths(
-    intersect=False, 
-    paths=dt.Pattern.empty_path_dict(), 
-    spacing=igniter_spacing, 
-    depth=igniter_depth, 
-    heat_depth=heat_spacing, 
-    side='left')
-
-start_path = np.asarray(raw_paths["geometry"][0])
-
-elev_raster = CostDistanceDEM(
-    data=elevs,
-    transform=Transform.from_map_matrix(transform),
-    epsg=32611)
-
-
-CD = CostDistance(start_path,elev_raster)
-raw_paths,cost_surface = CD.iterate(
-    num_igniters,
-    igniter_depth,
-    heat_spacing,
-    burn_unit=firing_area)
-
-    
-pattern = technique.process_paths(raw_paths)
-
+technique = dt.firing.StripContour(firing_area, point_crew)
+pattern,cost_surface = technique.generate_pattern(**args)
 
 plt.imshow(cost_surface.data.reshape((cost_surface.rows,cost_surface.cols)))
 plt.show()

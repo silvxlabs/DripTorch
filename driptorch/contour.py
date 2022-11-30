@@ -40,14 +40,14 @@ class Heap:
 
 
 class CostDistance:
-    def __init__(self,start_path:np.ndarray, elevation_raster:CostDistanceDEM, raster_offset = (0,0)):
+    def __init__(self,start_path:np.ndarray, elevation_raster:CostDistanceDEM):
         self.elevation_raster = elevation_raster
         self.start_path = start_path
         self.cost_raster,self.source_raster = self.elevation_raster.generate_source_cost(start_path)
         source_neighbors = [self.source_raster.get_neighbors(index) for index in self.source_raster.locations]
         init_costs = self._compute_costs(source_neighbors)
         self.PQ = Heap(init_costs)
-        self.raster_offset = np.array(raster_offset)
+      
     
     def _compute_costs(self,edge_set:list) -> list:
         computed_costs = []
@@ -60,7 +60,7 @@ class CostDistance:
                 computed_costs.append((cost,stop))
         return computed_costs
     
-    def iterate(self,num_igniters,igniter_depth,heat_depth,burn_unit=None) -> np.ndarray:
+    def iterate(self,num_igniters,igniter_depth,heat_depth,side,burn_unit=None) -> np.ndarray:
 
         path_dict = {
             'heat' : [],
@@ -106,15 +106,23 @@ class CostDistance:
 
         
         # Convert 
-        
+        direction_toggle = False if side == 'left' else True
+        current_heat = 0
         for i, heat in enumerate(heats):
             for j,path in enumerate(heat):
                 if len(path.bounds) > 0:
-
-                    line = LineString(
-                        [p.coords for p in 
+                    
+                    if current_heat != i:
+                        direction_toggle = ~direction_toggle
+                        current_heat = i
+                    raw_line = [p.coords for p in 
                         path.geoms
                         ][0]
+                    if direction_toggle:
+                        raw_line = raw_line[::-1]
+                    
+                    line = LineString(
+                        raw_line
                     )
                     if burn_unit:
                         line_intersect = line.intersection(burn_unit.polygon)

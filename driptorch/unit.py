@@ -11,7 +11,7 @@ import copy
 
 # Internal imports
 from .io import Projector, write_geojson, read_geojson_polygon
-from ._grid import fetch_dem
+from ._grid import fetch_dem,Grid
 
 # External imports
 import numpy as np
@@ -34,14 +34,21 @@ class BurnUnit:
         that coordinates are in 4326 and will be converted to UTM. Defaults to None.
     """
 
-    def __init__(self, polygon: Polygon, firing_direction: float, utm_epsg: int = None, use_dem: bool = False):
+    def __init__(self, 
+        polygon: Polygon, 
+        firing_direction: float, 
+        utm_epsg: int = None, 
+        use_dem: bool = False,
+        dem = None ) -> None:
+
+        self.dem = dem
 
         # Set the global EPSG source
         if not utm_epsg:
             utm_epsg, polygon = Projector.web_mercator_to_utm(polygon)
 
-        if use_dem:
-            self.dem = fetch_dem(polygon, utm_epsg)
+        if use_dem and dem is not None:
+            self.dem = self.fetch_dem(polygon, utm_epsg)
 
         # Store instance attributes
         self.utm_epsg = utm_epsg
@@ -101,8 +108,8 @@ class BurnUnit:
         >>> burn_unit = driptorch.BurnUnit(polygon, firing_direction=270)
         >>> burn_unit.to_json()
         '{'type': 'FeatureCollection', 'features': [{'type': 'Feature', 'properties': {}, \
-'geometry': {'type': 'Polygon', 'coordinates': (((-114.478, 47.163), (-114.471, 47.16299999999998), \
-(-114.471, 47.16699999999999), (-114.478, 47.16699999999999), (-114.478, 47.163)),)}}]}'
+        'geometry': {'type': 'Polygon', 'coordinates': (((-114.478, 47.163), (-114.471, 47.16299999999998), \
+        (-114.471, 47.16699999999999), (-114.478, 47.16699999999999), (-114.478, 47.163)),)}}]}'
 
         """
 
@@ -156,7 +163,7 @@ class BurnUnit:
         # Use shapely's buffer method on the polygon
         buffered_polygon = self.polygon.buffer(-width)
 
-        return BurnUnit(buffered_polygon, self.firing_direction, utm_epsg=self.utm_epsg)
+        return BurnUnit(buffered_polygon, self.firing_direction, utm_epsg=self.utm_epsg, dem = self.dem)
 
     def buffer_downwind(self, width: float) -> BurnUnit:
         """Create a downwind blackline buffer
@@ -180,7 +187,7 @@ class BurnUnit:
         # buffer to cut out the downfiring blackline area
         buffered_polygon = self.polygon.difference(fore_line_buffer)
 
-        return BurnUnit(buffered_polygon, self.firing_direction, utm_epsg=self.utm_epsg)
+        return BurnUnit(buffered_polygon, self.firing_direction, utm_epsg=self.utm_epsg, dem=self.dem)
 
     def difference(self, burn_unit: BurnUnit) -> BurnUnit:
         """Return a burn unit instance that is the difference between
@@ -202,6 +209,12 @@ class BurnUnit:
         polygon_difference = self.polygon.difference(burn_unit.polygon)
 
         return BurnUnit(polygon_difference, self.firing_direction, utm_epsg=self.utm_epsg)
+
+
+    def fetch_dem(self, polygon: Polygon , utm_epsg: int ) -> None:
+
+        dem: Grid = fetch_dem(polygon, utm_epsg)
+        self.dem = dem
 
     @property
     def bounds(self) -> np.ndarray:
