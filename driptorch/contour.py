@@ -62,7 +62,7 @@ class CostDistance:
                 computed_costs.append((cost,stop))
         return computed_costs
     
-    def iterate(self,num_igniters,igniter_depth,heat_depth,side,burn_unit,sigma=None) -> np.ndarray:
+    def iterate(self,num_igniters,igniter_depth,heat_depth,burn_unit,sigma=None) -> np.ndarray:
         
         path_dict = {
             'heat' : [],
@@ -111,7 +111,6 @@ class CostDistance:
 
         
         # Convert 
-        direction_toggle = False if side == 'left' else True
         current_heat = 0
         for i, heat in enumerate(heats):
             for j,path in enumerate(heat):
@@ -124,8 +123,6 @@ class CostDistance:
                     raw_line = [p.coords for p in 
                         path.geoms
                         ][0]
-                    #if direction_toggle:
-                       # raw_line = raw_line[::-1]
                     
                     line = LineString(
                         raw_line
