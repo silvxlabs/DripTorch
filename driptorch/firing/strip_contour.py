@@ -16,7 +16,7 @@ from ..contour import CostDistance
 # External imports
 from shapely.geometry import LineString, MultiLineString
 import numpy as np
-
+import pdb
 
 class StripContour(FiringBase):
     """Strip firing produces ignition paths perpendicular to the firing direction. Igniters are staggered with their heats
@@ -78,12 +78,27 @@ class StripContour(FiringBase):
             depth,
             heat_depth,
             side,
-            self._burn_unit,
+            burn_unit = self._burn_unit,
             sigma = kwargs.get("sigma",0)
         )
+
+    
+        "DEBUG"
+        import matplotlib.pyplot as plt
+        geoms = paths["geometry"]
+        geoms = [np.array(x) for x in geoms]
+        colors = ['r','b','g','y','k']
+        for i,line in enumerate(geoms):
+            if line.shape[0] > 0:
+                c = paths["igniter"][i]%len(colors)
+                plt.scatter(line[:,0],line[:,1],c=colors[c])
+        #plt.show()
+       
+        "DEBUG"
+        
         # Now we can unalign the paths before passing to the propagator
-        if kwargs.get('align', True):
-            paths['geometry'] = self._unalign(paths['geometry'])
+        # if kwargs.get('align', True):
+        #     paths['geometry'] = self._unalign(paths['geometry'])
 
         # Configure the propagator for pushing time through the paths
         propagator = TemporalPropagator(

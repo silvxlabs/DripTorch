@@ -370,6 +370,7 @@ class TemporalPropagator:
         """
         # Create a Pandas DataFrame from the initialized paths dictionary
         self.paths = pd.DataFrame(paths)
+        
         self.ignition_crew = ignition_crew
 
         # Geometry must of type LineString
@@ -410,10 +411,10 @@ class TemporalPropagator:
         Args:
             spacing (float): Stagger spacing between igniters in a heat
         """
-
+       
         # Loop over each ignition path and compute the start time and end time
         for index, path in self.paths.iterrows():
-
+            
             # Get the heat, igniter and leg indices from the current path
             i, j, k = path.heat, path.igniter, path.leg
             velocity = self.ignition_crew[j].velocity
@@ -477,19 +478,28 @@ class TemporalPropagator:
                 cur_igniter = self.paths.loc[
                     (self.paths.heat == i) & (self.paths.igniter == j)
                 ]
-                prev_igniter = self.paths.loc[
-                    (self.paths.heat == i) & (self.paths.igniter == j - 1)
-                ]
 
-                # Get the previous igniter's start time
-                prev_start_time = prev_igniter.start_time.values[0]
+                # Need to account for missing igniters in contour following
+                prev_start_time = None
+                for fake_j in reversed(range(j)):
+                
+                    prev_igniter = self.paths.loc[
+                        (self.paths.heat == i) & (self.paths.igniter == fake_j) & (self.paths.leg == 0)
+                    ]
+
+                    if len(prev_igniter) > 0:
+                        break
+
+                   
+                prev_start_time = prev_igniter.start_time
 
                 # Compute the offset due to stagger spacing and incongruence
                 # along a coordinate frame axis
+              
                 path.start_time = prev_start_time + self._get_offset(
                     prev_igniter, cur_igniter, spacing, velocity
                 )
-
+            
             # The last condition we have caught yet is the first igniter of the
             # first heat. That igniter gets a start time of zero
             else:
@@ -532,7 +542,7 @@ class TemporalPropagator:
         # We need three coordinates to construct two vectors: the
         # first coordinate from the current igniter and the first
         # and second coordinate from the preivous igniter
-       
+      
         cur_igniter_first_pos = np.array(
             cur_igniter.geometry.iloc[0].coords[0])
         prev_igniter_first_pos = np.array(

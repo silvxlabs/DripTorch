@@ -5,7 +5,7 @@ from __future__ import annotations
 # from .io import Projector
 
 # External imports
-from shapely.geometry import Polygon, MultiPoint, MultiLineString
+from shapely.geometry import Polygon, MultiPoint, MultiLineString,LineString
 import numpy as np
 import gcsfs
 import zarr
@@ -322,24 +322,36 @@ class Grid:
         # Loop over the levels and extract contours
         contours = []
         for level in levels:
+
+            try:
             
-            #Go from image coords to matrix coords
-            isoline = list(map(
-                np.fliplr, find_contours(image, level)
-            ))
-            
-        
-            # Map into world coordinates
-            isoline_world = list(map(
-                self.transform.ind2world, isoline
-            ))
-            
-         
-            # Cast as MultiLineString 
-            contours.append(
-                MultiLineString([line for line in isoline_world])
-            )
-         
+                #Go from image coords to matrix coords
+                isoline = list(map(
+                    np.fliplr,find_contours(image[:,::-1], level)
+                ))
+                
+                lines = []
+                for line in isoline:
+                    line = np.array(line)
+                    line[:,0] = image.shape[1] - line[:,0]
+                    #line = (np.array([[1, 0], [0, -1]])@line.T).T
+                    lines.append(line)
+                    
+                
+             
+              
+                # Map into world coordinates
+                isoline_world = list(map(
+                    self.transform.ind2world, lines
+                ))
+                
+                
+                # Cast as MultiLineString 
+                contours.append(
+                    MultiLineString([line for line in isoline_world])
+                )
+            except ValueError:
+                pass
 
         return contours
 
@@ -471,9 +483,6 @@ class CostDistanceDEM(Grid):
         else:
             source_slice = np.s_[-1,:]
 
-
-
-        
         source_array = np.zeros((self.rows,self.cols)).astype(bool)
         source_array[source_slice] = True
 

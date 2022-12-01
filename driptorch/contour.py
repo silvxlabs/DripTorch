@@ -62,8 +62,8 @@ class CostDistance:
                 computed_costs.append((cost,stop))
         return computed_costs
     
-    def iterate(self,num_igniters,igniter_depth,heat_depth,side,burn_unit=None,sigma=None) -> np.ndarray:
-        print("test")
+    def iterate(self,num_igniters,igniter_depth,heat_depth,side,burn_unit,sigma=None) -> np.ndarray:
+        
         path_dict = {
             'heat' : [],
             'igniter' : [],
@@ -93,7 +93,7 @@ class CostDistance:
 
    
         contours = self.cost_raster.get_contours(levels)
-       
+        
         heats = []
         heat_set = []
         current_heat = 0
@@ -120,28 +120,30 @@ class CostDistance:
                     if current_heat != i:
                         direction_toggle = ~direction_toggle
                         current_heat = i
+
                     raw_line = [p.coords for p in 
                         path.geoms
                         ][0]
-                    if direction_toggle:
-                        raw_line = raw_line[::-1]
+                    #if direction_toggle:
+                       # raw_line = raw_line[::-1]
                     
                     line = LineString(
                         raw_line
                     )
-                    if burn_unit:
-                        line_intersect = line.intersection(burn_unit.polygon)
+                    
+                    line_intersect = line.intersection(burn_unit.polygon)
     
                     # Get lines or multipart lines in the same structure for looping below
                     if isinstance(line_intersect, LineString):
-                        line_list = [line]
+                        line_list = [line_intersect]
                     elif isinstance(line_intersect, MultiLineString):
                         line_list = list(line_intersect.geoms)
-                    
-                    for leg,line_ in enumerate(line_list):
-                        path_dict["heat"].append(i)
-                        path_dict["igniter"].append(j)
-                        path_dict["leg"].append(leg)
-                        path_dict["geometry"].append(line_)
+                    if len(line_list) > 0:
+                        for leg,line_ in enumerate(line_list):
+                            if len(line_.bounds) > 1:
+                                path_dict["heat"].append(i)
+                                path_dict["igniter"].append(j)
+                                path_dict["leg"].append(leg)
+                                path_dict["geometry"].append(line_)
                
         return path_dict,self.cost_raster
