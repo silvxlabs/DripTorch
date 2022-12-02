@@ -1,32 +1,19 @@
 """
-Pattern generator for strip-head firing
+Pattern generator for contour following strip
 """
 
 # Internal imports
 from ._base import FiringBase
 from ..unit import BurnUnit
 from ..personnel import IgnitionCrew
-from ..pattern import Pattern
 from ..pattern import Pattern, TemporalPropagator
-
-from .._grid import Grid,Transform,Bounds
-
-
-
-# External imports
-from shapely.geometry import LineString, MultiLineString
-import numpy as np
-import zarr
-import pdb
+from .._grid import Grid,Transform
 
 #External Imports
-
 import numpy as np
 import heapq
-import matplotlib.pyplot as plt
+import zarr
 from shapely.geometry import LineString,MultiLineString
-from shapely.affinity import translate
-from shapely.ops import transform
 
 class StripContour(FiringBase):
     """Strip firing produces ignition paths perpendicular to the firing direction. Igniters are staggered with their heats
