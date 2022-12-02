@@ -28,15 +28,6 @@ from shapely.geometry import LineString,MultiLineString
 from shapely.affinity import translate
 from shapely.ops import transform
 
-import pdb
-
-
-
-# ref: https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-analyst/understanding-cost-distance-analysis.htm  # noqa: E501
-# ref: https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-analyst/how-the-cost-distance-tools-work.htm  # noqa: E501
-# ref: https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
-
-
 class StripContour(FiringBase):
     """Strip firing produces ignition paths perpendicular to the firing direction. Igniters are staggered with their heats
     and each heat alternates on which side of the unit they start.
@@ -98,21 +89,6 @@ class StripContour(FiringBase):
             sigma = kwargs.get("sigma",0)
         )
 
-    
-        # "DEBUG"
-        # import matplotlib.pyplot as plt
-        # geoms = paths["geometry"]
-        # geoms = [np.array(x) for x in geoms]
-        # colors = ['r','b','g','y','k']
-        # for i,line in enumerate(geoms):
-        #     if line.shape[0] > 0:
-        #         c = paths["igniter"][i]%len(colors)
-        #         plt.scatter(line[:,0],line[:,1],c=colors[c])
-        # #plt.show()
-       
-        # "DEBUG"
-        
-  
         # Configure the propagator for pushing time through the paths
         propagator = TemporalPropagator(
             spacing,
@@ -282,12 +258,23 @@ class Heap:
 
 
 class CostDistance:
+    """Computes the geodesic transform on a raster of elevations
+    """
     def __init__(self,start_path:np.ndarray, elevation_raster: CostDistanceDEM | Grid):
+        """Intializes the CostDistance object
+
+        Parameters
+        ----------
+            start_path (np.ndarray): 
+                Starting path line in world coordinates
+
+            elevation_raster (CostDistanceDEM | Grid):
+                elevation raster that defines the 2.d surface 
+        """
 
         if isinstance(elevation_raster,Grid):
             elevation_raster = CostDistanceDEM.from_grid(elevation_raster)
         self.elevation_raster = elevation_raster
-
         self.start_path = start_path
         self.cost_raster,self.source_raster = self.elevation_raster.generate_source_cost(start_path)
         source_neighbors = [self.source_raster.get_neighbors(index) for index in self.source_raster.locations]
@@ -296,19 +283,51 @@ class CostDistance:
       
     
     def _compute_costs(self,edge_set:list) -> list:
+        """Computes the local cost of each edge within the set
+           (i.e. "It costs this much to move from point A to point B along the raster")
+
+        Parameters
+        ----------
+            edge_set (list): 
+                A list of edges, with each edge defined as such:
+                [[start loc, stop loc, distance(pixel coords)]]
+
+        Returns
+        ----------
+            list: The associated cost and the stop location for each edge: [[cost,stop loc]]
+        """
         computed_costs = []
         for edges in edge_set:
             for edge in edges:
                 start,stop,distance = edge
                 dz = self.elevation_raster[start] - self.elevation_raster[stop]
-                #dz /= 1.5
                 move_length = np.sqrt(distance**2 + dz**2)
                 cost = self.cost_raster[start] + move_length
                 computed_costs.append((cost,stop))
         return computed_costs
     
-    def iterate(self,num_igniters,igniter_depth,heat_depth,burn_unit,sigma=None) -> np.ndarray:
-        
+    def iterate(self,num_igniters,igniter_depth,heat_depth,burn_unit,sigma=None):
+        """Performs Djikstra algorithm to compute the geodesic transform, or "cost distance" for the raster
+           and finds the respective paths for the ignition pattern arguments.
+
+        Parameters
+        ----------
+            num_igniters (_type_): Number of igniters 
+            igniter_depth (_type_): Spacing between igniters
+            heat_depth (_type_): Spacing between heats
+            burn_unit (_type_): Burn unit for the simulation
+            sigma (_type_, optional): lengthscale for smoothing kernel. Defaults to None.
+
+        Returns
+        ----------
+            dict,np.ndarray: returns the found paths in world coordinates and the computed cost raster
+        """
+
+        # ref: https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-analyst/understanding-cost-distance-analysis.htm  # noqa: E501
+        # ref: https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-analyst/how-the-cost-distance-tools-work.htm  # noqa: E501
+        # ref: https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+
+
         path_dict = {
             'heat' : [],
             'igniter' : [],
@@ -317,8 +336,10 @@ class CostDistance:
         }
         # Generate cost surface
         if sigma:
+            # smooth the elevation values
             self.elevation_raster.smooth(sigma)
-            
+        
+        # Djikstras algorithm
         while len(self.PQ.list) > 0:
             cost,loc = self.PQ.pop()
             if cost > self.cost_raster[loc]:
@@ -329,48 +350,33 @@ class CostDistance:
                 neighbor_costs = self._compute_costs(neighbors)
                 self.PQ.push(neighbor_costs)
         
-
+        # Get contour levels that correspond to ignition parameters
         levels = [igniter_depth]
         while levels[-1] < np.max(self.cost_raster.data):
             for i in range(num_igniters - 1):
                 levels.append(levels[-1] + igniter_depth)
             levels.append(levels[-1] + heat_depth)
 
-   
+        # Find the contours from the cost raster surface
         contours = self.cost_raster.get_contours(levels)
-        
         heats = []
         heat_set = []
         current_heat = 0
-
-
         for (i,contour) in enumerate(contours):
             if i//num_igniters > current_heat:
                 current_heat = i//num_igniters
                 heats.append(heat_set)
                 heat_set = []
-
             heat_set.append(
                 contour
             )
 
-        
-        # Convert 
-
         for i, heat in enumerate(heats):
             for j,path in enumerate(heat):
                 if len(path.bounds) > 0:
-                    
-                    raw_line = [p.coords for p in 
-                        path.geoms
-                        ][0]
-                    
-                    line = LineString(
-                        raw_line
-                    )
-                    
-                    line_intersect = line.intersection(burn_unit.polygon)
-    
+
+                    # Crop line to burn unit boundary
+                    line_intersect = path.intersection(burn_unit.polygon)
                     # Get lines or multipart lines in the same structure for looping below
                     if isinstance(line_intersect, LineString):
                         line_list = [line_intersect]
