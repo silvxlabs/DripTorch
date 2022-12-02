@@ -17,8 +17,7 @@ import os.path as path
 sys.path.append("/driptorch")
 import driptorch as dt
 from driptorch.firing import flank
-from driptorch.contour import *
-from driptorch._grid import Grid
+from driptorch._grid import Grid,Transform
 
 # Define burn unit spatial data in GeoJSON format
 elevs = np.squeeze(np.load("/Users/franklyndunbar/Project/Silvx/bm_dem.npy"))

@@ -12,7 +12,7 @@ import zarr
 from scipy.interpolate import griddata
 from scipy.ndimage import gaussian_filter
 from skimage.measure import find_contours
-import pdb
+
 
 class Transform:
     """Helper class to store transform information for raster data"""
@@ -41,6 +41,8 @@ class Transform:
         self.build_map_matrix()
 
     def build_map_matrix(self):
+        """Constructs the matrix coordinates to world coordinate transformation
+        """
         
         self.ind2worldmatrix = np.array([
             [self.res_x,0,self.upper_left_x],
@@ -51,6 +53,14 @@ class Transform:
         self.world2indmatrix = np.linalg.inv(self.ind2worldmatrix)
 
     def world2ind(self,locs:np.ndarray) -> np.ndarray:
+        """Maps an array of world coordinates to matrix coordinates
+
+        Args:
+            locs (np.ndarray): Array of world cordinates [[x,y]]
+
+        Returns:
+            np.ndarray: Array of matrix coordinates [[row,column]]
+        """
         if len(locs.shape) < 2:
             locs = locs.reshape(1,-1)
         locs = np.hstack((locs,np.ones((locs.shape[0],1))))
@@ -58,6 +68,15 @@ class Transform:
         return indicies.astype(int)
 
     def ind2world(self,locs:np.ndarray) -> np.ndarray:
+        """Maps an array of matrix coordinates to world coordinates
+
+        Args:
+            locs (np.ndarray): Array of matrix coordinates [[row,column]]
+
+        Returns:
+            np.ndarray: Array of world cordinates [[x,y]]
+        """
+
         if len(locs.shape) < 2:
             locs = locs.reshape(1,-1)
         locs = np.hstack((locs,np.ones((locs.shape[0],1))))
@@ -65,8 +84,15 @@ class Transform:
         return worldpoints[:,:-1]
 
     @classmethod
-    def from_map_matrix(cls,map:np.ndarray):
-        # Take a world to ind mapping matrix and solve for the transform parameters
+    def from_map_matrix(cls,map:np.ndarray) -> Transform:
+        """Builds Transform object from matrix coordinate to world coordinate transform
+
+        Args:
+            map (np.ndarray): World coordinate to matrix coordinate transform
+
+        Returns:
+            Transform : Transform object
+        """
         
         res_x = np.abs(map[0][0])
         res_y = np.abs(map[1][1])
@@ -298,7 +324,7 @@ class Grid:
 
         return Grid(data, new_transform, dst_epsg)
 
-    def get_contours(self, levels: list,sigma=None) -> list[MultiLineString]:
+    def get_contours(self, levels: list) -> list[MultiLineString]:
         """Get contours from the grid. The returned contours are in the geographic/projected
         coordinates, not in matrix space.
 
@@ -312,7 +338,6 @@ class Grid:
         list[MultiLineString]
             List of contours
         """
-        bounds = self.bounds
 
         if len(self.data.shape) < 2:
             image = self.reshape()
@@ -323,40 +348,36 @@ class Grid:
         contours = []
         for level in levels:
 
-            try:
+            #Go from image coords to matrix coords
+            isoline = list(map(
+                np.fliplr,find_contours(image[:,::-1], level)
+            ))
             
-                #Go from image coords to matrix coords
-                isoline = list(map(
-                    np.fliplr,find_contours(image[:,::-1], level)
-                ))
+            lines = []
+            for line in isoline:
+                line = np.array(line)
+                line[:,0] = image.shape[1] - line[:,0]
+                lines.append(line)
                 
-                lines = []
-                for line in isoline:
-                    line = np.array(line)
-                    line[:,0] = image.shape[1] - line[:,0]
-                    #line = (np.array([[1, 0], [0, -1]])@line.T).T
-                    lines.append(line)
-                    
-                
-             
-              
-                # Map into world coordinates
-                isoline_world = list(map(
-                    self.transform.ind2world, lines
-                ))
-                
-                
-                # Cast as MultiLineString 
-                contours.append(
-                    MultiLineString([line for line in isoline_world])
-                )
-            except ValueError:
-                pass
+            # Map into world coordinates
+            isoline_world = list(map(
+                self.transform.ind2world, lines
+            ))
+            
+            # Cast as MultiLineString 
+            contours.append(
+                MultiLineString([line for line in isoline_world])
+            )
 
         return contours
 
 
-    def smooth(self,sigma):
+    def smooth(self,sigma:int):
+        """Smooths the raster data by applying a gaussian kernel
+
+        Args:
+            sigma (int): Kernel standard deviation in pixels
+        """
         self.data = self.reshape()
         self.data = gaussian_filter(self.data,sigma=sigma)
         self.data = self.data.flatten()
@@ -379,158 +400,6 @@ class AlbersConusDEM(Grid):
 
         # Call the parent constructor
         super().__init__(data, transform, 5070)
-
-
-
-class CostDistanceDEM(Grid):
-    def __init__(self, data: np.ndarray | zarr.Array, transform: Transform, epsg: int):
-        super().__init__(data,transform,epsg)
-        self.rows,self.cols = self.data.shape 
-        self.data = self.data.flatten()
-        
-        self.inds = np.arange(self.data.shape[0])
-
-        self.neighbor_kernel = [
-            -self.cols-1, -self.cols, -self.cols+1, -1, 1, self.cols-1, self.cols, self.cols+1
-            ]
-
-        self.neighbor_kernel_dists = [2**.5, 1, 2**.5, 1, 1, 2**.5, 1, 2**.5]
-
-    def build_map(self):
-        translation = np.array([
-            [-1,0,self.transform.upper_left_x],
-            [0,-1,self.transform.upper_left_y]
-        ])
-        scale = np.array([
-            [1/self.transform.res_x,0],
-            [0,1/self.transform.res_y]
-        ])
-        self.world2ind = scale@translation
-
-
-    def reshape(self) -> np.ndarray:
-        return self.data.reshape((self.rows,self.cols))
-
-
-    def get_index(self,index:int) -> np.ndarray:
-        
-        return np.array([index//self.cols,index%self.cols]).astype(int)
-
-
-    def get_neighbors(self,index:int) -> list:
-        """
-        Return the 1d neighborhood indicies for the neighborhood of a given pixel and check bounds
-        -------+-------+-----
-        -cols-1| -cols | -cols+1
-        -------+-------+-----
-        -1     | 0     | +1
-        -------+-------+-----
-        cols-1 | cols  | cols+1
-        -------+-------+-----
-        + index
-        """
-
-
-        matcoords = np.array(self.get_index(index)) # get 2d coords
-        neighborhood = np.array(self.neighbor_kernel.copy()) + index
-        distances = np.array(self.neighbor_kernel_dists.copy())
-        
-        # check if we are at the boundary
-        if matcoords[0] <= 0: # If we are at the first row
-            remove = [0,1,2]
-            neighborhood[remove] = -999
-            distances[remove] = -999
-        if matcoords[0] >= self.rows-1: # If we are at the last row
-            remove = [5,6,7]
-            neighborhood[remove] = -999
-            distances[remove] = -999
-        if matcoords[1] <= self.cols-1: # If we are at the first column
-            remove = [0,3,5]
-            neighborhood[remove] = -999
-            distances[remove] = -999
-        if matcoords[1] >= self.cols-1: # If we are at the last column
-            remove = [2,4,7]
-            neighborhood[remove] = -999
-            distances[remove] = -999
-
-        to_keep = neighborhood != -999
-        neighborhood = neighborhood[to_keep].tolist()
-        distances = distances[to_keep].tolist()
-       
-        neighbors_distances = list(zip([index]*len(neighborhood),neighborhood,distances))
-
-        return neighbors_distances
-    
-    def generate_source_cost(self,start_line:np.ndarray):
-        """Generate a source array given a starting path, where the 
-        source cells are the edge row closest to the start path
-        Args:
-            path (list): _description_
-        Returns:
-            np.ndarray: _description_
-        """
-        
-        start,stop = start_line[0,:],start_line[1,:]
-        start_mat,stop_mat = np.squeeze(self.transform.world2ind(start)),np.squeeze(self.transform.world2ind(stop))
-        dpos = np.squeeze(np.abs(start_mat - stop_mat))[:2]
-        #perp_axis = np.argmin(dpos)
-        travel_axis = np.argmax(dpos)
-        
-       
-        start_row = start_mat[travel_axis]
-        if start_row < self.rows//2:
-            source_slice = np.s_[0,:]
-        else:
-            source_slice = np.s_[-1,:]
-
-        source_array = np.zeros((self.rows,self.cols)).astype(bool)
-        source_array[source_slice] = True
-
-        cost_array = np.ones((self.rows,self.cols))
-        cost_array *= np.inf
-        cost_array[source_slice] = 0
-
-        cost_raster = CostDistanceDEM(data=cost_array,transform=self.transform,epsg=self.epsg)
-        source_raster = SourceRasterDEM(data=source_array,transform=self.transform,epsg=self.epsg)
-        return cost_raster,source_raster
-
-
-    def __getitem__(self,key):
-        return self.data[key]
-    
-    def __setitem__(self,key,item):
-        self.data[key] = item
-    
-    @classmethod
-    def from_grid(cls,grid:Grid) -> CostDistanceDEM:
-        """Return CostDistanceDEM from Grid Object
-
-        Args:
-            grid (Grid): Instantiated Grid Instance
-        Returns:
-            CostDistanceDEM: generated CostDistanceDEM object
-        """
-        return cls(grid.data,grid.transform,grid.epsg)
-
-class SourceRasterDEM(CostDistanceDEM):
-    def __init__(self, data: np.ndarray | zarr.Array, transform: Transform, epsg: int):
-        super().__init__(data, transform, epsg)
-
-    @property
-    def locations(self) -> np.ndarray:
-        """Return the 1d indicies of source locations
-
-        Returns:
-            np.ndarray: _description_
-        """
-        return self.inds[self.data]
-
-
-
-
-
-
-
 
 def fetch_dem(polygon: Polygon, epsg: int, res: int = 1) -> Grid:
     """Returns a DEM for the bounds of the provided polygon
