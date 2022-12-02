@@ -2,10 +2,10 @@
 from __future__ import annotations
 
 # Internal imports
-# from .io import Projector
+from .io import Projector
 
 # External imports
-from shapely.geometry import Polygon, MultiPoint, MultiLineString,LineString
+from shapely.geometry import Polygon, MultiPoint, MultiLineString
 import numpy as np
 import gcsfs
 import zarr
@@ -350,7 +350,7 @@ class Grid:
 
             #Go from image coords to matrix coords
             isoline = list(map(
-                np.fliplr,find_contours(image[:,::-1], level)
+                np.fliplr,find_contours(image, level)
             ))
             
             lines = []
