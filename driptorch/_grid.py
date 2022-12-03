@@ -12,7 +12,7 @@ import zarr
 from scipy.interpolate import griddata
 from scipy.ndimage import gaussian_filter
 from skimage.measure import find_contours
-
+import pdb
 
 class Transform:
     """Helper class to store transform information for raster data"""
@@ -343,14 +343,14 @@ class Grid:
             image = self.reshape()
         else:
             image = self.data
-
+       
         # Loop over the levels and extract contours
         contours = []
         for level in levels:
 
             #Go from image coords to matrix coords
             isoline = list(map(
-                np.fliplr,find_contours(image, level)
+                np.fliplr,find_contours(image[:,::-1], level)
             ))
             
             lines = []
