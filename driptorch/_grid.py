@@ -47,7 +47,7 @@ class Transform:
 
         self.ind2worldmatrix = np.array([
             [self.res_x, 0, self.upper_left_x],
-            [0, -self.res_y, self.upper_left_y],
+            [0, self.res_y, self.upper_left_y],
             [0, 0, 1]
         ])
 
