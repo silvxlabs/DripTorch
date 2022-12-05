@@ -206,7 +206,7 @@ class Grid:
         self.data = data
         self.transform = transform
         self.epsg = epsg
-        self.row, self.cols = self.data.shape[:2]
+        self.rows, self.cols = self.data.shape[:2]
 
     @property
     def bounds(self) -> Bounds:
