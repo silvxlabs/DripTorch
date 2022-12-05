@@ -11,7 +11,7 @@ import copy
 
 # Internal imports
 from .io import Projector, write_geojson, read_geojson_polygon
-from ._grid import fetch_dem, Grid
+from ._grid import Grid, Bounds, AlbersConusDEM
 
 # External imports
 import numpy as np
@@ -206,10 +206,32 @@ class BurnUnit:
 
         return BurnUnit(polygon_difference, self.firing_direction, utm_epsg=self.utm_epsg)
 
-    def fetch_dem(self, polygon: Polygon, utm_epsg: int) -> None:
+    def fetch_dem(self) -> None:
+        """Extract elevation data for the burn unit from cloud-hosted CONUS DEM
+        """
 
-        dem: Grid = fetch_dem(polygon, utm_epsg)
-        self.dem = dem
+        # Setup a projector to get the burn unit's polygon in Albers for extract the
+        # USGS 3DEP CONUS DEM
+        projector = Projector(self.utm_epsg, 5070)
+
+        # Get the bounds of the input polygon then construct a polygon from the bounds
+        # and reproject to Albers
+        src_bounds = Bounds.from_polygon(self.polygon)
+        src_bounds_polygon = src_bounds.to_polygon()
+        albers_bounds_polygon = projector.forward(src_bounds_polygon)
+
+        # Now we get the bounds of the reprojected source polygon bounds to ensure
+        # we cover the entire area for the interpolated reprojection
+        albers_bounds = Bounds.from_polygon(albers_bounds_polygon)
+
+        # Instantiate the Albers CONUS DEM and extract the subarray by the bounds
+        albers_dem_conus = AlbersConusDEM()
+        albers_sub_dem = albers_dem_conus.extract_by_bounds(
+            albers_bounds, padding=3)
+
+        # Reproject from albers to UTM and store as burn unit instance attribute
+        self.dem = albers_sub_dem.reproject(
+            self.utm_epsg, src_bounds, dst_res=1)
 
     @property
     def bounds(self) -> np.ndarray:

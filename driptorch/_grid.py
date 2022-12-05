@@ -14,6 +14,7 @@ from scipy.ndimage import gaussian_filter
 from skimage.measure import find_contours
 import pdb
 
+
 class Transform:
     """Helper class to store transform information for raster data"""
 
@@ -43,16 +44,16 @@ class Transform:
     def build_map_matrix(self):
         """Constructs the matrix coordinates to world coordinate transformation
         """
-        
+
         self.ind2worldmatrix = np.array([
-            [self.res_x,0,self.upper_left_x],
-            [0,-self.res_y,self.upper_left_y],
-            [0,0,1]
+            [self.res_x, 0, self.upper_left_x],
+            [0, -self.res_y, self.upper_left_y],
+            [0, 0, 1]
         ])
-        
+
         self.world2indmatrix = np.linalg.inv(self.ind2worldmatrix)
 
-    def world2ind(self,locs:np.ndarray) -> np.ndarray:
+    def world2ind(self, locs: np.ndarray) -> np.ndarray:
         """Maps an array of world coordinates to matrix coordinates
 
         Args:
@@ -62,12 +63,12 @@ class Transform:
             np.ndarray: Array of matrix coordinates [[row,column]]
         """
         if len(locs.shape) < 2:
-            locs = locs.reshape(1,-1)
-        locs = np.hstack((locs,np.ones((locs.shape[0],1))))
+            locs = locs.reshape(1, -1)
+        locs = np.hstack((locs, np.ones((locs.shape[0], 1))))
         indicies = locs@self.world2indmatrix.T
         return indicies.astype(int)
 
-    def ind2world(self,locs:np.ndarray) -> np.ndarray:
+    def ind2world(self, locs: np.ndarray) -> np.ndarray:
         """Maps an array of matrix coordinates to world coordinates
 
         Args:
@@ -78,13 +79,13 @@ class Transform:
         """
 
         if len(locs.shape) < 2:
-            locs = locs.reshape(1,-1)
-        locs = np.hstack((locs,np.ones((locs.shape[0],1))))
+            locs = locs.reshape(1, -1)
+        locs = np.hstack((locs, np.ones((locs.shape[0], 1))))
         worldpoints = locs@self.ind2worldmatrix.T
-        return worldpoints[:,:-1]
+        return worldpoints[:, :-1]
 
     @classmethod
-    def from_map_matrix(cls,map:np.ndarray) -> Transform:
+    def from_map_matrix(cls, map: np.ndarray) -> Transform:
         """Builds Transform object from matrix coordinate to world coordinate transform
 
         Args:
@@ -93,17 +94,14 @@ class Transform:
         Returns:
             Transform : Transform object
         """
-        
+
         res_x = np.abs(map[0][0])
         res_y = np.abs(map[1][1])
 
         ul_x = np.abs(map[0][-1])
         ul_y = np.abs(map[1][-1])
-        
-        
-        return Transform(ul_x,ul_y,res_x,res_y)
 
-        
+        return Transform(ul_x, ul_y, res_x, res_y)
 
     @classmethod
     def from_geo_transform(cls, geo_transform: list) -> Transform:
@@ -208,7 +206,7 @@ class Grid:
         self.data = data
         self.transform = transform
         self.epsg = epsg
-        self.row,self.cols = self.data.shape
+        self.row, self.cols = self.data.shape
 
     @property
     def bounds(self) -> Bounds:
@@ -343,44 +341,44 @@ class Grid:
             image = self.reshape()
         else:
             image = self.data
-       
+
         # Loop over the levels and extract contours
         contours = []
         for level in levels:
 
-            #Go from image coords to matrix coords
+            # Go from image coords to matrix coords
             isoline = list(map(
-                np.fliplr,find_contours(image[:,::-1], level)
+                np.fliplr, find_contours(image[:, ::-1], level)
             ))
-            
+
             lines = []
             for line in isoline:
                 line = np.array(line)
-                line[:,0] = image.shape[1] - line[:,0]
+                line[:, 0] = image.shape[1] - line[:, 0]
                 lines.append(line)
-                
+
             # Map into world coordinates
             isoline_world = list(map(
                 self.transform.ind2world, lines
             ))
-            
-            # Cast as MultiLineString 
+
+            # Cast as MultiLineString
             contours.append(
                 MultiLineString([line for line in isoline_world])
             )
 
         return contours
 
-
-    def smooth(self,sigma:int):
+    def smooth(self, sigma: int):
         """Smooths the raster data by applying a gaussian kernel
 
         Args:
             sigma (int): Kernel standard deviation in pixels
         """
         self.data = self.reshape()
-        self.data = gaussian_filter(self.data,sigma=sigma)
+        self.data = gaussian_filter(self.data, sigma=sigma)
         self.data = self.data.flatten()
+
 
 class AlbersConusDEM(Grid):
     """Child grid class for the Albers CONUS DEM"""
@@ -400,41 +398,3 @@ class AlbersConusDEM(Grid):
 
         # Call the parent constructor
         super().__init__(data, transform, 5070)
-
-def fetch_dem(polygon: Polygon, epsg: int, res: int = 1) -> Grid:
-    """Returns a DEM for the bounds of the provided polygon
-
-    Parameters
-    ----------
-    polygon : Polygon
-        Polygon to fetch the DEM for
-    epsg : int
-        EPSG code to reproject the DEM
-    res : int, optional
-        Spatial resolution of the returned DEM, by default 1
-
-    Returns
-    -------
-    Grid
-        Elevation grid
-    """
-
-    projector = Projector(epsg, 5070)
-
-    # Get the bounds of the input polygon then construct a polygon from the bounds
-    # and reproject to Albers
-    src_bounds = Bounds.from_polygon(polygon)
-    src_bounds_polygon = src_bounds.to_polygon()
-    albers_bounds_polygon = projector.forward(src_bounds_polygon)
-
-    # Now we get the bounds of the reprojected source polygon bounds to ensure
-    # we cover the entire area for the interpolated reprojection
-    albers_bounds = Bounds.from_polygon(albers_bounds_polygon)
-
-    # Instantiate the Albers CONUS DEM and extract the subarray by the bounds
-    albers_dem_conus = AlbersConusDEM()
-    albers_sub_dem = albers_dem_conus.extract_by_bounds(
-        albers_bounds, padding=0)
-
-    # Return the reprojected DEM in the desired projection system
-    return albers_sub_dem.reproject(epsg, src_bounds, dst_res=res)
