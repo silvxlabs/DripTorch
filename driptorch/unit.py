@@ -159,7 +159,7 @@ class BurnUnit:
         # Use shapely's buffer method on the polygon
         buffered_polygon = self.polygon.buffer(-width)
 
-        return BurnUnit(buffered_polygon, self.firing_direction, utm_epsg=self.utm_epsg, dem=self.dem)
+        return BurnUnit(buffered_polygon, self.firing_direction, utm_epsg=self.utm_epsg)
 
     def buffer_downwind(self, width: float) -> BurnUnit:
         """Create a downwind blackline buffer
@@ -183,7 +183,7 @@ class BurnUnit:
         # buffer to cut out the downfiring blackline area
         buffered_polygon = self.polygon.difference(fore_line_buffer)
 
-        return BurnUnit(buffered_polygon, self.firing_direction, utm_epsg=self.utm_epsg, dem=self.dem)
+        return BurnUnit(buffered_polygon, self.firing_direction, utm_epsg=self.utm_epsg)
 
     def difference(self, burn_unit: BurnUnit) -> BurnUnit:
         """Return a burn unit instance that is the difference between
