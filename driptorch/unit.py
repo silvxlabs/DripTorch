@@ -37,18 +37,14 @@ class BurnUnit:
     def __init__(self,
                  polygon: Polygon,
                  firing_direction: float,
-                 utm_epsg: int = None,
-                 use_dem: bool = False,
-                 dem=None) -> None:
+                 utm_epsg: int = None) -> None:
 
-        self.dem = dem
+        # Initialize the dem attribute to None so we can detect if it has been fetched or not
+        self.dem = None
 
         # Set the global EPSG source
         if not utm_epsg:
             utm_epsg, polygon = Projector.web_mercator_to_utm(polygon)
-
-        if use_dem and dem is not None:
-            self.dem = self.fetch_dem(polygon, utm_epsg)
 
         # Store instance attributes
         self.utm_epsg = utm_epsg
