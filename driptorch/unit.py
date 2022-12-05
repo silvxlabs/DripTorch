@@ -11,7 +11,7 @@ import copy
 
 # Internal imports
 from .io import Projector, write_geojson, read_geojson_polygon
-from ._grid import fetch_dem,Grid
+from ._grid import fetch_dem, Grid
 
 # External imports
 import numpy as np
@@ -34,12 +34,12 @@ class BurnUnit:
         that coordinates are in 4326 and will be converted to UTM. Defaults to None.
     """
 
-    def __init__(self, 
-        polygon: Polygon, 
-        firing_direction: float, 
-        utm_epsg: int = None, 
-        use_dem: bool = False,
-        dem = None ) -> None:
+    def __init__(self,
+                 polygon: Polygon,
+                 firing_direction: float,
+                 utm_epsg: int = None,
+                 use_dem: bool = False,
+                 dem=None) -> None:
 
         self.dem = dem
 
@@ -163,7 +163,7 @@ class BurnUnit:
         # Use shapely's buffer method on the polygon
         buffered_polygon = self.polygon.buffer(-width)
 
-        return BurnUnit(buffered_polygon, self.firing_direction, utm_epsg=self.utm_epsg, dem = self.dem)
+        return BurnUnit(buffered_polygon, self.firing_direction, utm_epsg=self.utm_epsg, dem=self.dem)
 
     def buffer_downwind(self, width: float) -> BurnUnit:
         """Create a downwind blackline buffer
@@ -210,8 +210,7 @@ class BurnUnit:
 
         return BurnUnit(polygon_difference, self.firing_direction, utm_epsg=self.utm_epsg)
 
-
-    def fetch_dem(self, polygon: Polygon , utm_epsg: int ) -> None:
+    def fetch_dem(self, polygon: Polygon, utm_epsg: int) -> None:
 
         dem: Grid = fetch_dem(polygon, utm_epsg)
         self.dem = dem
