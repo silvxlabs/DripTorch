@@ -206,9 +206,11 @@ class BurnUnit:
 
         return BurnUnit(polygon_difference, self.firing_direction, utm_epsg=self.utm_epsg)
 
-    def fetch_dem(self) -> None:
+    def fetch_dem(self, resolution=3) -> None:
         """Extract elevation data for the burn unit from cloud-hosted CONUS DEM
         """
+
+        # TODO: #146 Use minimum bounding circle to determine DEM extraction padding
 
         # Setup a projector to get the burn unit's polygon in Albers for extract the
         # USGS 3DEP CONUS DEM
@@ -217,6 +219,10 @@ class BurnUnit:
         # Get the bounds of the input polygon then construct a polygon from the bounds
         # and reproject to Albers
         src_bounds = Bounds.from_polygon(self.polygon)
+        src_bounds.west -= 200
+        src_bounds.east += 200
+        src_bounds.north += 200
+        src_bounds.south -= 200
         src_bounds_polygon = src_bounds.to_polygon()
         albers_bounds_polygon = projector.forward(src_bounds_polygon)
 
@@ -231,7 +237,7 @@ class BurnUnit:
 
         # Reproject from albers to UTM and store as burn unit instance attribute
         self.dem = albers_sub_dem.reproject(
-            self.utm_epsg, src_bounds, dst_res=1)
+            self.utm_epsg, src_bounds, dst_res=resolution)
 
     @property
     def bounds(self) -> np.ndarray:
