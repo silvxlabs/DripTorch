@@ -1,4 +1,8 @@
 # External Imports
+import json
+from resources import testgeoms
+from driptorch.io import *
+import driptorch as dt
 from shapely import affinity
 from shapely.geometry.polygon import Polygon
 import numpy as np
@@ -8,12 +12,8 @@ import sys
 
 # Internal Imports
 sys.path.append("../driptorch")
-import driptorch as dt
-from driptorch.io import *
-from resources import testgeoms
 
 # Core imports
-import json
 
 """
 The following defined functions are for testing class objects of io.py.
@@ -99,14 +99,14 @@ def test_projector() -> None:
     )
 
 
-def test_web_mercator_funcs() -> None:
-    """Test web mercator functionality"""
+def test_wgs84_funcs() -> None:
+    """Test WGS84 functionality"""
 
     test_polygon_4326: Polygon = read_geojson_polygon(testgeoms.test_polygon)
-    utm_epsg, test_polygon_4326_to_UTM = Projector.web_mercator_to_utm(
+    utm_epsg, test_polygon_4326_to_UTM = Projector.wgs84_to_utm(
         test_polygon_4326
     )
-    test_polygon_4326_to_UTM_to_4326 = Projector.to_web_mercator(
+    test_polygon_4326_to_UTM_to_4326 = Projector.to_wgs84(
         test_polygon_4326_to_UTM, utm_epsg
     )
 
@@ -146,7 +146,6 @@ def test_write_quickfire() -> None:
             geom, -lower_left[0], -lower_left[1]))
     geometries = trans_geoms
 
-    
     # Generate quicfire output
     quicfire_output = write_quicfire(
         geometry=geometries, times=times, elapsed_time=elapsed_time

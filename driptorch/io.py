@@ -96,8 +96,8 @@ class Projector:
         return int(32700-round((45+lat)/90, 0)*100+round((183+lon)/6, 0))
 
     @classmethod
-    def web_mercator_to_utm(cls, geometry: BaseGeometry) -> BaseGeometry:
-        """Convert geometry from Web Mercator to UTM
+    def wgs84_to_utm(cls, geometry: BaseGeometry) -> BaseGeometry:
+        """Convert geometry from WGS84 to UTM
 
         Parameters
         ----------
@@ -118,8 +118,8 @@ class Projector:
         return utm_epsg, projector.forward(geometry)
 
     @classmethod
-    def to_web_mercator(cls, geometry: Union[BaseGeometry, dict], src_epsg: int) -> Union[BaseGeometry, dict]:
-        """Convenience method to project a shapely geometry or GeoJSON feature to web mercator
+    def to_wgs84(cls, geometry: Union[BaseGeometry, dict], src_epsg: int) -> Union[BaseGeometry, dict]:
+        """Convenience method to project a shapely geometry or GeoJSON feature to WGS84.
 
         Parameters
         ----------

@@ -44,7 +44,7 @@ class BurnUnit:
 
         # Set the global EPSG source
         if not utm_epsg:
-            utm_epsg, polygon = Projector.web_mercator_to_utm(polygon)
+            utm_epsg, polygon = Projector.wgs84_to_utm(polygon)
 
         # Store instance attributes
         self.utm_epsg = utm_epsg

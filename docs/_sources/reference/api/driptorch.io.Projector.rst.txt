@@ -17,8 +17,8 @@
       ~Projector.backward
       ~Projector.estimate_utm_epsg
       ~Projector.forward
-      ~Projector.to_web_mercator
-      ~Projector.web_mercator_to_utm
+      ~Projector.to_wgs84
+      ~Projector.wgs84_to_utm
    
    
 

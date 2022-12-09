@@ -51,8 +51,9 @@ class Strip(FiringBase):
         Pattern
             Spatiotemporal ignition pattern
         """
-
         return self._generate_pattern(spacing=spacing, depth=depth, heat_depth=heat_depth, side=side, heat_delay=heat_delay)
+
+
 
     def _init_paths(self, paths: dict, **kwargs) -> dict:
         """Initialize spatial part of the ignition paths.
