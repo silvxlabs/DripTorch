@@ -4,6 +4,7 @@ Spatiotemporal patterns and the infamous temporal propagator
 
 # Core imports
 from __future__ import annotations
+import pdb
 import copy
 from time import time as unix_time
 import warnings
@@ -25,7 +26,6 @@ from shapely.geometry import MultiPoint, MultiLineString, LineString, shape
 # Turn off Pandas copy warning (or figure out how to do it like the Panda wants)
 pd.options.mode.chained_assignment = None
 
-import pdb
 """
 
 Turn off the Shapely deprecation warning about about future removal
@@ -166,7 +166,8 @@ class Pattern:
             "leg": self.leg,
             "times": times.to_list(),
         }
-        style = {"icon": "circle", "style": {"color": "#ff0000", "radius": 1}}
+        style = {"icon": "circle", "style": {
+            "color": "#ff0000", "radius": 1}}
 
         # Send off to the GeoJSON writer and return
         return write_geojson(
@@ -370,7 +371,7 @@ class TemporalPropagator:
         """
         # Create a Pandas DataFrame from the initialized paths dictionary
         self.paths = pd.DataFrame(paths)
-        
+
         self.ignition_crew = ignition_crew
 
         # Geometry must of type LineString
@@ -385,7 +386,7 @@ class TemporalPropagator:
         self.paths.sort_values(
             by=["heat", "igniter", "leg"], ascending=[True, True, True], inplace=True
         )
-        
+
         # Run the initial forward pass through the paths
         self._init_path_time(self.spacing)
 
@@ -411,10 +412,10 @@ class TemporalPropagator:
         Args:
             spacing (float): Stagger spacing between igniters in a heat
         """
-       
+
         # Loop over each ignition path and compute the start time and end time
         for index, path in self.paths.iterrows():
-            
+
             # Get the heat, igniter and leg indices from the current path
             i, j, k = path.heat, path.igniter, path.leg
             velocity = self.ignition_crew[j].velocity
@@ -478,28 +479,19 @@ class TemporalPropagator:
                 cur_igniter = self.paths.loc[
                     (self.paths.heat == i) & (self.paths.igniter == j)
                 ]
+                prev_igniter = self.paths.loc[
+                    (self.paths.heat == i) & (self.paths.igniter == j - 1)
+                ]
 
-                # Need to account for missing igniters in contour following
-                prev_start_time = None
-                for fake_j in reversed(range(j)):
-                
-                    prev_igniter = self.paths.loc[
-                        (self.paths.heat == i) & (self.paths.igniter == fake_j) & (self.paths.leg == 0)
-                    ]
-
-                    if len(prev_igniter) > 0:
-                        break
-
-                   
-                prev_start_time = prev_igniter.start_time
+                # Get the previous igniter's start time
+                prev_start_time = prev_igniter.start_time.values[0]
 
                 # Compute the offset due to stagger spacing and incongruence
                 # along a coordinate frame axis
-              
                 path.start_time = prev_start_time + self._get_offset(
                     prev_igniter, cur_igniter, spacing, velocity
                 )
-            
+
             # The last condition we have caught yet is the first igniter of the
             # first heat. That igniter gets a start time of zero
             else:
@@ -542,7 +534,7 @@ class TemporalPropagator:
         # We need three coordinates to construct two vectors: the
         # first coordinate from the current igniter and the first
         # and second coordinate from the preivous igniter
-      
+
         cur_igniter_first_pos = np.array(
             cur_igniter.geometry.iloc[0].coords[0])
         prev_igniter_first_pos = np.array(
