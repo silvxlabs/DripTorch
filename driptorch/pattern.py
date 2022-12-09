@@ -4,6 +4,7 @@ Spatiotemporal patterns and the infamous temporal propagator
 
 # Core imports
 from __future__ import annotations
+import pdb
 import copy
 from time import time as unix_time
 import warnings
@@ -165,7 +166,8 @@ class Pattern:
             "leg": self.leg,
             "times": times.to_list(),
         }
-        style = {"icon": "circle", "style": {"color": "#ff0000", "radius": 1}}
+        style = {"icon": "circle", "style": {
+            "color": "#ff0000", "radius": 1}}
 
         # Send off to the GeoJSON writer and return
         return write_geojson(
@@ -369,6 +371,7 @@ class TemporalPropagator:
         """
         # Create a Pandas DataFrame from the initialized paths dictionary
         self.paths = pd.DataFrame(paths)
+
         self.ignition_crew = ignition_crew
 
         # Geometry must of type LineString
@@ -531,6 +534,7 @@ class TemporalPropagator:
         # We need three coordinates to construct two vectors: the
         # first coordinate from the current igniter and the first
         # and second coordinate from the preivous igniter
+
         cur_igniter_first_pos = np.array(
             cur_igniter.geometry.iloc[0].coords[0])
         prev_igniter_first_pos = np.array(

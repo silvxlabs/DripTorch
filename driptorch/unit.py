@@ -11,7 +11,7 @@ import copy
 
 # Internal imports
 from .io import Projector, write_geojson, read_geojson_polygon
-from ._grid import fetch_dem
+from ._grid import Grid, Bounds, AlbersConusDEM
 
 # External imports
 import numpy as np
@@ -34,14 +34,17 @@ class BurnUnit:
         that coordinates are in 4326 and will be converted to UTM. Defaults to None.
     """
 
-    def __init__(self, polygon: Polygon, firing_direction: float, utm_epsg: int = None, use_topo: bool = False):
+    def __init__(self,
+                 polygon: Polygon,
+                 firing_direction: float,
+                 utm_epsg: int = None) -> None:
+
+        # Initialize the dem attribute to None so we can detect if it has been fetched or not
+        self.dem = None
 
         # Set the global EPSG source
         if not utm_epsg:
             utm_epsg, polygon = Projector.wgs84_to_utm(polygon)
-
-        if use_topo:
-            self.topo = fetch_dem(polygon, utm_epsg)
 
         # Store instance attributes
         self.utm_epsg = utm_epsg
@@ -101,8 +104,8 @@ class BurnUnit:
         >>> burn_unit = driptorch.BurnUnit(polygon, firing_direction=270)
         >>> burn_unit.to_json()
         '{'type': 'FeatureCollection', 'features': [{'type': 'Feature', 'properties': {}, \
-'geometry': {'type': 'Polygon', 'coordinates': (((-114.478, 47.163), (-114.471, 47.16299999999998), \
-(-114.471, 47.16699999999999), (-114.478, 47.16699999999999), (-114.478, 47.163)),)}}]}'
+        'geometry': {'type': 'Polygon', 'coordinates': (((-114.478, 47.163), (-114.471, 47.16299999999998), \
+        (-114.471, 47.16699999999999), (-114.478, 47.16699999999999), (-114.478, 47.163)),)}}]}'
 
         """
 
@@ -202,6 +205,39 @@ class BurnUnit:
         polygon_difference = self.polygon.difference(burn_unit.polygon)
 
         return BurnUnit(polygon_difference, self.firing_direction, utm_epsg=self.utm_epsg)
+
+    def fetch_dem(self, resolution=3) -> None:
+        """Extract elevation data for the burn unit from cloud-hosted CONUS DEM
+        """
+
+        # TODO: #146 Use minimum bounding circle to determine DEM extraction padding
+
+        # Setup a projector to get the burn unit's polygon in Albers for extract the
+        # USGS 3DEP CONUS DEM
+        projector = Projector(self.utm_epsg, 5070)
+
+        # Get the bounds of the input polygon then construct a polygon from the bounds
+        # and reproject to Albers
+        src_bounds = Bounds.from_polygon(self.polygon)
+        src_bounds.west -= 200
+        src_bounds.east += 200
+        src_bounds.north += 200
+        src_bounds.south -= 200
+        src_bounds_polygon = src_bounds.to_polygon()
+        albers_bounds_polygon = projector.forward(src_bounds_polygon)
+
+        # Now we get the bounds of the reprojected source polygon bounds to ensure
+        # we cover the entire area for the interpolated reprojection
+        albers_bounds = Bounds.from_polygon(albers_bounds_polygon)
+
+        # Instantiate the Albers CONUS DEM and extract the subarray by the bounds
+        albers_dem_conus = AlbersConusDEM()
+        albers_sub_dem = albers_dem_conus.extract_by_bounds(
+            albers_bounds, padding=3)
+
+        # Reproject from albers to UTM and store as burn unit instance attribute
+        self.dem = albers_sub_dem.reproject(
+            self.utm_epsg, src_bounds, dst_res=resolution)
 
     @property
     def bounds(self) -> np.ndarray:

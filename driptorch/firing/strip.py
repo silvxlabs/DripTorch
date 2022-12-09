@@ -58,14 +58,19 @@ class Strip(FiringBase):
     def _init_paths(self, paths: dict, **kwargs) -> dict:
         """Initialize spatial part of the ignition paths.
 
-        Notes:
-            Overrides the `_init_paths()` method in the base class.
+        Notes
+        -----
+        Overrides the `_init_paths()` method in the base class.
 
-        Args:
-            paths (dict): Empty pattern path dictionary
+        Parameters
+        ----------
+        paths : dict
+            Dictionary of empty ignition paths
 
-        Returns:
-            dict: Pattern path dictionary with initial untimed paths
+        Returns
+        -------
+        dict
+            Dictionary of untimed ignition paths
         """
 
         # Get the depth parameter from the keyword args (This is required in the

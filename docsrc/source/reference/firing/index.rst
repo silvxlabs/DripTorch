@@ -13,3 +13,4 @@ Firing Techniques
     head
     back
     inferno
+    strip_contour

@@ -1,6 +1,7 @@
 
 # notebooks
 *.ipynb
+*.ipynb_checkpoints
 *.npy
 .DS_Store
 
