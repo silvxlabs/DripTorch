@@ -7,7 +7,6 @@ from ._base import FiringBase
 from ..unit import BurnUnit
 from ..personnel import IgnitionCrew
 from ..pattern import Pattern
-from ..pattern import Pattern, TemporalPropagator
 
 # External imports
 from shapely.geometry import LineString, MultiLineString
