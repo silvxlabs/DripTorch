@@ -38,7 +38,7 @@ class StripContour(FiringBase):
         super().__init__(burn_unit, ignition_crew)
 
     def generate_pattern(self, spacing: float = 0, depth: float = 0, heat_depth: float = 0, side: str = 'right', heat_delay: float = 0, topo_scale: int = 1) -> Pattern:
-        """Generate a flank fire ignition pattern
+        """Pattern generator for strip-contour firing
 
         Parameters
         ----------
