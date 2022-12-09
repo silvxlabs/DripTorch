@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>DripTorch 0.8.0 Release Notes &#8212; DripTorch 0.9.0-beta.1 documentation</title>
+    <title>DripTorch 0.9.0-beta.1 Release Notes &#8212; DripTorch 0.9.0-beta.1 documentation</title>
 <script>
   document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
   document.documentElement.dataset.theme = localStorage.getItem("theme") || "light"
@@ -37,8 +37,8 @@
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="DripTorch 0.7.2 Release Notes" href="0.7.2-notes.html" />
-    <link rel="prev" title="DripTorch 0.8.1 Release Notes" href="0.8.1-notes.html" />
+    <link rel="next" title="DripTorch 0.8.2 Release Notes" href="0.8.2-notes.html" />
+    <link rel="prev" title="DripTorch Unreleased Notes" href="unreleased-notes.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="docsearch:language" content="None">
   </head>
@@ -154,8 +154,8 @@
    unreleased
   </a>
  </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="0.9.0-beta.1-notes.html">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
    v0.9.0-beta.1
   </a>
  </li>
@@ -169,8 +169,8 @@
    v0.8.1
   </a>
  </li>
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
+ <li class="toctree-l1">
+  <a class="reference internal" href="0.8.0-notes.html">
    v0.8.0
   </a>
  </li>
@@ -214,33 +214,23 @@
 <nav id="bd-toc-nav">
     <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#highlights">
-   Highlights
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#new-features-and-improvements">
-   New features and improvements
+  <a class="reference internal nav-link" href="#new-features">
+   New Features
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#directional-arguments-for-backing-and-head-fire-pr-123">
-     Directional arguments for backing and head fire (PR #123)
+    <a class="reference internal nav-link" href="#strip-contour-firing-beta-release-pr-143">
+     Strip contour firing beta release (PR #143)
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#igniter-stagger-for-flank-ignition-pr-124">
-     Igniter stagger for flank ignition (PR #124)
+    <a class="reference internal nav-link" href="#cloud-hosted-dem-and-on-the-fly-grid-reprojection-pr-137">
+     Cloud-hosted DEM and on-the-fly grid reprojection (PR #137)
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#tests-for-firing-techniques-pr-113">
-     Tests for firing techniques (PR #113)
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#minor-doc-fixes-pr-125">
-     Minor doc fixes (PR #125)
+    <a class="reference internal nav-link" href="#contour-following-strip-ignition-prototype-pr-138">
+     Contour-following strip ignition prototype (PR #138)
     </a>
    </li>
   </ul>
@@ -251,8 +241,8 @@
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#heat-delay-error-pr-121">
-     Heat delay error (PR #121)
+    <a class="reference internal nav-link" href="#incorrect-naming-of-epsg-4326-pr-141">
+     Incorrect naming of EPSG 4326 (PR #141)
     </a>
    </li>
   </ul>
@@ -276,40 +266,32 @@
               
               <article class="bd-article" role="main">
                 
-  <section id="driptorch-0-8-0-release-notes">
-<h1>DripTorch 0.8.0 Release Notes<a class="headerlink" href="#driptorch-0-8-0-release-notes" title="Permalink to this headline">#</a></h1>
-<section id="highlights">
-<h2>Highlights<a class="headerlink" href="#highlights" title="Permalink to this headline">#</a></h2>
-<ul class="simple">
-<li><p>Use the optional <code class="docutils literal notranslate"><span class="pre">clockwise</span></code> parameter in the <code class="docutils literal notranslate"><span class="pre">head</span></code> and <code class="docutils literal notranslate"><span class="pre">back</span></code> pattern generators to control the direction of the igniter.</p></li>
-<li><p>The flank pattern generator now has an optional <code class="docutils literal notranslate"><span class="pre">spacing</span></code> argument for staggering igniters within a heat.</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">heat_delay</span></code> bug for strip and flank ignition has been fixed.</p></li>
-</ul>
+  <section id="driptorch-0-9-0-beta-1-release-notes">
+<h1>DripTorch 0.9.0-beta.1 Release Notes<a class="headerlink" href="#driptorch-0-9-0-beta-1-release-notes" title="Permalink to this headline">#</a></h1>
+<section id="new-features">
+<h2>New Features<a class="headerlink" href="#new-features" title="Permalink to this headline">#</a></h2>
+<section id="strip-contour-firing-beta-release-pr-143">
+<h3>Strip contour firing beta release (<a class="reference external" href="https://github.com/silvxlabs/DripTorch/pull/143">PR #143</a>)<a class="headerlink" href="#strip-contour-firing-beta-release-pr-143" title="Permalink to this headline">#</a></h3>
+<p>The strip contour firing technique is working, but unstable. We will follow up with beta bumps until we reach a stable version of the new firing technique.</p>
 </section>
-<section id="new-features-and-improvements">
-<h2>New features and improvements<a class="headerlink" href="#new-features-and-improvements" title="Permalink to this headline">#</a></h2>
-<section id="directional-arguments-for-backing-and-head-fire-pr-123">
-<h3>Directional arguments for backing and head fire (<a class="reference external" href="https://github.com/silvxlabs/DripTorch/pull/123">PR #123</a>)<a class="headerlink" href="#directional-arguments-for-backing-and-head-fire-pr-123" title="Permalink to this headline">#</a></h3>
-<p>We’ve added an optional <code class="docutils literal notranslate"><span class="pre">clockwise:</span> <span class="pre">bool</span></code> parameter to backing and head fire pattern generators. By default, the igniter will follow the boundary in the clockwise direction. Setting <code class="docutils literal notranslate"><span class="pre">clockwise</span> <span class="pre">=</span> <span class="pre">False</span></code> will send the igniter in the counter-clockwise direction.</p>
+<section id="cloud-hosted-dem-and-on-the-fly-grid-reprojection-pr-137">
+<h3>Cloud-hosted DEM and on-the-fly grid reprojection (<a class="reference external" href="https://github.com/silvxlabs/DripTorch/pull/137">PR #137</a>)<a class="headerlink" href="#cloud-hosted-dem-and-on-the-fly-grid-reprojection-pr-137" title="Permalink to this headline">#</a></h3>
+<p>These efforts support our goal to add contour following ignition patterns in version 0.9. The grid extraction and processing happens automatically behind the scenes.</p>
 </section>
-<section id="igniter-stagger-for-flank-ignition-pr-124">
-<h3>Igniter stagger for flank ignition (<a class="reference external" href="https://github.com/silvxlabs/DripTorch/pull/124">PR #124</a>)<a class="headerlink" href="#igniter-stagger-for-flank-ignition-pr-124" title="Permalink to this headline">#</a></h3>
-<p>The request for within-heat flank igniter spacing has been fulfilled. This feature was implemented in the same way as the strip ignition pattern generator; you can pass <code class="docutils literal notranslate"><span class="pre">spacing:</span> <span class="pre">float</span></code> parameter to the generator - spacing is the stagger distance in meters.</p>
-</section>
-<section id="tests-for-firing-techniques-pr-113">
-<h3>Tests for firing techniques (<a class="reference external" href="https://github.com/silvxlabs/DripTorch/pull/113">PR #113</a>)<a class="headerlink" href="#tests-for-firing-techniques-pr-113" title="Permalink to this headline">#</a></h3>
-<p>The new testing suite now includes validation tests for all implemented firing techniques.</p>
-</section>
-<section id="minor-doc-fixes-pr-125">
-<h3>Minor doc fixes (<a class="reference external" href="https://github.com/silvxlabs/DripTorch/pull/125">PR #125</a>)<a class="headerlink" href="#minor-doc-fixes-pr-125" title="Permalink to this headline">#</a></h3>
-<p>Fixed a few typos in the docs and updated the quickstart guide</p>
+<section id="contour-following-strip-ignition-prototype-pr-138">
+<h3>Contour-following strip ignition prototype (<a class="reference external" href="https://github.com/silvxlabs/DripTorch/pull/138">PR #138</a>)<a class="headerlink" href="#contour-following-strip-ignition-prototype-pr-138" title="Permalink to this headline">#</a></h3>
+<p>This PR encompasses the prototype code for an algorithm to commpute the geodesic distance transform over a 2.5 dimensional surface representated as a 2 dimensional matrix.</p>
 </section>
 </section>
 <section id="bug-fixes">
 <h2>Bug fixes<a class="headerlink" href="#bug-fixes" title="Permalink to this headline">#</a></h2>
-<section id="heat-delay-error-pr-121">
-<h3>Heat delay error (<a class="reference external" href="https://github.com/silvxlabs/DripTorch/pull/121">PR #121</a>)<a class="headerlink" href="#heat-delay-error-pr-121" title="Permalink to this headline">#</a></h3>
-<p>The between-heat time delay feature introduced in 0.7.0 was producing incorrect timings between heats and igniters. These issues have been resolved.</p>
+<section id="incorrect-naming-of-epsg-4326-pr-141">
+<h3>Incorrect naming of EPSG 4326 (<a class="reference external" href="https://github.com/silvxlabs/DripTorch/pull/141">PR #141</a>)<a class="headerlink" href="#incorrect-naming-of-epsg-4326-pr-141" title="Permalink to this headline">#</a></h3>
+<p>Somehow we got in the habit of calling EPSG: 4326 ‘Web Mercator’ while it’s actually WGS84. We have updated the code and docs to semantically reference 4326 as WGS84.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This is a breaking change for users directly using the <code class="docutils literal notranslate"><span class="pre">mercator_to_utm</span></code> and <code class="docutils literal notranslate"><span class="pre">to_mercator</span></code> methods from the <code class="docutils literal notranslate"><span class="pre">Projector</span></code> class.</p>
+</div>
 </section>
 </section>
 </section>
@@ -322,17 +304,17 @@
               <footer class="bd-footer-article">
                   <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-  <a class='left-prev' id="prev-link" href="0.8.1-notes.html" title="previous page">
+  <a class='left-prev' id="prev-link" href="unreleased-notes.html" title="previous page">
       <i class="fas fa-angle-left"></i>
       <div class="prev-next-info">
           <p class="prev-next-subtitle">previous</p>
-          <p class="prev-next-title">DripTorch 0.8.1 Release Notes</p>
+          <p class="prev-next-title">DripTorch Unreleased Notes</p>
       </div>
   </a>
-  <a class='right-next' id="next-link" href="0.7.2-notes.html" title="next page">
+  <a class='right-next' id="next-link" href="0.8.2-notes.html" title="next page">
   <div class="prev-next-info">
       <p class="prev-next-subtitle">next</p>
-      <p class="prev-next-title">DripTorch 0.7.2 Release Notes</p>
+      <p class="prev-next-title">DripTorch 0.8.2 Release Notes</p>
   </div>
   <i class="fas fa-angle-right"></i>
   </a>

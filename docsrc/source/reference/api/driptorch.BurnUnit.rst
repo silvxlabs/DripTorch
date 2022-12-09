@@ -18,6 +18,7 @@
       ~BurnUnit.buffer_downwind
       ~BurnUnit.copy
       ~BurnUnit.difference
+      ~BurnUnit.fetch_dem
       ~BurnUnit.from_json
       ~BurnUnit.to_json
    

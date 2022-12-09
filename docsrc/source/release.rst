@@ -5,6 +5,7 @@ Release notes
     :maxdepth: 3
 
      unreleased <release/unreleased-notes>
+     v0.9.0-beta.1 <release/0.9.0-beta.1-notes>
      v0.8.2 <release/0.8.2-notes>
      v0.8.1 <release/0.8.1-notes>
      v0.8.0 <release/0.8.0-notes>
