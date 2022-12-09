@@ -17,8 +17,8 @@ from shapely.ops import substring
 
 
 class StripContour(FiringBase):
-    """Strip firing produces ignition paths perpendicular to the firing direction. Igniters are staggered with their heats
-    and each heat alternates on which side of the unit they start.
+    """Strip-contour firing is similar to strip firing, with the option to include
+    topographic influences on the ignition paths.
 
     Parameters
     ----------
