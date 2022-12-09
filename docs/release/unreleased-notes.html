@@ -207,48 +207,9 @@
     
     <div class="toc-item">
       
-<div class="tocsection onthispage mt-5 pt-1 pb-3">
-    <i class="fas fa-list"></i> On this page
-</div>
 
 <nav id="bd-toc-nav">
-    <ul class="visible nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#new-features">
-   New Features
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#strip-contour-firing-beta-release-pr-143">
-     Strip contour firing beta release (PR #143)
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#cloud-hosted-dem-and-on-the-fly-grid-reprojection-pr-137">
-     Cloud-hosted DEM and on-the-fly grid reprojection (PR #137)
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#contour-following-strip-ignition-prototype-pr-138">
-     Contour-following strip ignition prototype (PR #138)
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#bug-fixes">
-   Bug fixes
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#incorrect-naming-of-epsg-4326-pr-141">
-     Incorrect naming of EPSG 4326 (PR #141)
-    </a>
-   </li>
-  </ul>
- </li>
-</ul>
-
+    
 </nav>
     </div>
     
@@ -268,32 +229,6 @@
                 
   <section id="driptorch-unreleased-notes">
 <h1>DripTorch Unreleased Notes<a class="headerlink" href="#driptorch-unreleased-notes" title="Permalink to this headline">#</a></h1>
-<section id="new-features">
-<h2>New Features<a class="headerlink" href="#new-features" title="Permalink to this headline">#</a></h2>
-<section id="strip-contour-firing-beta-release-pr-143">
-<h3>Strip contour firing beta release (<a class="reference external" href="https://github.com/silvxlabs/DripTorch/pull/143">PR #143</a>)<a class="headerlink" href="#strip-contour-firing-beta-release-pr-143" title="Permalink to this headline">#</a></h3>
-<p>The strip contour firing technique is working, but unstable. We will follow up with beta bumps until we reach a stable version of the new firing technique.</p>
-</section>
-<section id="cloud-hosted-dem-and-on-the-fly-grid-reprojection-pr-137">
-<h3>Cloud-hosted DEM and on-the-fly grid reprojection (<a class="reference external" href="https://github.com/silvxlabs/DripTorch/pull/137">PR #137</a>)<a class="headerlink" href="#cloud-hosted-dem-and-on-the-fly-grid-reprojection-pr-137" title="Permalink to this headline">#</a></h3>
-<p>These efforts support our goal to add contour following ignition patterns in version 0.9. The grid extraction and processing happens automatically behind the scenes.</p>
-</section>
-<section id="contour-following-strip-ignition-prototype-pr-138">
-<h3>Contour-following strip ignition prototype (<a class="reference external" href="https://github.com/silvxlabs/DripTorch/pull/138">PR #138</a>)<a class="headerlink" href="#contour-following-strip-ignition-prototype-pr-138" title="Permalink to this headline">#</a></h3>
-<p>This PR encompasses the prototype code for an algorithm to commpute the geodesic distance transform over a 2.5 dimensional surface representated as a 2 dimensional matrix.</p>
-</section>
-</section>
-<section id="bug-fixes">
-<h2>Bug fixes<a class="headerlink" href="#bug-fixes" title="Permalink to this headline">#</a></h2>
-<section id="incorrect-naming-of-epsg-4326-pr-141">
-<h3>Incorrect naming of EPSG 4326 (<a class="reference external" href="https://github.com/silvxlabs/DripTorch/pull/141">PR #141</a>)<a class="headerlink" href="#incorrect-naming-of-epsg-4326-pr-141" title="Permalink to this headline">#</a></h3>
-<p>Somehow we got in the habit of calling EPSG: 4326 ‘Web Mercator’ while it’s actually WGS84. We have updated the code and docs to semantically reference 4326 as WGS84.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>This is a breaking change for users directly using the <code class="docutils literal notranslate"><span class="pre">mercator_to_utm</span></code> and <code class="docutils literal notranslate"><span class="pre">to_mercator</span></code> methods from the <code class="docutils literal notranslate"><span class="pre">Projector</span></code> class.</p>
-</div>
-</section>
-</section>
 </section>
 
 

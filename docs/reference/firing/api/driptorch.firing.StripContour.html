@@ -6,39 +6,39 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>driptorch.io.read_geojson_polygon &#8212; DripTorch 0.9.0-beta.1 documentation</title>
+    <title>driptorch.firing.StripContour &#8212; DripTorch 0.9.0-beta.1 documentation</title>
 <script>
   document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
   document.documentElement.dataset.theme = localStorage.getItem("theme") || "light"
 </script>
 
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=92025949c220c2e29695" rel="stylesheet">
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=92025949c220c2e29695" rel="stylesheet">
+  <link href="../../../_static/styles/theme.css?digest=92025949c220c2e29695" rel="stylesheet">
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=92025949c220c2e29695" rel="stylesheet">
 
 
   <link rel="stylesheet"
-    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+    href="../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
   <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+    href="../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
   <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+    href="../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css" />
 
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=92025949c220c2e29695">
+  <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=92025949c220c2e29695">
 
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="driptorch.io.write_geojson" href="driptorch.io.write_geojson.html" />
-    <link rel="prev" title="driptorch.io.Projector.wgs84_to_utm" href="driptorch.io.Projector.wgs84_to_utm.html" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="driptorch.firing.StripContour.generate_pattern" href="driptorch.firing.StripContour.generate_pattern.html" />
+    <link rel="prev" title="Strip-contour fire" href="../strip_contour.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="docsearch:language" content="None">
   </head>
@@ -59,13 +59,13 @@
   
 
 
-<a class="navbar-brand logo" href="../../index.html">
+<a class="navbar-brand logo" href="../../../index.html">
   
   
   
   
-    <img src="../../_static/logo.svg" class="logo__image only-light" alt="Logo image">
-    <img src="../../_static/logo.svg" class="logo__image only-dark" alt="Logo image">
+    <img src="../../../_static/logo.svg" class="logo__image only-light" alt="Logo image">
+    <img src="../../../_static/logo.svg" class="logo__image only-dark" alt="Logo image">
   
   
 </a>
@@ -83,25 +83,25 @@
       <div class="navbar-center-item">
         <ul id="navbar-main-elements" class="navbar-nav">
     <li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../../index.html">
+ <a class="reference internal nav-link" href="../../../index.html">
   Home
  </a>
 </li>
 
 <li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../../getting_started/index.html">
+ <a class="reference internal nav-link" href="../../../getting_started/index.html">
   Getting started
  </a>
 </li>
 
 <li class="toctree-l1 current active nav-item">
- <a class="reference internal nav-link" href="../index.html">
+ <a class="reference internal nav-link" href="../../index.html">
   Reference
  </a>
 </li>
 
 <li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../../release.html">
+ <a class="reference internal nav-link" href="../../../release.html">
   Release notes
  </a>
 </li>
@@ -143,14 +143,14 @@
 
 <!-- Only show if we have sidebars configured, else just a small margin  -->
 <div class="bd-sidebar-primary col-12 col-md-3 bd-sidebar">
-  <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
   <i class="icon fas fa-search"></i>
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
     <ul class="current nav bd-sidenav">
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="../burn_unit.html">
+  <a class="reference internal" href="../../burn_unit.html">
    Burn Unit
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
@@ -160,49 +160,49 @@
   </label>
   <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.BurnUnit.html">
+    <a class="reference internal" href="../../api/driptorch.BurnUnit.html">
      driptorch.BurnUnit
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.BurnUnit.from_json.html">
+    <a class="reference internal" href="../../api/driptorch.BurnUnit.from_json.html">
      driptorch.BurnUnit.from_json
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.BurnUnit.copy.html">
+    <a class="reference internal" href="../../api/driptorch.BurnUnit.copy.html">
      driptorch.BurnUnit.copy
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.BurnUnit.to_json.html">
+    <a class="reference internal" href="../../api/driptorch.BurnUnit.to_json.html">
      driptorch.BurnUnit.to_json
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.BurnUnit.buffer_control_line.html">
+    <a class="reference internal" href="../../api/driptorch.BurnUnit.buffer_control_line.html">
      driptorch.BurnUnit.buffer_control_line
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.BurnUnit.buffer_downwind.html">
+    <a class="reference internal" href="../../api/driptorch.BurnUnit.buffer_downwind.html">
      driptorch.BurnUnit.buffer_downwind
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.BurnUnit.difference.html">
+    <a class="reference internal" href="../../api/driptorch.BurnUnit.difference.html">
      driptorch.BurnUnit.difference
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.BurnUnit.bounds.html">
+    <a class="reference internal" href="../../api/driptorch.BurnUnit.bounds.html">
      driptorch.BurnUnit.bounds
     </a>
    </li>
   </ul>
  </li>
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="../igniter.html">
+  <a class="reference internal" href="../../igniter.html">
    Igniter
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
@@ -212,29 +212,29 @@
   </label>
   <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.Igniter.html">
+    <a class="reference internal" href="../../api/driptorch.Igniter.html">
      driptorch.Igniter
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.Igniter.from_json.html">
+    <a class="reference internal" href="../../api/driptorch.Igniter.from_json.html">
      driptorch.Igniter.from_json
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.Igniter.to_json.html">
+    <a class="reference internal" href="../../api/driptorch.Igniter.to_json.html">
      driptorch.Igniter.to_json
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.Igniter.copy.html">
+    <a class="reference internal" href="../../api/driptorch.Igniter.copy.html">
      driptorch.Igniter.copy
     </a>
    </li>
   </ul>
  </li>
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="../ignition_crew.html">
+  <a class="reference internal" href="../../ignition_crew.html">
    Ignition Crew
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
@@ -244,49 +244,49 @@
   </label>
   <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.IgnitionCrew.html">
+    <a class="reference internal" href="../../api/driptorch.IgnitionCrew.html">
      driptorch.IgnitionCrew
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.IgnitionCrew.from_json.html">
+    <a class="reference internal" href="../../api/driptorch.IgnitionCrew.from_json.html">
      driptorch.IgnitionCrew.from_json
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.IgnitionCrew.from_list.html">
+    <a class="reference internal" href="../../api/driptorch.IgnitionCrew.from_list.html">
      driptorch.IgnitionCrew.from_list
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.IgnitionCrew.clone_igniter.html">
+    <a class="reference internal" href="../../api/driptorch.IgnitionCrew.clone_igniter.html">
      driptorch.IgnitionCrew.clone_igniter
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.IgnitionCrew.to_json.html">
+    <a class="reference internal" href="../../api/driptorch.IgnitionCrew.to_json.html">
      driptorch.IgnitionCrew.to_json
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.IgnitionCrew.add_igniter.html">
+    <a class="reference internal" href="../../api/driptorch.IgnitionCrew.add_igniter.html">
      driptorch.IgnitionCrew.add_igniter
     </a>
    </li>
   </ul>
  </li>
- <li class="toctree-l1 has-children">
-  <a class="reference internal" href="../firing/index.html">
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="../index.html">
    Firing Techniques
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
   <label for="toctree-checkbox-4">
    <i class="fas fa-chevron-down">
    </i>
   </label>
-  <ul>
+  <ul class="current">
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="../firing/strip.html">
+    <a class="reference internal" href="../strip.html">
      Strip fire
     </a>
     <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
@@ -296,19 +296,19 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="../firing/api/driptorch.firing.Strip.html">
+      <a class="reference internal" href="driptorch.firing.Strip.html">
        driptorch.firing.Strip
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../firing/api/driptorch.firing.Strip.generate_pattern.html">
+      <a class="reference internal" href="driptorch.firing.Strip.generate_pattern.html">
        driptorch.firing.Strip.generate_pattern
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="../firing/flank.html">
+    <a class="reference internal" href="../flank.html">
      Flank fire
     </a>
     <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
@@ -318,19 +318,19 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="../firing/api/driptorch.firing.Flank.html">
+      <a class="reference internal" href="driptorch.firing.Flank.html">
        driptorch.firing.Flank
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../firing/api/driptorch.firing.Flank.generate_pattern.html">
+      <a class="reference internal" href="driptorch.firing.Flank.generate_pattern.html">
        driptorch.firing.Flank.generate_pattern
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="../firing/ring.html">
+    <a class="reference internal" href="../ring.html">
      Ring fire
     </a>
     <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
@@ -340,19 +340,19 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="../firing/api/driptorch.firing.Ring.html">
+      <a class="reference internal" href="driptorch.firing.Ring.html">
        driptorch.firing.Ring
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../firing/api/driptorch.firing.Ring.generate_pattern.html">
+      <a class="reference internal" href="driptorch.firing.Ring.generate_pattern.html">
        driptorch.firing.Ring.generate_pattern
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="../firing/head.html">
+    <a class="reference internal" href="../head.html">
      Head fire
     </a>
     <input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
@@ -362,19 +362,19 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="../firing/api/driptorch.firing.Head.html">
+      <a class="reference internal" href="driptorch.firing.Head.html">
        driptorch.firing.Head
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../firing/api/driptorch.firing.Head.generate_pattern.html">
+      <a class="reference internal" href="driptorch.firing.Head.generate_pattern.html">
        driptorch.firing.Head.generate_pattern
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="../firing/back.html">
+    <a class="reference internal" href="../back.html">
      Backing fire
     </a>
     <input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/>
@@ -384,19 +384,19 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="../firing/api/driptorch.firing.Back.html">
+      <a class="reference internal" href="driptorch.firing.Back.html">
        driptorch.firing.Back
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../firing/api/driptorch.firing.Back.generate_pattern.html">
+      <a class="reference internal" href="driptorch.firing.Back.generate_pattern.html">
        driptorch.firing.Back.generate_pattern
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="../firing/inferno.html">
+    <a class="reference internal" href="../inferno.html">
      Inferno fire
     </a>
     <input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
@@ -406,34 +406,34 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="../firing/api/driptorch.firing.Inferno.html">
+      <a class="reference internal" href="driptorch.firing.Inferno.html">
        driptorch.firing.Inferno
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../firing/api/driptorch.firing.Inferno.generate_pattern.html">
+      <a class="reference internal" href="driptorch.firing.Inferno.generate_pattern.html">
        driptorch.firing.Inferno.generate_pattern
       </a>
      </li>
     </ul>
    </li>
-   <li class="toctree-l2 has-children">
-    <a class="reference internal" href="../firing/strip_contour.html">
+   <li class="toctree-l2 current active has-children">
+    <a class="reference internal" href="../strip_contour.html">
      Strip-contour fire
     </a>
-    <input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/>
+    <input checked="" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/>
     <label for="toctree-checkbox-11">
      <i class="fas fa-chevron-down">
      </i>
     </label>
-    <ul>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../firing/api/driptorch.firing.StripContour.html">
+    <ul class="current">
+     <li class="toctree-l3 current active">
+      <a class="current reference internal" href="#">
        driptorch.firing.StripContour
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../firing/api/driptorch.firing.StripContour.generate_pattern.html">
+      <a class="reference internal" href="driptorch.firing.StripContour.generate_pattern.html">
        driptorch.firing.StripContour.generate_pattern
       </a>
      </li>
@@ -442,7 +442,7 @@
   </ul>
  </li>
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="../pattern.html">
+  <a class="reference internal" href="../../pattern.html">
    Pattern
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/>
@@ -452,106 +452,106 @@
   </label>
   <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.Pattern.html">
+    <a class="reference internal" href="../../api/driptorch.Pattern.html">
      driptorch.Pattern
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.Pattern.from_dict.html">
+    <a class="reference internal" href="../../api/driptorch.Pattern.from_dict.html">
      driptorch.Pattern.from_dict
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.Pattern.to_dict.html">
+    <a class="reference internal" href="../../api/driptorch.Pattern.to_dict.html">
      driptorch.Pattern.to_dict
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.Pattern.empty_path_dict.html">
+    <a class="reference internal" href="../../api/driptorch.Pattern.empty_path_dict.html">
      driptorch.Pattern.empty_path_dict
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.Pattern.to_json.html">
+    <a class="reference internal" href="../../api/driptorch.Pattern.to_json.html">
      driptorch.Pattern.to_json
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.Pattern.merge.html">
+    <a class="reference internal" href="../../api/driptorch.Pattern.merge.html">
      driptorch.Pattern.merge
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.Pattern.translate.html">
+    <a class="reference internal" href="../../api/driptorch.Pattern.translate.html">
      driptorch.Pattern.translate
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.Pattern.to_quicfire.html">
+    <a class="reference internal" href="../../api/driptorch.Pattern.to_quicfire.html">
      driptorch.Pattern.to_quicfire
     </a>
    </li>
   </ul>
  </li>
- <li class="toctree-l1 current active has-children">
-  <a class="reference internal" href="../io.html">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../io.html">
    Projections and I/O
   </a>
-  <input checked="" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" type="checkbox"/>
+  <input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" type="checkbox"/>
   <label for="toctree-checkbox-13">
    <i class="fas fa-chevron-down">
    </i>
   </label>
-  <ul class="current">
+  <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.io.Projector.html">
+    <a class="reference internal" href="../../api/driptorch.io.Projector.html">
      driptorch.io.Projector
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.io.Projector.forward.html">
+    <a class="reference internal" href="../../api/driptorch.io.Projector.forward.html">
      driptorch.io.Projector.forward
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.io.Projector.backward.html">
+    <a class="reference internal" href="../../api/driptorch.io.Projector.backward.html">
      driptorch.io.Projector.backward
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.io.Projector.estimate_utm_epsg.html">
+    <a class="reference internal" href="../../api/driptorch.io.Projector.estimate_utm_epsg.html">
      driptorch.io.Projector.estimate_utm_epsg
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.io.Projector.to_wgs84.html">
+    <a class="reference internal" href="../../api/driptorch.io.Projector.to_wgs84.html">
      driptorch.io.Projector.to_wgs84
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.io.Projector.wgs84_to_utm.html">
+    <a class="reference internal" href="../../api/driptorch.io.Projector.wgs84_to_utm.html">
      driptorch.io.Projector.wgs84_to_utm
     </a>
    </li>
-   <li class="toctree-l2 current active">
-    <a class="current reference internal" href="#">
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../api/driptorch.io.read_geojson_polygon.html">
      driptorch.io.read_geojson_polygon
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.io.write_geojson.html">
+    <a class="reference internal" href="../../api/driptorch.io.write_geojson.html">
      driptorch.io.write_geojson
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.io.write_quicfire.html">
+    <a class="reference internal" href="../../api/driptorch.io.write_quicfire.html">
      driptorch.io.write_quicfire
     </a>
    </li>
   </ul>
  </li>
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="../mapping.html">
+  <a class="reference internal" href="../../mapping.html">
    Mapping
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" type="checkbox"/>
@@ -561,32 +561,32 @@
   </label>
   <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.Map.html">
+    <a class="reference internal" href="../../api/driptorch.Map.html">
      driptorch.Map
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.Map.add_firing_area.html">
+    <a class="reference internal" href="../../api/driptorch.Map.add_firing_area.html">
      driptorch.Map.add_firing_area
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.Map.add_blackline_area.html">
+    <a class="reference internal" href="../../api/driptorch.Map.add_blackline_area.html">
      driptorch.Map.add_blackline_area
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.Map.add_pattern.html">
+    <a class="reference internal" href="../../api/driptorch.Map.add_pattern.html">
      driptorch.Map.add_pattern
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.Map.show.html">
+    <a class="reference internal" href="../../api/driptorch.Map.show.html">
      driptorch.Map.show
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="driptorch.Map.styling.html">
+    <a class="reference internal" href="../../api/driptorch.Map.styling.html">
      driptorch.Map.styling
     </a>
    </li>
@@ -630,32 +630,49 @@
               
               <article class="bd-article" role="main">
                 
-  <section id="driptorch-io-read-geojson-polygon">
-<h1>driptorch.io.read_geojson_polygon<a class="headerlink" href="#driptorch-io-read-geojson-polygon" title="Permalink to this headline">#</a></h1>
-<dl class="py function">
-<dt class="sig sig-object py" id="driptorch.io.read_geojson_polygon">
-<span class="sig-prename descclassname"><span class="pre">driptorch.io.</span></span><span class="sig-name descname"><span class="pre">read_geojson_polygon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geojson</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://python-visualization.github.io/folium/modules.html#folium.vector_layers.Polygon" title="(in Folium v0.12)"><span class="pre">folium.vector_layers.Polygon</span></a></span></span><a class="headerlink" href="#driptorch.io.read_geojson_polygon" title="Permalink to this definition">#</a></dt>
-<dd><p>Parse a GeoJSON to a shapely Polygon</p>
+  <section id="driptorch-firing-stripcontour">
+<h1>driptorch.firing.StripContour<a class="headerlink" href="#driptorch-firing-stripcontour" title="Permalink to this headline">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="driptorch.firing.StripContour">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">driptorch.firing.</span></span><span class="sig-name descname"><span class="pre">StripContour</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">burn_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../api/driptorch.BurnUnit.html#driptorch.BurnUnit" title="driptorch.unit.BurnUnit"><span class="pre">driptorch.unit.BurnUnit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignition_crew</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../api/driptorch.IgnitionCrew.html#driptorch.IgnitionCrew" title="driptorch.personnel.IgnitionCrew"><span class="pre">driptorch.personnel.IgnitionCrew</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#driptorch.firing.StripContour" title="Permalink to this definition">#</a></dt>
+<dd><p>Strip firing produces ignition paths perpendicular to the firing direction. Igniters are staggered with their heats
+and each heat alternates on which side of the unit they start.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>geojson</strong><span class="classifier">dict</span></dt><dd><p>GeoJSON feature projected in 4326</p>
+<dt><strong>burn_unit</strong><span class="classifier">BurnUnit</span></dt><dd><p>Area bounding the ignition paths</p>
 </dd>
-</dl>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt>Polygon</dt><dd><p>Shapely polygon geometry</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-odd">Raises</dt>
-<dd class="field-odd"><dl class="simple">
-<dt>GeojsonError</dt><dd><p>Raise error if we can’t figure out the formatting</p>
+<dt><strong>ignition_crew</strong><span class="classifier">IgnitionCrew</span></dt><dd><p>Ignition crew assigned to the burn</p>
 </dd>
 </dl>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="driptorch.firing.StripContour.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">burn_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../api/driptorch.BurnUnit.html#driptorch.BurnUnit" title="driptorch.unit.BurnUnit"><span class="pre">driptorch.unit.BurnUnit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignition_crew</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../api/driptorch.IgnitionCrew.html#driptorch.IgnitionCrew" title="driptorch.personnel.IgnitionCrew"><span class="pre">driptorch.personnel.IgnitionCrew</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#driptorch.firing.StripContour.__init__" title="Permalink to this definition">#</a></dt>
+<dd><p>Constructor</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>burn_unit (BurnUnit): Area bounding the ignition paths
+ignition_crew (IgnitionCrew): Crew assigned to the firing operation</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="autosummary longtable table autosummary">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#driptorch.firing.StripContour.__init__" title="driptorch.firing.StripContour.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(burn_unit, ignition_crew)</p></td>
+<td><p>Constructor</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="driptorch.firing.StripContour.generate_pattern.html#driptorch.firing.StripContour.generate_pattern" title="driptorch.firing.StripContour.generate_pattern"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_pattern</span></code></a>([spacing, depth, ...])</p></td>
+<td><p>Generate a flank fire ignition pattern</p></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </section>
@@ -668,17 +685,17 @@
               <footer class="bd-footer-article">
                   <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-  <a class='left-prev' id="prev-link" href="driptorch.io.Projector.wgs84_to_utm.html" title="previous page">
+  <a class='left-prev' id="prev-link" href="../strip_contour.html" title="previous page">
       <i class="fas fa-angle-left"></i>
       <div class="prev-next-info">
           <p class="prev-next-subtitle">previous</p>
-          <p class="prev-next-title">driptorch.io.Projector.wgs84_to_utm</p>
+          <p class="prev-next-title">Strip-contour fire</p>
       </div>
   </a>
-  <a class='right-next' id="next-link" href="driptorch.io.write_geojson.html" title="next page">
+  <a class='right-next' id="next-link" href="driptorch.firing.StripContour.generate_pattern.html" title="next page">
   <div class="prev-next-info">
       <p class="prev-next-subtitle">next</p>
-      <p class="prev-next-title">driptorch.io.write_geojson</p>
+      <p class="prev-next-title">driptorch.firing.StripContour.generate_pattern</p>
   </div>
   <i class="fas fa-angle-right"></i>
   </a>
@@ -693,7 +710,7 @@
   
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=92025949c220c2e29695"></script>
+  <script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=92025949c220c2e29695"></script>
 
 <footer class="bd-footer"><div class="bd-footer__inner container">
   
