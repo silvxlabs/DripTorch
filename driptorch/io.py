@@ -144,6 +144,32 @@ class Projector:
         return projector.forward(geometry)
 
 
+def find_dicts_with_keys(d, key1: str = "type", key2: str = "coordinates"):
+    """Recursively traverse the dictionary and return a list of all children
+    dictionaries that contain the specific keys.
+
+    Wrote with intention to effectively parse geojson dicts
+
+    Args:
+        d (dict): input dictionary
+        key1 (str, optional): first key to search. Defaults to "type".
+        key2 (str, optional): second key to search. Defaults to "coordinates".
+
+    Returns:
+        list: list of found dicts containing key1 and key2
+    """
+    result = []
+    if isinstance(d, dict):
+        if key1 in d and key2 in d:
+            result.append(d)
+        for v in d.values():
+            result += find_dicts_with_keys(v, key1, key2)
+    elif isinstance(d, list):
+        for i in d:
+            result += find_dicts_with_keys(i, key1, key2)
+    return result
+
+
 def read_geojson_polygon(geojson: dict) -> Polygon:
     """Parse a GeoJSON to a shapely Polygon
 
@@ -163,23 +189,16 @@ def read_geojson_polygon(geojson: dict) -> Polygon:
         Shapely polygon geometry
     """
 
+    geojson = {
+        "geometry": find_dicts_with_keys(geojson)[0]
+    }
+
     # If the geojson is a feature collection then we loop over the features
     # and find the first instance of a polygon geometry type
-    if geojson['type'] == 'FeatureCollection':
-        for feature in geojson['features']:
-            if feature['geometry']['type'].lower() == 'polygon':
-                geometry = shape(feature['geometry'])
-                break
-
-    # Maybe it's just the geometry?
-    elif geojson['type'].lower() == 'Polygon':
-        geometry = shape(geojson)
-
-    # Fix your shit, we're not gonna to keep trying to guess
+    if geojson['geometry']['type'].lower() == "polygon":
+        return shape(geojson)
     else:
         raise GeojsonError(GeojsonError.read_error)
-
-    return geometry
 
 
 def write_geojson(geometries: list[BaseGeometry], src_epsg: int, dst_epsg: int = 4326, properties={},
