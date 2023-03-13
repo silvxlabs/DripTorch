@@ -151,12 +151,12 @@ def find_dicts_with_keys(d, key1: str = "type", key2: str = "coordinates"):
     Wrote with intention to effectively parse geojson dicts
 
     Args:
-        d (_type_): dictionary
+        d (dict): input dictionary
         key1 (str, optional): first key to search. Defaults to "type".
         key2 (str, optional): second key to search. Defaults to "coordinates".
 
     Returns:
-        _type_: list of found dicts containing key1 and key2
+        list: list of found dicts containing key1 and key2
     """
     result = []
     if isinstance(d, dict):
