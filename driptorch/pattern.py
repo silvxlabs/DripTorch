@@ -133,14 +133,13 @@ class Pattern:
 
         return {"heat": [], "igniter": [], "leg": [], "geometry": []}
 
-    def to_json(self, max_time=None) -> dict:
+    def to_json(self, max_line_segment_time=None) -> dict:
         """Write the Pattern to a GeoJSON dictionary
-        
+
         Parameters
         ----------
-        max_time : int
-            Maximum time (seconds) for any two line segments. Does not
-            split line segments.
+        max_line_segment_time : int, optional
+            Maximum time (in milliseconds) for a line segment.
 
         Returns
         -------
@@ -161,48 +160,6 @@ class Pattern:
 
         # Read the jagged times array as an Awkward array for vectorized operations
         times = ak.Array(times)
-        
-        if max_time is not None:
-
-            new_times = []
-            new_geoms = []
-            new_heat = []
-            new_igniter = []
-            new_leg = []
-
-            for i in range(len(times)):
-
-                segment_times = []
-                segment_coords = []
-                prev_time = 0
-
-                for j in range(len(times[i])):
-
-                    if times[i][j] - prev_time > max_time and len(segment_times) > 1:
-                        
-                        new_times.append(segment_times)
-                        new_geoms.append(LineString(segment_coords))
-
-                        segment_times = [prev_time]
-                        segment_coords = [self.geometry[i].coords[j-1]]
-
-                        prev_time = times[i][j]
-
-                    segment_times.append(times[i][j])
-                    segment_coords.append(self.geometry[i].coords[j])
-
-                    new_heat.append(self.heat[i])
-                    new_igniter.append(self.heat[i])
-                    new_leg.append(self.heat[i])
-               
-                new_times.append(segment_times)
-                new_geoms.append(LineString(segment_coords))
-
-            times = ak.Array(new_times)
-            self.geometry = new_geoms
-            self.heat = new_heat
-            self.igniter = new_igniter
-            self.leg = new_leg
 
         # Convert to milliseconds since Epoch (this is what Leaflet wants)
         times = (times * 1000) + (unix_time() * 1000)
@@ -224,6 +181,7 @@ class Pattern:
             properties=props,
             style=style,
             elapsed_time=self.elapsed_time,
+            max_line_segment_time=max_line_segment_time
         )
 
     def translate(self, x_off: float, y_off: float) -> Pattern:
