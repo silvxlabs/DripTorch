@@ -15,6 +15,8 @@ from shapely.geometry import mapping, shape, MultiLineString, LineString, Point,
 from shapely.geometry.base import BaseGeometry
 from shapely.ops import transform
 from typing import Union
+import json
+import copy
 
 
 class Projector:
@@ -183,7 +185,7 @@ def read_geojson_polygon(geojson: dict) -> Polygon:
 
 
 def write_geojson(geometries: list[BaseGeometry], src_epsg: int, dst_epsg: int = 4326, properties={},
-                  style={}, elapsed_time=None) -> dict:
+                  style={}, elapsed_time=None, max_line_segment_time=None) -> dict:
     """Write a list of shapely geometries to GeoJSON
 
     Parameters
@@ -200,6 +202,8 @@ def write_geojson(geometries: list[BaseGeometry], src_epsg: int, dst_epsg: int =
         Rendering style applied to all features. Defaults to {}.
     elapsed_time : float, optional
         Time elapsed during the firing operation. Defaults to None.
+    max_line_segment_time : int, optional
+        Maximum time (in milliseconds) for a line segment.
 
     Returns
     -------
@@ -228,6 +232,76 @@ def write_geojson(geometries: list[BaseGeometry], src_epsg: int, dst_epsg: int =
                 'geometry': mapping(projector.forward(geometry))
             }
         )
+
+    if max_line_segment_time is not None and 'times' in features[0]['properties']:
+       
+        new_features = []
+
+        for feature in features:
+
+            # only split lines
+            if feature['geometry']['type'] != 'LineString':
+                new_features.append(copy.deepcopy(feature))
+                continue
+
+            times = feature['properties']['times']
+            coords = feature['geometry']['coordinates']
+            prev_idx = 0
+            cur_idx = 0
+
+            while cur_idx < len(times):
+
+                while times[cur_idx] - times[prev_idx] > max_line_segment_time:
+
+                    # create a new feature ending at previous time + max time
+                    end_time = times[prev_idx] + max_line_segment_time
+                    new_times = times[prev_idx:cur_idx] + [end_time]
+
+                    fraction = max_line_segment_time / (times[cur_idx] - times[prev_idx])
+
+                    # calculate distance for accumulated line
+                    distance = LineString(coords[prev_idx:cur_idx+1]).length
+
+                    max_distance = distance * fraction
+
+                    # find the segment where the distance along accumulated line
+                    # is past the max distance
+                    accum_idx = prev_idx
+                    accum_distance = 0
+                    while accum_distance < max_distance:
+                        next_distance = Point(coords[accum_idx]).distance(Point(coords[accum_idx+1]))
+                        accum_distance += next_distance
+                        accum_idx += 1
+
+                    subfraction = (max_distance - (accum_distance - next_distance)) / next_distance
+
+                    new_x = coords[accum_idx-1][0] + (coords[accum_idx][0] - coords[accum_idx-1][0]) * subfraction
+                    new_y = coords[accum_idx-1][1] + (coords[accum_idx][1] - coords[accum_idx-1][1]) * subfraction
+                    end_coords = (new_x, new_y)
+                    new_coords = coords[prev_idx:accum_idx] + (end_coords,)
+
+                    new_feature = copy.deepcopy(feature)
+                    new_feature['properties']['times'] = new_times
+                    new_feature['geometry']['coordinates'] = new_coords
+                    new_features.append(new_feature)
+
+                    # modify current feature to start at previous time + max_line_segment_time
+                    feature['properties']['times'] = [end_time] + times[accum_idx:]
+                    feature['geometry']['coordinates'] = (end_coords,) + coords[accum_idx:]
+                    times = feature['properties']['times']
+                    coords = feature['geometry']['coordinates']
+
+                    prev_idx = 0
+                    cur_idx = 0
+            
+                cur_idx += 1
+            
+        
+            if len(times) > 0:
+                new_features.append(copy.deepcopy(feature))
+
+
+        features = new_features
 
     # Compile the features in a feature collection
     geojson = {
