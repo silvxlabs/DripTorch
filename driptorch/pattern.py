@@ -133,8 +133,13 @@ class Pattern:
 
         return {"heat": [], "igniter": [], "leg": [], "geometry": []}
 
-    def to_json(self) -> dict:
+    def to_json(self, max_line_segment_time=None) -> dict:
         """Write the Pattern to a GeoJSON dictionary
+
+        Parameters
+        ----------
+        max_line_segment_time : int, optional
+            Maximum time (in milliseconds) for a line segment.
 
         Returns
         -------
@@ -176,6 +181,7 @@ class Pattern:
             properties=props,
             style=style,
             elapsed_time=self.elapsed_time,
+            max_line_segment_time=max_line_segment_time
         )
 
     def translate(self, x_off: float, y_off: float) -> Pattern:
