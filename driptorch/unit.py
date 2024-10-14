@@ -15,7 +15,7 @@ from ._grid import Grid, Bounds, AlbersConusDEM
 
 # External imports
 import numpy as np
-from shapely.geometry import Polygon, LineString, Point
+from shapely.geometry import Polygon, LineString, Point, MultiPolygon
 from shapely import affinity
 
 
@@ -182,6 +182,17 @@ class BurnUnit:
         # Now take the difference between the current firing area and the fore line
         # buffer to cut out the downfiring blackline area
         buffered_polygon = self.polygon.difference(fore_line_buffer)
+
+        if isinstance(buffered_polygon, MultiPolygon):
+            print('WARNING: downwind buffered geometry is multipolygon; using only largest polygon.')
+            multi = list(buffered_polygon)
+            max_area = -999999
+            for poly in multi:
+                if poly.area > max_area:
+                    max_area = poly.area
+                    max_poly = poly
+
+            buffered_polygon = max_poly
 
         return BurnUnit(buffered_polygon, self.firing_direction, utm_epsg=self.utm_epsg)
 

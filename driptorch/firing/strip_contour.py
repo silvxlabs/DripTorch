@@ -112,7 +112,7 @@ class StripContour(FiringBase):
                             source_line, neighborhood_size=1, z_multiplier=elevation_influence)
 
         # Determine level set values for ignition path slicing
-        if heat_depth == depth:
+        if not heat_depth or heat_depth == depth:
             levels = range(depth, int(np.max(cost_distance.data)), depth)
         else:
             levels = [depth]
