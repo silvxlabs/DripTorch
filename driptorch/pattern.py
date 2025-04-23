@@ -4,10 +4,8 @@ Spatiotemporal patterns and the infamous temporal propagator
 
 # Core imports
 from __future__ import annotations
-import pdb
 import copy
 from time import time as unix_time
-import warnings
 
 # Internal imports
 from .io import Projector, write_geojson, write_quicfire
@@ -19,23 +17,11 @@ from .personnel import IgnitionCrew
 import awkward as ak
 import numpy as np
 import pandas as pd
-from shapely.errors import ShapelyDeprecationWarning
 from shapely import affinity
 from shapely.geometry import MultiPoint, MultiLineString, LineString, shape
 
 # Turn off Pandas copy warning (or figure out how to do it like the Panda wants)
 pd.options.mode.chained_assignment = None
-
-"""
-
-Turn off the Shapely deprecation warning about about future removal
-of the array interface. This happens when a Pandas takes a list of Shapely
-geometries and casts to a list of ndarray objects. GeoPandas would fix this
-but it's not worth the added complexity of GDAL C binary deps. This is fine
-as long as we don't upgrade the Shapely req to v2.
-
-"""
-warnings.filterwarnings("ignore", category=ShapelyDeprecationWarning)
 
 
 class Pattern:
@@ -65,15 +51,38 @@ class Pattern:
         self.heat = heat
         self.igniter = igniter
         self.leg = leg
-        self.times = times
+        # Ensure all times are floats, handling nested lists
+        self.times = []
+        for time_list in times:
+            if isinstance(time_list, list):
+                if all(isinstance(t, (int, float)) for t in time_list):
+                    self.times.append([float(t) for t in time_list])
+                else:
+                    # Handle nested lists
+                    nested_times = []
+                    for t in time_list:
+                        if isinstance(t, list):
+                            nested_times.append([float(x) for x in t])
+                        else:
+                            nested_times.append(float(t))
+                    self.times.append(nested_times)
+            else:
+                self.times.append([float(time_list)])
         self.geometry = geometry
         self.epsg = epsg
 
         # Compute the total elapsed time for the ignition crew
-        times_ak = ak.Array(self.times)
-        min_time = ak.min(times_ak)
-        max_time = ak.max(times_ak)
-        self.elapsed_time = max_time - min_time
+        # Flatten the times array to find min and max
+        flat_times = []
+        for time_list in self.times:
+            if isinstance(time_list[0], list):
+                # For dash patterns, we have [start, end] pairs
+                for pair in time_list:
+                    flat_times.extend(pair)
+            else:
+                flat_times.extend(time_list)
+        
+        self.elapsed_time = max(flat_times) - min(flat_times)
 
     @classmethod
     def from_dict(cls, paths_dict: dict, epsg: int) -> Pattern:
@@ -94,6 +103,24 @@ class Pattern:
         """
 
         paths_dict["geometry"] = [shape(x) for x in paths_dict["geometry"]]
+        # Ensure all times are floats, handling nested lists
+        times = []
+        for time_list in paths_dict["times"]:
+            if isinstance(time_list, list):
+                if all(isinstance(t, (int, float)) for t in time_list):
+                    times.append([float(t) for t in time_list])
+                else:
+                    # Handle nested lists
+                    nested_times = []
+                    for t in time_list:
+                        if isinstance(t, list):
+                            nested_times.append([float(x) for x in t])
+                        else:
+                            nested_times.append(float(t))
+                    times.append(nested_times)
+            else:
+                times.append([float(time_list)])
+        paths_dict["times"] = times
         return cls(
             paths_dict["heat"],
             paths_dict["igniter"],
@@ -723,30 +750,40 @@ class TemporalPropagator:
         self.paths.at[index, "geometry"] = MultiLineString(line_segs)
 
     def _dots(self, index: int, path: pd.Series, velocity: float, gap_length: float):
-        """Compute arrival times along each igniter's coordinate sequence
-        for interpolated equally spaced points (dots)
+        """Compute arrival times for dot ignition pattern
+
+        Parameters
+        ----------
+        index : int
+            Path index
+        path : pd.Series
+            Path data
+        velocity : float
+            Igniter velocity in meters per second
+        gap_length : float
+            Gap length in meters
         """
+        # Get the path geometry and ensure we have a list of points
+        if hasattr(path.geometry, 'geoms'):
+            points = list(path.geometry.geoms)
+        elif isinstance(path.geometry, LineString):
+            # For LineString, create points at regular intervals
+            distances = np.arange(0, path.geometry.length, gap_length)
+            points = [path.geometry.interpolate(distance) for distance in distances]
+        else:
+            points = [path.geometry]
 
+        # Get the initial arrival time
         arrival_time = path.start_time
-
-        # Get a range of distances along the length of the path space by
-        # the ignition rate
-        distances = np.arange(0, path.geometry.length, gap_length)
-
-        # Interpolate points at those distance along the path
-        points = MultiPoint(
-            [path.geometry.interpolate(distance) for distance in distances]
-        )
 
         # Set the initial arrival time
         path_times = [arrival_time]
 
         # For each interpolated point except the last
         for i, point in enumerate(points[:-1]):
-
             # Get the current and next points
-            xy = np.array(point.coords)
-            next_xy = np.array(points[i + 1].coords)
+            xy = np.array(point.coords).squeeze()
+            next_xy = np.array(points[i + 1].coords).squeeze()
 
             # Compute the distance between points and travel time
             meters = np.linalg.norm(xy - next_xy)
@@ -758,4 +795,4 @@ class TemporalPropagator:
         # Add the current path's time array to the global time array and
         # add the multipar point geometry to the new geometries array
         self.paths.at[index, "times"] = path_times
-        self.paths.at[index, "geometry"] = points
+        self.paths.at[index, "geometry"] = MultiPoint(points)
