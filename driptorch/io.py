@@ -145,7 +145,7 @@ class Projector:
 
 
 def read_geojson_polygon(geojson: dict) -> Polygon:
-    """Parse a GeoJSON to a shapely Polygon
+    """Read a GeoJSON polygon into a shapely polygon
 
     Parameters
     ----------
@@ -168,18 +168,14 @@ def read_geojson_polygon(geojson: dict) -> Polygon:
     if geojson['type'] == 'FeatureCollection':
         for feature in geojson['features']:
             if feature['geometry']['type'].lower() == 'polygon':
-                geometry = shape(feature['geometry'])
-                break
+                return shape(feature['geometry'])
 
     # Maybe it's just the geometry?
-    elif geojson['type'].lower() == 'Polygon':
-        geometry = shape(geojson)
+    elif geojson['type'].lower() == 'polygon':
+        return shape(geojson)
 
     # Fix your shit, we're not gonna to keep trying to guess
-    else:
-        raise GeojsonError(GeojsonError.read_error)
-
-    return geometry
+    raise GeojsonError(GeojsonError.read_error)
 
 
 def write_geojson(geometries: list[BaseGeometry], src_epsg: int, dst_epsg: int = 4326, properties={},
