@@ -1,0 +1,10 @@
+Shapely
+awkward
+numpy
+pandas
+pyproj
+folium
+gcsfs
+zarr
+scipy
+scikit-image
