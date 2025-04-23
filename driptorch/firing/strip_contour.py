@@ -29,13 +29,19 @@ class StripContour(FiringBase):
     """
 
     def __init__(self, burn_unit: BurnUnit, ignition_crew: IgnitionCrew):
+        """Constructor
 
-        # Check if DEM has been fetched for burn unit
-        if burn_unit.dem is None:
-            burn_unit.fetch_dem(resolution=10)
-
-        # Initialize the base class
-        super().__init__(burn_unit, ignition_crew)
+        Parameters
+        ----------
+        burn_unit : BurnUnit
+            Burn unit to generate pattern for
+        ignition_crew : IgnitionCrew
+            Ignition crew to use for pattern generation
+        """
+        raise NotImplementedError(
+            "The StripContour firing pattern is currently unavailable due to DEM data access issues. "
+            "Please use other firing pattern types like Strip or Ring instead."
+        )
 
     def generate_pattern(self, spacing: float = 0, depth: float = 0, heat_depth: float = 0, side: str = 'right', heat_delay: float = 0, topo_scale: int = 1) -> Pattern:
         """Pattern generator for strip-contour firing

@@ -29,16 +29,16 @@ setup(
     keywords=['ignition pattern', 'fire',
               'firing techniques', 'prescribed burn'],
     install_requires=[
-        'Shapely==1.8.2',
-        'awkward==1.8.0',
-        'numpy==1.22.4',
-        'pandas==1.4.2',
-        'pyproj==3.3.1',
-        'folium==0.12.1.post1',
-        'gcsfs==2022.1.0',
-        'zarr==2.13.3',
-        'scipy==1.9.3',
-        'scikit-image==0.19.3'
+        'Shapely',
+        'awkward',
+        'numpy',
+        'pandas',
+        'pyproj',
+        'folium',
+        'gcsfs',
+        'zarr',
+        'scipy',
+        'scikit-image'
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
