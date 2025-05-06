@@ -286,15 +286,19 @@ class Pattern:
                 geometry, times, self.elapsed_time, resolution=resolution
             )
 
-    def merge(self, pattern: Pattern, time_offset: float = 0, inplace: bool = False) -> Pattern:
+    def merge(self, pattern: Pattern, time_offset: float = 0, time_offset_end: bool = True, inplace: bool = False) -> Pattern:
         """Merge an input pattern with self
 
         Parameters
         ----------
         pattern : Pattern
             Input pattern to be merged into self
-        time_offset : float
-            Time offset between patterns (seconds)
+        time_offset : float, optional
+            Time offset for other pattern. See time_offset_end for when other pattern executes in parallel or
+            sequentially this self pattern. (seconds)
+        time_offset_end : bool, optional
+            If true, patterns are executed sequentially and time_offset is the time between patterns.
+            Otherwise, patterns are executed in parallel and time_offset is the delayed start time for the other pattern.
         inplace : bool, optional
             Overwrites Pattern object if true, otherwise return new Pattern object. Defaults to True.
 
@@ -315,10 +319,16 @@ class Pattern:
         # Get an empty path dictionary
         merged_dict = self.empty_path_dict()
 
-        # Delay times in the second pattern by the elapsed time of the first pattern and offset
-        delayed_times = (
-            ak.max(self.times) + time_offset + ak.Array(pattern.times)
-        ).to_list()
+        if time_offset_end:
+            # Delay times in the second pattern by the elapsed time of the first pattern and offset
+            delayed_times = (
+                ak.max(self.times) + time_offset + ak.Array(pattern.times)
+            ).to_list()
+        else:
+            # Delay times in the second pattern by the offset
+            delayed_times = (
+                time_offset + ak.Array(pattern.times)
+            ).to_list()
 
         # Build merged pattern attributes
         merged_dict["heat"] = self.heat + pattern.heat
