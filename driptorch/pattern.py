@@ -4,7 +4,6 @@ Spatiotemporal patterns and the infamous temporal propagator
 
 # Core imports
 from __future__ import annotations
-import pdb
 import copy
 from time import time as unix_time
 import warnings
@@ -76,7 +75,7 @@ class Pattern:
         self.elapsed_time = max_time - min_time
 
     @classmethod
-    def from_dict(cls, paths_dict: dict, epsg: int) -> Pattern:
+    def from_dict(cls, paths_dict: dict, epsg: int = None) -> Pattern:
         """Alternative constructor for initializing a Pattern object with a dictionary
         of path parameters
 
@@ -85,7 +84,7 @@ class Pattern:
         paths_dict : dict
             Dictionary of path parameters
         epsg : Int
-            EPSG code of path geometries
+            EPSG code of path geometries. If not specified, epsg must by in paths_dict
 
         Returns
         -------
@@ -93,6 +92,11 @@ class Pattern:
             A new instance of Pattern
         """
 
+        if epsg is None:
+            if 'epsg' not in paths_dict:
+                raise ValueError('epsg not specified and not in paths_dict')
+            epsg = paths_dict['epsg']
+            
         paths_dict["geometry"] = [shape(x) for x in paths_dict["geometry"]]
         return cls(
             paths_dict["heat"],
@@ -117,6 +121,7 @@ class Pattern:
             "igniter": self.igniter,
             "leg": self.leg,
             "times": self.times,
+            "epsg": self.epsg,
             # convert to geoJSON for storage
             "geometry": [x.__geo_interface__ for x in self.geometry],
         }
