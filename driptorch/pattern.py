@@ -55,10 +55,12 @@ class Pattern:
         Path geometry
     epsg : int
         EPSG code for path geometry
+    properties: list[dict], optional
+        Set of properties of the path
     """
 
     def __init__(self, heat: list[int], igniter: list[int], leg: list[int], times: list[list[float]],
-                 geometry: list[LineString], epsg: int,
+                 geometry: list[LineString], epsg: int, properties: list[dict] = None
                  ):
 
         self.heat = heat
@@ -67,6 +69,10 @@ class Pattern:
         self.times = times
         self.geometry = geometry
         self.epsg = epsg
+
+        self.properties = properties
+        if self.properties is None:
+            self.properties = [{} for _ in range(len(heat))]
 
         # Compute the total elapsed time for the ignition crew
         times_ak = ak.Array(self.times)
@@ -98,6 +104,12 @@ class Pattern:
             epsg = paths_dict['epsg']
             
         paths_dict["geometry"] = [shape(x) for x in paths_dict["geometry"]]
+
+        if 'properties' in paths_dict:
+            properties = paths_dict["properties"]
+        else:
+            properties = [{} for _ in range(len(paths_dict["heat"]))]
+
         return cls(
             paths_dict["heat"],
             paths_dict["igniter"],
@@ -105,6 +117,7 @@ class Pattern:
             paths_dict["times"],
             paths_dict["geometry"],
             epsg,
+            properties,
         )
 
     def to_dict(self) -> dict:
@@ -122,6 +135,7 @@ class Pattern:
             "leg": self.leg,
             "times": self.times,
             "epsg": self.epsg,
+            "properties": self.properties,
             # convert to geoJSON for storage
             "geometry": [x.__geo_interface__ for x in self.geometry],
         }
@@ -186,7 +200,8 @@ class Pattern:
             properties=props,
             style=style,
             elapsed_time=self.elapsed_time,
-            max_line_segment_time=max_line_segment_time
+            max_line_segment_time=max_line_segment_time,
+            path_properties=self.properties
         )
 
     def translate(self, x_off: float, y_off: float) -> Pattern:
@@ -336,14 +351,20 @@ class Pattern:
         merged_dict["leg"] = self.leg + pattern.leg
         merged_dict["times"] = self.times + delayed_times
         merged_dict["geometry"] = self.geometry + pattern.geometry
+        merged_dict["properties"] = self.properties + pattern.properties
 
         # Instantiate a new Pattern object
         merged_pattern = self.from_dict(merged_dict, self.epsg)
 
         # Compute summed elapse time
-        merged_pattern.elapsed_time = (
-            self.elapsed_time + time_offset + pattern.elapsed_time
-        )
+        if time_offset_end:
+            merged_pattern.elapsed_time = (
+                self.elapsed_time + time_offset + pattern.elapsed_time
+            )
+        else:
+            merged_pattern.elapsed_time = (
+                max(self.elapsed_time, time_offset + pattern.elapsed_time)
+            )
 
         # If inplace then overwrite self with the merged pattern
         if inplace:

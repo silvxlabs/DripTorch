@@ -15,7 +15,6 @@ from shapely.geometry import mapping, shape, MultiLineString, LineString, Point,
 from shapely.geometry.base import BaseGeometry
 from shapely.ops import transform
 from typing import Union
-import json
 import copy
 
 
@@ -185,7 +184,7 @@ def read_geojson_polygon(geojson: dict) -> Polygon:
 
 
 def write_geojson(geometries: list[BaseGeometry], src_epsg: int, dst_epsg: int = 4326, properties={},
-                  style={}, elapsed_time=None, max_line_segment_time=None) -> dict:
+                  style={}, elapsed_time=None, max_line_segment_time=None, path_properties: list[dict]=None) -> dict:
     """Write a list of shapely geometries to GeoJSON
 
     Parameters
@@ -204,7 +203,8 @@ def write_geojson(geometries: list[BaseGeometry], src_epsg: int, dst_epsg: int =
         Time elapsed during the firing operation. Defaults to None.
     max_line_segment_time : int, optional
         Maximum time (in milliseconds) for a line segment.
-
+    path_properties : list[dict], optional
+        Properties for each segment of the path.
     Returns
     -------
     dict
@@ -222,13 +222,21 @@ def write_geojson(geometries: list[BaseGeometry], src_epsg: int, dst_epsg: int =
     for i, geometry in enumerate(geometries):
 
         props = {}
+        # add properties
         for name in property_names:
             props[name] = properties[name][i]
+
+        # add style
+        props.update(style)
+
+        # add any path_properties for this segment of the path
+        if path_properties is not None:
+            props.update(path_properties[i])     
 
         features.append(
             {
                 'type': 'Feature',
-                'properties': props | style,
+                'properties': props,
                 'geometry': mapping(projector.forward(geometry))
             }
         )
